@@ -4,6 +4,8 @@ These are **not** approved answers. Each question includes a decision ID to amen
 
 P1A implementation alternatives and the versioned lab defaults are recorded in [ENGINE-RFC-P1A.md](ENGINE-RFC-P1A.md). That RFC does not close the questions below.
 
+[CF-RFC-P2B.md](CF-RFC-P2B.md) records the founder-approved **first EXPERIMENTAL profile (N-046/N-047)**. O-17..O-21 remain OPEN regarding final product adoption, balance, fairness and empirical evidence. The approved lab contract can be implemented **only under a separate Codex issue**, not by modifying DF-SYM/P2A.
+
 [LAB-P1B.md](LAB-P1B.md) records isolated common-random-number lanes for offline counterfactual comparisons only. This benchmark supplies evidence without closing O-01/O-02/O-03 or selecting a live mirror algorithm.
 
 | Key | Urgency | Question / required evidence |

@@ -46,3 +46,7 @@ P1A's experimental engine and offline simulator, P1B's model solver/comparison l
 ## PR requirements
 
 Every rule-affecting PR includes a decision-register delta, affected specification changes, negative/security tests, reproduction steps, evidence references, and a statement of what remains unvalidated.
+
+## First Cofre + Foco experiment authorized in design only — N-046/N-047
+
+Founder approval dated 2026-10-18 authorizes an **EXPERIMENTAL and isolated Codex implementation** of `DF-CF-0.1-lab` after the documented RFC merges and a separate issue is created. Option B after negative dealer peek; 5th reserve card, 3 Focus per Night, Manobra cost 1, Leitura cost 2 private/solo, max once each per round, 10 rounds main, 5/20 sensitivity. Post-swap Ace+10 is **regular 21 with automatic stand** (no natural bonus); no Focus window when the dealer has natural or both player hands are terminal. This later approval takes precedence **only** over the historical earlier CANDIDATE restriction on implementing these parameters for a test; it does **not** promote them to RATIFIED final gameplay. Keep the DF-SYM-0.1 engine, P2A UI, historical research, multiplayer and economy unchanged. Read [docs/CF-RFC-P2B.md](docs/CF-RFC-P2B.md) and N-046/N-047.

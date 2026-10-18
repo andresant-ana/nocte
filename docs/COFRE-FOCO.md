@@ -77,3 +77,7 @@ Questões detalhadas: [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md), O-03 e O-17..O-21.
 - **N-043:** 5ª carta/3/1/2/Manobra/Leitura são hipóteses configuráveis, não aprovações numéricas.
 - **N-044:** Contratos, Protocolos, conquistas e sistemas de progressão permanecem fora desta etapa.
 - **N-036/N-045:** profundidade, prazer, diversidade, balanceamento e fairness continuam OPEN até evidência.
+
+## 7. Adendo posterior — perfil de laboratório aprovado (2026-10-18)
+
+O fundador aprovou **somente como EXPERIMENTAL N-046/N-047** a opção B pós-peek: quinta carta Cofre visível, 3 Foco/Noite sem renovação, Manobra por 1, Leitura privada solo por 2, ambas opcionais e no máximo uma vez/rodada; teste principal com 10 rodadas e sensibilidades 5/20. 21 por Manobra é **21 comum auto-stand, sem natural retroativo**; sem janela se dealer natural ou ambas as mãos terminais. Esta aprovação **supersede apenas a pendência de escolha do primeiro perfil no texto histórico acima**, não ratifica valores permanentes nem autoriza multiplayer. Referência normativa de teste: [CF-RFC-P2B.md](CF-RFC-P2B.md).
