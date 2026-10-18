@@ -1,5 +1,5 @@
 import {
-  applyAction, compose, createRound, legalActions, playDealer, publicRound,
+  applyAction, compose, createRound, legalActions, playDealer, publicRound, roundScore,
   type Action, type CardSource, type InternalRound, type Partition, type PublicRound,
 } from "@nocte/engine";
 import type { PreparedRound } from "./random";
@@ -46,6 +46,10 @@ export class SoloSession {
     const next = playDealer(round, this.prepared.draws.dealer);
     this.round = next;
     return publicRound(next);
+  }
+
+  score(): number {
+    return roundScore(this.requireRound());
   }
 
   private requireRound(): InternalRound {
