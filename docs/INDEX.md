@@ -16,8 +16,9 @@
 | [ROADMAP.md](ROADMAP.md) | Phases and go/no-go gates; no fabricated progress |
 | [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md) | Explicit unresolved decisions and experiments |
 | [RESEARCH-CONTEXT.md](RESEARCH-CONTEXT.md) | Balatro/blackjack motivation and limits of inference |
+| [EXECUTION-MODEL.md](EXECUTION-MODEL.md) | Ratified ChatGPT / Codex / Work responsibilities and engineering handoffs |
 | [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md) | Template for new ADR/decision entries |
-| [../AGENTS.md](../AGENTS.md) | Mandatory constraints for Work/Codex/agents |
+| [../AGENTS.md](../AGENTS.md) | Mandatory constraints for Codex/software-development agents |
 | [../lab/README.md](../lab/README.md) | Available lab artifacts and reproduction caveats |
 
 ## Terminology

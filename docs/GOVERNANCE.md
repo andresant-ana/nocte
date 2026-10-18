@@ -2,7 +2,7 @@
 
 ## 1. Why this exists
 
-The founder requested on 2026-10-18 that **every decision and analysis to date be documented in GitHub**, preventing Work/agents from rewriting the design by inference. This is the initial authoritative baseline, not an implementation authorization.
+The founder requested on 2026-10-18 that **every decision and analysis to date be documented in GitHub**, preventing agents from rewriting the design by inference. This is the initial authoritative baseline, not an implementation authorization.
 
 ## 2. States and transitions
 
@@ -43,8 +43,12 @@ For any impactful change:
 - Every unapproved mechanical detail is tagged EXPERIMENTAL/CANDIDATE/OPEN.
 - Early and corrected research figures coexist with methodological distinction.
 - Architecture is a selected direction for exploration, not a falsely delivered system.
-- Work instructions prohibit undocumented scope drift.
+- Codex/engineering instructions prohibit undocumented scope drift.
 
-## 6. Contradiction procedure
+## 6. Responsibility delegation
+
+The founder explicitly assigned **coding and software development to Codex**, while **Work handles noncoding work tasks**. ChatGPT remains the gameplay/product design and governance interlocutor. See [EXECUTION-MODEL.md](EXECUTION-MODEL.md) (N-041). No tool's implementation choices may silently ratify product rules.
+
+## 7. Contradiction procedure
 
 If a message, test script and doc disagree: record the conflict in [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md). Do not silently choose a convenient interpretation. The latest explicitly confirmed founder choice governs only what it actually decides; experiments never overrule user intent.
