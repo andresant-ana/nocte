@@ -35,6 +35,36 @@ describe("card values and composition", () => {
 });
 
 describe("DF-SYM-0.1 state machine", () => {
+  it.each([
+    { luz: [0, 2], sombra: [1, 3] },
+    { luz: [1, 3], sombra: [0, 2] },
+  ] as const)("preserves the chosen hands when dealer natural ends the round: %j", partition => {
+    const round = createRound(sequence([c("A"), c("7"), c("10"), c("8"), c("A"), c("10")]));
+    const finished = compose(round, partition);
+    const visible = publicRound(finished);
+    expect(finished.phase).toBe("complete");
+    expect(finished.currentHand).toBeUndefined();
+    expect(legalActions(finished)).toEqual([]);
+    for (const name of ["luz", "sombra"] as const) {
+      const cards = partition[name].map(i => round.originalCards[i]!);
+      const expected = { cards, exposure: 10, status: "stood" };
+      expect(finished.hands?.[name]).toEqual(expected);
+      expect(visible.hands?.[name]).toEqual(expected);
+      expect(finished.settlement?.[name]).toMatchObject({
+        outcome: handValue(cards).natural ? "push" : "loss",
+        score: handValue(cards).natural ? 0 : -10,
+      });
+    }
+    expect(round.hands).toBeUndefined();
+  });
+  it("advances past a natural without mutating the previous round's hands", () => {
+    const round = compose(createRound(sequence([c("7"), c("8"), c("A"), c("10"), c("7"), c("10")])), firstPartition);
+    const before = structuredClone(round);
+    const next = applyAction(round, "stand", sequence([]));
+    expect(round).toEqual(before);
+    expect(next.phase).toBe("dealer");
+    expect(next.hands?.sombra.status).toBe("stood");
+  });
   it("keeps dealer hole, natural status and future draws out of public pre-reveal state", () => {
     const naturalDealer = createRound(sequence([c("2"), c("3"), c("4"), c("5"), c("A"), c("10")]));
     const visible = publicRound(naturalDealer) as unknown as Record<string, unknown>;
@@ -116,6 +146,47 @@ describe("DF-SYM-0.1 state machine", () => {
     const round = createRound(sequence(initial));
     expect(() => applyAction(round, "hit", sequence([]))).toThrow();
     expect(round.phase).toBe("compose");
+  });
+});
+
+describe("public snapshot isolation", () => {
+  type Mutable<T> = T extends object ? { -readonly [K in keyof T]: Mutable<T[K]> } : T;
+  it.each(["compose", "player", "dealer", "complete", "dealer-natural"] as const)("detaches all public data in %s", phase => {
+    let round = createRound(sequence(phase === "dealer-natural"
+      ? [c("A"), c("7"), c("10"), c("8"), c("A"), c("10")]
+      : structuredClone(initial)));
+    if (phase !== "compose") round = compose(round, firstPartition);
+    if (phase === "dealer" || phase === "complete") {
+      round = applyAction(round, "stand", sequence([]));
+      round = applyAction(round, "stand", sequence([]));
+    }
+    if (phase === "complete") round = playDealer(round, sequence([c("4")]));
+    const before = structuredClone(round);
+    const visible = publicRound(round) as Mutable<ReturnType<typeof publicRound>>;
+    const second = publicRound(round);
+    visible.originalCards[0]!.rank = "2";
+    visible.originalCards.push(c("3"));
+    visible.dealerUp.rank = "2";
+    if (visible.dealerHole) visible.dealerHole.rank = "2";
+    visible.legalActions.push("double");
+    for (const name of ["luz", "sombra"] as const) {
+      if (visible.hands) {
+        visible.hands[name].cards[0]!.rank = "2";
+        visible.hands[name].cards.push(c("3"));
+        visible.hands[name].exposure = 999;
+        visible.hands[name].status = "busted";
+      }
+      if (visible.settlement) {
+        visible.settlement[name].score = 999;
+        visible.settlement[name].outcome = "win";
+      }
+    }
+    expect(round).toEqual(before);
+    expect(second).toEqual(publicRound(round));
+    // Subsequent authoritative writes must not change an already-issued snapshot either.
+    const publicBefore = structuredClone(second);
+    (round.originalCards[0] as Mutable<Card>).rank = "9";
+    expect(second).toEqual(publicBefore);
   });
 });
 

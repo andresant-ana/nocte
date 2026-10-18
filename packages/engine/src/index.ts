@@ -106,13 +106,13 @@ export function compose(round: InternalRound, partition: Partition): InternalRou
   if (indices.length !== 4 || new Set(indices).size !== 4 || indices.some(i => !Number.isInteger(i) || i < 0 || i > 3)) {
     throw new Error("Partição inválida: cada carta inicial deve ser usada uma vez.");
   }
-  if (round.naturalPeek) {
-    return { ...round, phase: "complete", settlement: dealerNaturalSettlement(round, partition) };
-  }
   const hands: Record<HandName, HandState> = {
-    luz: { cards: partition.luz.map(i => round.originalCards[i]!), exposure: round.rules.initialExposure, status: "playing" },
-    sombra: { cards: partition.sombra.map(i => round.originalCards[i]!), exposure: round.rules.initialExposure, status: "playing" },
+    luz: { cards: partition.luz.map(i => round.originalCards[i]!), exposure: round.rules.initialExposure, status: round.naturalPeek ? "stood" : "playing" },
+    sombra: { cards: partition.sombra.map(i => round.originalCards[i]!), exposure: round.rules.initialExposure, status: round.naturalPeek ? "stood" : "playing" },
   };
+  if (round.naturalPeek) {
+    return { ...round, hands, phase: "complete", settlement: dealerNaturalSettlement(round, hands) };
+  }
   const first = handValue(hands.luz.cards).natural ? "sombra" : "luz";
   const state: InternalRound = { ...round, hands, currentHand: first, phase: "player" };
   return advanceHand(state);
@@ -120,13 +120,14 @@ export function compose(round: InternalRound, partition: Partition): InternalRou
 
 function advanceHand(round: InternalRound): InternalRound {
   if (!round.hands) return round;
+  const hands = { ...round.hands };
   for (const name of ["luz", "sombra"] as const) {
-    const hand = round.hands[name];
-    if (hand.status === "playing" && !handValue(hand.cards).natural) return { ...round, currentHand: name, phase: "player" };
-    if (hand.status === "playing") round.hands[name] = { ...hand, status: "stood" };
+    const hand = hands[name];
+    if (hand.status === "playing" && !handValue(hand.cards).natural) return { ...round, hands, currentHand: name, phase: "player" };
+    if (hand.status === "playing") hands[name] = { ...hand, status: "stood" };
   }
   const { currentHand: _completedHand, ...withoutCurrentHand } = round;
-  return { ...withoutCurrentHand, phase: "dealer" };
+  return { ...withoutCurrentHand, hands, phase: "dealer" };
 }
 
 export function applyAction(round: InternalRound, action: Action, draw: CardSource): InternalRound {
@@ -165,14 +166,13 @@ function settle(round: InternalRound, hand: HandState, dealer: HandValue): Settl
   return { outcome, score, playerTotal: player.total, dealerTotal: dealer.total };
 }
 
-function dealerNaturalSettlement(round: InternalRound, partition: Partition): Record<HandName, SettledHand> {
-  const hands = { luz: partition.luz.map(i => round.originalCards[i]!), sombra: partition.sombra.map(i => round.originalCards[i]!) };
+function dealerNaturalSettlement(round: InternalRound, hands: Record<HandName, HandState>): Record<HandName, SettledHand> {
   const settleOne = (cards: readonly Card[]): SettledHand => {
     const natural = handValue(cards).natural;
     return { outcome: natural ? "push" : "loss", score: natural ? 0 : -round.rules.initialExposure,
       playerTotal: handValue(cards).total, dealerTotal: handValue([round.dealerUp, round.dealerHole]).total };
   };
-  return { luz: settleOne(hands.luz), sombra: settleOne(hands.sombra) };
+  return { luz: settleOne(hands.luz.cards), sombra: settleOne(hands.sombra.cards) };
 }
 
 export function publicRound(round: InternalRound): PublicRound {
@@ -185,7 +185,8 @@ export function publicRound(round: InternalRound): PublicRound {
     ...(round.currentHand ? { currentHand: round.currentHand } : {}),
     ...(round.settlement ? { settlement: round.settlement } : {}),
   };
-  return base;
+  // Readonly is a compile-time contract; detach every nested object at runtime.
+  return structuredClone(base);
 }
 
 export function roundScore(round: InternalRound): number {

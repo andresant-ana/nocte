@@ -15,6 +15,7 @@
 ## Chosen implementation boundaries
 
 - `@nocte/engine` is a synchronous state machine with no UI, network, persistence, or random-number generator dependency. Draws are supplied by the caller.
+- Composition is retained as terminal Luz/Sombra hands even when dealer natural ends the round immediately. Public projections are detached deep snapshots, so runtime mutation of a projection cannot change authoritative state or another projection. Hand advancement builds a new hands record rather than writing to the input round.
 - `@nocte/sim` owns seed parsing, deterministic random ranks, strategy policies and JSON output. Its simple heuristic ranks partitions by resulting hand totals; it is neither exact EV nor a solver.
 - The report identifies the simulator and PRNG versions as well as the seed, scenario count and rule profile so seeded output can be replayed against the matching implementation.
 - Distinct composition outcomes collapse when the resulting unordered rank-pair groups are equal. The selected partition keeps original card indices so each dealt card is used once.
@@ -29,5 +30,6 @@
 4. Visibility check: before the post-composition peek, neither dealer hole card nor natural status is present in the public projection; completed rounds may reveal the hole card.
 5. Repeated simulator invocation with the same seed, profile and scenario count yields identical JSON data; both strategies appear in output with the non-solver limitation stated.
 6. The JSON report includes sample counts and a normal-approximation 95% interval for the paired mean score difference when at least two scenarios are run; this interval is Monte Carlo uncertainty, not a rule-validation result.
+7. Dealer-natural regression tests retain the selected Luz/Sombra cards, exposures and terminal statuses in both internal and public state, with the same push/loss settlement. Snapshot regression tests mutate nested cards, hands and settlement across round phases and verify isolation from authoritative state and other snapshots.
 
 These tests validate the implementation against the chosen profile. They do not resolve O-01/O-02/O-03, reproduce the historical Python calculations, demonstrate balance, or establish player enjoyment.
