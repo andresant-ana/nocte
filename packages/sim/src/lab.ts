@@ -4,3 +4,5 @@ export { enumerate } from "./enumeration.js";
 export { benchmark } from "./benchmark.js";
 export { buildAudit, representativeCsv } from "./depth-audit.js";
 export { sessionBenchmark } from "./depth-sessions.js";
+export { generatePlaytestPools, PLAYTEST_POOL_VERSION } from "./playtest-pools.js";
+export type { PlaytestPools, PlaytestScenario, DealerBucket, DecisionClass, PoolStage } from "./playtest-pools.js";

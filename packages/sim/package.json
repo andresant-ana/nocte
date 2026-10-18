@@ -3,7 +3,19 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/lab.ts" },
-  "scripts": { "simulate": "tsx src/cli.ts", "benchmark": "tsx src/lab-cli.ts", "enumerate": "tsx src/lab-cli.ts --mode enumerate", "depth": "tsx src/depth-cli.ts", "depth:report": "tsx src/depth-report.ts" },
-  "dependencies": { "@nocte/engine": "workspace:*" }
+  "exports": {
+    ".": "./src/lab.ts",
+    "./solver": "./src/solver.ts"
+  },
+  "scripts": {
+    "simulate": "tsx src/cli.ts",
+    "benchmark": "tsx src/lab-cli.ts",
+    "enumerate": "tsx src/lab-cli.ts --mode enumerate",
+    "depth": "tsx src/depth-cli.ts",
+    "depth:report": "tsx src/depth-report.ts",
+    "playtest:pools": "tsx src/playtest-pools-cli.ts"
+  },
+  "dependencies": {
+    "@nocte/engine": "workspace:*"
+  }
 }

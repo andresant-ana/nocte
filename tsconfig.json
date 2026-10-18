@@ -1,7 +1,14 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/engine" },
-    { "path": "./packages/sim" }
+    {
+      "path": "./packages/engine"
+    },
+    {
+      "path": "./packages/sim"
+    },
+    {
+      "path": "./packages/web"
+    }
   ]
 }

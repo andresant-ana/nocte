@@ -73,7 +73,38 @@ describe("DF-SYM-0.1 state machine", () => {
     expect(JSON.stringify(visible)).not.toContain("dealerDraws");
     const ended = compose(naturalDealer, firstPartition);
     expect(publicRound(ended).dealerHole).toEqual(c("10"));
+    expect(publicRound(ended).dealerDraws).toEqual([]);
     expect(publicRound(ended).naturalPeek).toBe(true);
+  });
+  it("reveals all dealer draws only on completion and keeps final totals consistent", () => {
+    const round = createRound(sequence([c("8"), c("8"), c("9"), c("9"), c("6"), c("2")]));
+    const assertDealerHidden = (state: ReturnType<typeof createRound>) => {
+      const visible = publicRound(state) as unknown as Record<string, unknown>;
+      expect(visible).not.toHaveProperty("dealerHole");
+      expect(visible).not.toHaveProperty("dealerDraws");
+    };
+    assertDealerHidden(round);
+
+    let state = compose(round, firstPartition);
+    assertDealerHidden(state);
+    state = applyAction(state, "stand", sequence([]));
+    assertDealerHidden(state);
+    state = applyAction(state, "stand", sequence([]));
+    expect(state.phase).toBe("dealer");
+    assertDealerHidden(state);
+
+    const finished = playDealer(state, sequence([c("3"), c("7")]));
+    const visible = publicRound(finished);
+    expect(visible.dealerHole).toEqual(c("2"));
+    expect(visible.dealerDraws).toEqual([c("3"), c("7")]);
+    const dealerTotal = handValue([round.dealerUp, round.dealerHole, ...finished.dealerDraws]).total;
+    expect(dealerTotal).toBe(18);
+    expect(visible.settlement?.luz.dealerTotal).toBe(dealerTotal);
+    expect(visible.settlement?.sombra.dealerTotal).toBe(dealerTotal);
+
+    (visible.dealerDraws![0] as unknown as { rank: string }).rank = "A";
+    expect(publicRound(finished).dealerDraws).toEqual([c("3"), c("7")]);
+    expect(finished.dealerDraws).toEqual([c("3"), c("7")]);
   });
   it("natural dealer peek pushes composed natural and loses other hand", () => {
     const round = createRound(sequence([c("A"), c("10"), c("7"), c("8"), c("A"), c("10")]));

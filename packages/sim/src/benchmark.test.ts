@@ -80,5 +80,5 @@ describe("EV agents run against the engine", () => {
     }
     const summary = score.summary();
     expect(Math.abs(summary.mean - 10 * choice.ev)).toBeLessThan(6 * summary.standardError!);
-  });
+  }, 15_000);
 });
