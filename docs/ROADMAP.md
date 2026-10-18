@@ -5,10 +5,10 @@
 ## Phase 0 — Documentation baseline (current)
 
 - RATIFIED founder constraints + experimental rule definitions recorded; dissent/unknowns preserved.
-- Registers, validation provenance, roadmap, Work instructions and specs consistent.
+- Registers, validation provenance, roadmap, Codex engineering instructions and specs consistent.
 - Gate: every consequential rule tagged by status; no silent elevation of lab results.
 
-## Phase 1 — TypeScript engine and offline lab (next)
+## Phase 1 — TypeScript engine and offline lab (next; owner: Codex)
 
 - Pure `@nocte/engine` without browser dependencies; explicit `DF-SYM-0.1` config.
 - Finite-shoe policy documented and validated (or explicit alternative), controlled server RNG boundary and deterministic test RNG.
@@ -55,6 +55,10 @@
 - Blockers, next executable task and whether approvals are needed.
 - No claim of a PR merged or a deploy online unless confirmed by GitHub/provider.
 
+## Execution ownership
+
+Coding and software architecture implementation are owned by **Codex**. ChatGPT handles product decisions, gameplay analysis and design-governance support. **Work** handles noncoding work/research/operational tasks; it must not be assigned engine, test or application implementation. See [EXECUTION-MODEL.md](EXECUTION-MODEL.md).
+
 ## Immediate follow-up
 
-Design a prototype-specific finite dealing/mirroring RFC in [OPEN-QUESTIONS](OPEN-QUESTIONS.md), then implement Phase 1. No signup, premium animation or live financial mechanics required for this.
+Codex prepares a prototype-specific finite dealing/mirroring RFC in [OPEN-QUESTIONS](OPEN-QUESTIONS.md), then implement Phase 1. No signup, premium animation or live financial mechanics required for this.

@@ -1,6 +1,8 @@
-# Instructions for development agents / ChatGPT Work
+# Instructions for Codex and software-development agents
 
-Applies to all work in this repository. Read this file, then [docs/INDEX.md](docs/INDEX.md), [docs/DECISION-REGISTER.md](docs/DECISION-REGISTER.md), and the relevant detailed specs **before** planning or changing code.
+Applies to all software-development work in this repository. **Codex owns coding, implementation, refactoring, testing and engineering PRs; ChatGPT Work does not own software development.** See [docs/EXECUTION-MODEL.md](docs/EXECUTION-MODEL.md).
+
+Applies to every coding task in this repository. Read this file, then [docs/INDEX.md](docs/INDEX.md), [docs/DECISION-REGISTER.md](docs/DECISION-REGISTER.md), and the relevant detailed specs **before** planning or changing code.
 
 ## Source of truth and authority
 
@@ -35,7 +37,7 @@ Applies to all work in this repository. Read this file, then [docs/INDEX.md](doc
 
 ## Current authorized implementation scope
 
-**DOCUMENTATION ONLY** as of baseline. Planned next gate: engine and offline simulator; neither is recorded as delivered. The exact rules for a finite shoe, natural resolution with two composed hands, mirror draw allocation, match timeout and economy distribution are not final; see [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
+**DOCUMENTATION ONLY** in the initial documentation baseline, pending the first explicitly started Codex implementation task. Planned next gate: engine and offline simulator; neither is recorded as delivered. The exact rules for a finite shoe, natural resolution with two composed hands, mirror draw allocation, match timeout and economy distribution are not final; see [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 
 ## PR requirements
 

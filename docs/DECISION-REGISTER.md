@@ -44,6 +44,7 @@
 | N-038 | RATIFIED | No early monetization; later optional cosmetics/business model only via new founder decision, no purchased competitive edge. | [VISION](VISION.md) |
 | N-039 | CANDIDATE | Seasonal leaderboards and cosmetic achievements/Prestígio separated from credit balances. | [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md) |
 | N-040 | RATIFIED | Preserve audits, assumptions and validation gates in repo; changes must be tracked by decision ID. | [GOVERNANCE](GOVERNANCE.md), [AGENTS](../AGENTS.md) |
+| N-041 | RATIFIED | **Codex owns software development, code, simulations and engineering tests; ChatGPT guides product/design and governance; Work is for noncoding work tasks.** | [EXECUTION-MODEL](EXECUTION-MODEL.md), [AGENTS](../AGENTS.md) |
 
 ## Decisions not to infer
 
@@ -55,4 +56,4 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-041 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-042 onward and update the linked document. Never silently overwrite an existing decision's historical basis.

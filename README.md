@@ -10,7 +10,15 @@ This is a **new, independent project**. MESA/21 was discontinued because it had 
 2. [Decision register](docs/DECISION-REGISTER.md) — every approved, experimental, deferred, open and superseded decision, with IDs.
 3. [Game rules](docs/GAMEPLAY.md) — Duas Faces v0.1 experimental contract.
 4. [Evidence](docs/VALIDATION.md) — reproducible assumptions and findings; **not** validated production balance.
-5. [Execution policy](AGENTS.md) — mandatory constraints for ChatGPT Work and other agents.
+5. [Execution policy](AGENTS.md) — mandatory constraints for Codex and software-development agents.
+
+## Who does what
+
+- **Codex:** all code, motor, simulations, automated tests, GitHub engineering PRs.
+- **ChatGPT:** product strategy, game design, decisions and critical review.
+- **Work:** noncoding work tasks, desk research, operational/documentation support.
+
+See [execution model](docs/EXECUTION-MODEL.md) (N-041).
 
 ## Non-negotiables
 
