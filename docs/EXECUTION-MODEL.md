@@ -22,6 +22,8 @@ A ChatGPT planning conversation may prepare a specification or request, but tech
 
 ## Immediate technical execution
 
+Progress note, 2026-10-18: P1A is integrated through PR #4. Issue #5 authorizes the P1B offline model solver and strategic benchmark described in [LAB-P1B](LAB-P1B.md); all production/gameplay approvals and ownership boundaries below remain in force.
+
 Next stage: **Phase 1** in [ROADMAP.md](ROADMAP.md). Start with a pure TypeScript Duas Faces engine and offline simulator; keep UI, multiplayer, auth, economics and Cloudflare deployment out of initial scope. Preserve evidence provenance. The exploratory Python source was not imported during documentation baseline; do not imply the existing numerical JSON is independently executable.
 
 See [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md) for finite-shoe, dealer natural, draw order and mirror fairness blockers.
