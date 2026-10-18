@@ -30,6 +30,14 @@
 - G-SKILL: skill advantage persists among non-random bots/humans, with repeated matched scenarios and uncertainty. Strategy diversity measured, not assumed.
 - G-ROLES: choose symmetric or asymmetric **only** after controlled comparison.
 
+## Próximo ramo de experimentação — Cofre + Foco (direção de produto N-042)
+
+O fundador aprovou a **direção Cofre + Foco**, motivado por experiência inicial pessoal com o protótipo: divertido, porém ainda próximo de blackjack e sujeito à repetição. **Esse comentário é feedback informal de uma pessoa, não dados do protocolo P2A** nem aprovação de regras exatas.
+
+**Sequência recomendada, ainda não executada:** (1) finalizar o PR P2A com correções e preservar baseline jogável; (2) elaborar versão DF-CF-0.x separada com especificação e matriz de hipóteses; (3) simular baseline vs Cofre-only, Foco-actions e combinado, sob condições equivalentes; (4) executar playtests humanos consentidos e comparar complexidade, decisão significativa, aprendizado e replay voluntário; (5) decidir calibragem ou descarte de variantes antes de multiplayer/ranking.
+
+**Não** incorporar ao motor DF-SYM-0.1/P2A silenciosamente, nem tratar números/custos exemplificativos como RATIFIED. Contratos, Protocolos, economia e sistema de conquistas **continuam fases posteriores** (N-044). Questões O-17..O-21 e [COFRE-FOCO.md](COFRE-FOCO.md) orientam o escopo de uma task Codex futura, separada.
+
 ## Phase 3 — Friends-only realtime rooms
 
 - Public/private join/invite, user cap, server authoritative web sockets, timers, reconnection and action privacy.

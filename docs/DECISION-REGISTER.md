@@ -31,7 +31,7 @@
 | N-025 | CANDIDATE | Ranked duel: 1v1, 10 rounds; casual: 5; actual duration/playfeel not human-validated. | [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md) |
 | N-026 | CANDIDATE | Fixed-entry **zero-sum** multiplayer credit redistribution; no dealer-generated persistent winnings. | [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md) |
 | N-027 | CANDIDATE | Solo scored practice initially, without unlimited credit minting; economic details pending. | [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md) |
-| N-028 | DEFERRED | Cofre fifth card, limited Foco, Manobra/Leitura, Contracts and Protocols until core validated. | [GAMEPLAY](GAMEPLAY.md) |
+| N-028 | SUPERSEDED | Histórico: Cofre/Foco/Contratos/Protocolos eram todos DEFERRED no primeiro laboratório. Cofre + Foco agora seguem N-042; Contratos/Protocolos permanecem DEFERRED por N-044. A regra DF-SYM-0.1 continua sem esses recursos. | [GAMEPLAY](GAMEPLAY.md), [COFRE-FOCO](COFRE-FOCO.md) |
 | N-029 | CANDIDATE | Fullstack TypeScript: React/Vite, Workers/Hono, Durable Objects/WebSocket, D1. | [ARCHITECTURE](ARCHITECTURE.md) |
 | N-030 | CANDIDATE | CSS/SVG + Motion, Howler/Web Audio; optional PixiJS only if needed. | [EXPERIENCE](EXPERIENCE.md) |
 | N-031 | RATIFIED | Authoritative server state; no trusting browser on cards, results, credits or ranking. | [ARCHITECTURE](ARCHITECTURE.md) |
@@ -45,6 +45,10 @@
 | N-039 | CANDIDATE | Seasonal leaderboards and cosmetic achievements/Prestígio separated from credit balances. | [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md) |
 | N-040 | RATIFIED | Preserve audits, assumptions and validation gates in repo; changes must be tracked by decision ID. | [GOVERNANCE](GOVERNANCE.md), [AGENTS](../AGENTS.md) |
 | N-041 | RATIFIED | **Codex owns software development, code, simulations and engineering tests; ChatGPT guides product/design and governance; Work is for noncoding work tasks.** | [EXECUTION-MODEL](EXECUTION-MODEL.md), [AGENTS](../AGENTS.md) |
+| N-042 | RATIFIED (direção) | **Cofre + Foco é a próxima direção de aprofundamento de Duas Faces:** carta adicional de reserva, recurso limitado compartilhado na Noite e escolhas com custo de oportunidade entre mãos/rodadas. Ratificação do conceito, **não** dos números nem implementação automática. | [COFRE-FOCO](COFRE-FOCO.md) |
+| N-043 | CANDIDATE | Protótipo ilustrativo: 5ª carta no Cofre; orçamento de 3 Foco/Noite, Manobra (troca de carta por 1), Leitura (consulta da carta oculta por 2) e opção conservar Foco. Custos, timing, efeitos, elegibilidade e informação permanecem por validar. | [COFRE-FOCO](COFRE-FOCO.md), [OPEN-QUESTIONS](OPEN-QUESTIONS.md) |
+| N-044 | DEFERRED | Contratos, Protocolos, conquistas e progressão econômica/competitiva ficam fora do primeiro experimento Cofre + Foco; fases posteriores mediante tarefa própria. | [COFRE-FOCO](COFRE-FOCO.md), [ROADMAP](ROADMAP.md) |
+| N-045 | OPEN | Desenho final de ações/custos/renovação de Foco, sequência de dealer peek, pontuação, fairness de multiplayer, diversidade estratégica e evidência humana para Cofre + Foco. | [OPEN-QUESTIONS](OPEN-QUESTIONS.md), [COFRE-FOCO](COFRE-FOCO.md) |
 
 ## Decisions not to infer
 
@@ -56,7 +60,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-042 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-046 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 
@@ -68,4 +72,8 @@ N-033/N-034/N-035 retain their **EXPERIMENTAL** statuses. [LAB-P1B](LAB-P1B.md) 
 
 ## P2A implementation addendum — 2026-10-18
 
-Issue #9 authorizes a local solo prototype and a consent-based validation protocol, not a rule or product-status change. The prototype exposes the existing DF-SYM-0.1 experimental profiles, optional experimental teaching suggestions, and post-settlement solver analysis for research. [PLAYTEST-P2A](PLAYTEST-P2A.md) describes the fixed stratified study pools, consent, local in-memory handling, export/clear controls, and interpretation limits. No human sessions or outcomes are represented as completed. N-019/N-020 remain **EXPERIMENTAL**; N-036, N-024 and O-01/O-02/O-03 remain **OPEN**. This addendum does not ratify gameplay, balance, teaching guidance, or release readiness.
+Issue #9 authorizes a local solo prototype and a consent-based validation protocol, not a rule or product-status change. The prototype exposes the existing DF-SYM-0.1 experimental profiles, optional experimental teaching suggestions, and post-settlement solver analysis for research. [PLAYTEST-P2A](PLAYTEST-P2A.md) describes the fixed stratified study pools, consent, local in-memory handling, export/clear controls, and interpretation limits. No human sessions or outcomes are represented as completed. N-019/N-020 remain **EXPERIMENTAL**; N-036, N-024 and O-01/O-02/O-03 remain **OPEN**. N-042 ratifies only the future direction; it does not authorize Cofre + Foco in P2A. N-043/N-045 remain candidate/open, and N-044 deferred. This addendum does not ratify gameplay, balance, teaching guidance, or release readiness.
+
+## Aditivo de direção Cofre + Foco — 2026-10-18
+
+A aprovação expressa do fundador em conversa de produto é N-042: aprofundar Duas Faces com carta de reserva + orçamento limitado de ações especiais entre rodadas. Os exemplos quantitativos são **N-043 CANDIDATE**, não resultados de teste nem regras já implementadas. N-028 preserva o histórico como SUPERSEDED; N-044 mantém separadamente o adiamento de Contratos/Protocolos. P1A–P1C e P2A conservam integralmente suas regras e evidências. A P2A ainda tem PR próprio de UI para revisão; este aditivo de documentação não autoriza alteração desse escopo.

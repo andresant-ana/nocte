@@ -37,4 +37,6 @@ Avoid compulsive engagement techniques (manipulative near-miss feedback, pressur
 
 ## No feature creep as substitute for skill
 
-The founder chose **Duas Faces** from proposed directions. This commits to testing its viability, not permanently ratifying every knob and payout. Contracts/Cofre/Protocolos may increase richness, but are deferred until base gameplay has proven worthwhile.
+The founder chose **Duas Faces** from proposed directions. This commits to testing its viability, not permanently ratifying every knob and payout. Initial personal prototype feedback described the game as enjoyable **but still monotonous/close to blackjack**; this is useful qualitative direction, **not** a completed formal P2A human study.
+
+**New founder decision N-042 (2026-10-18):** proceed with **Cofre + Foco as the next depth direction**: reserve card and limited shared choices across a Noite, intending inter-hand/round opportunity cost rather than only score cosmetics. Exact 5-card dealing, 3 Foco/Noite, Manobra/Leitura costs/eligibility and information timing are **candidates**, not finalized mechanics; [COFRE-FOCO.md](COFRE-FOCO.md) is the authority for the boundary. Contracts, Protocolos, achievements/economy and other complexity remain deferred until individual validation. No claim of live implementation.

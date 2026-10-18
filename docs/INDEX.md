@@ -9,6 +9,7 @@
 | [GOVERNANCE.md](GOVERNANCE.md) | Status semantics, change process and conflicts |
 | [VISION.md](VISION.md) | Ratified product goals, constraints and discarded MESA/21 direction |
 | [GAMEPLAY.md](GAMEPLAY.md) | Experimental symmetric Duas Faces rulebook plus candidate asymmetric variant |
+| [COFRE-FOCO.md](COFRE-FOCO.md) | Ratified depth direction, candidate Cofre/Foco operations, unresolved rules and validation gates |
 | [COMPETITION-ECONOMY.md](COMPETITION-ECONOMY.md) | Ranked mirroring, virtual economies, Subsolo, statistics and anti-abuse |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |

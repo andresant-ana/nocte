@@ -35,9 +35,13 @@ Applies to every coding task in this repository. Read this file, then [docs/INDE
 - Preserve raw research numbers and their limitations, including the distinction between preliminary 40k sampling and the corrected 7,150-class enumeration.
 - Favor least complexity: small friend group first, no scale optimization without measurements.
 
+## Cofre + Foco — design ratification is not coding permission
+
+The founder RATIFIED **only the strategic direction** of a reserve card (Cofre) and a limited across-Night shared resource (Foco), N-042. Numeric parameters 3 Foco/Noite, Manobra 1, Leitura 2 and precise effects/timing remain **CANDIDATE/OPEN** (N-043/N-045). Read [docs/COFRE-FOCO.md](docs/COFRE-FOCO.md). **Do not modify the currently active P2A PR, DF-SYM-0.1 core engine, or P1A–P1C evidence to include these abilities.** Next coding task must have an explicitly separate scope and versioned rules after the documentation/experiment design gate. P2A must sync its branch after this docs update to main and reconcile any documentary overlap without discarding N-042..N-045.
+
 ## Current authorized implementation scope
 
-P1A's experimental engine and offline simulator, P1B's model solver/comparison lab, and P1C's strategic-depth audit are integrated. Issue #9 authorizes a local solo browser prototype and consent-based human-validation protocol; see [PLAYTEST-P2A.md](docs/PLAYTEST-P2A.md) and [LAB-P1C.md](docs/LAB-P1C.md). The prototype reuses the existing experimental engine without changing rules. No networked play, identity, persistence, economy, deployment, or balance claim is authorized by P2A. N-019/N-020 remain EXPERIMENTAL; N-036, N-024 and O-01/O-02/O-03 remain OPEN. See [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
+P1A's experimental engine and offline simulator, P1B's model solver/comparison lab, and P1C's strategic-depth audit are integrated. Issue #9 authorizes a local solo browser prototype and consent-based human-validation protocol; this active PR implements those P2A deliverables and the requested public reveal/help fixes. See [PLAYTEST-P2A.md](docs/PLAYTEST-P2A.md) and [LAB-P1C.md](docs/LAB-P1C.md). P2A reuses the experimental engine without adding gameplay rules. No networked play, identity, persistence, economy, deployment, or balance claim is authorized. N-019/N-020 remain EXPERIMENTAL; N-036, N-024 and O-01/O-02/O-03 remain OPEN. N-042–N-045 retain the separate statuses above; Cofre + Foco is excluded from this PR. See [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 
 ## PR requirements
 
