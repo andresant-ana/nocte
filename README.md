@@ -32,4 +32,14 @@ See [execution model](docs/EXECUTION-MODEL.md) (N-041).
 
 Documentation baseline → TypeScript game engine and simulation lab → gameplay validation with friends → browser multiplayer → economy/ranking → premium audiovisual layer.
 
-The repository is not yet a live game. All simulation figures are exploratory, with modeling limitations documented in [VALIDATION.md](docs/VALIDATION.md).
+The repository is not yet a live game. The NOCTE-P1A branch adds an experimental, offline-only symmetric engine and strategy simulator; it is not production gameplay or balance evidence. All historical simulation figures and modeling limitations are documented in [VALIDATION.md](docs/VALIDATION.md).
+
+## Local lab (NOCTE-P1A)
+
+Requires Node.js 22+ and pnpm 12. Install dependencies with `pnpm install`, run checks with `pnpm test` and `pnpm typecheck`, and generate a reproducible report with:
+
+```sh
+pnpm simulate -- --seed demo-1 --scenarios 1000 --rules DF-SYM-0.1-lab-infinite-3to2-peek-natural-first --out lab-report.json
+```
+
+Use `DF-SYM-0.1-lab-infinite-1to1-peek-natural-first` for the natural-payout sensitivity. Both profiles and strategy limitations are documented in [the P1A RFC](docs/ENGINE-RFC-P1A.md); outputs do not reproduce the historical Python results.

@@ -2,6 +2,8 @@
 
 These are **not** approved answers. Each question includes a decision ID to amend when resolved.
 
+P1A implementation alternatives and the versioned lab defaults are recorded in [ENGINE-RFC-P1A.md](ENGINE-RFC-P1A.md). That RFC does not close the questions below.
+
 | Key | Urgency | Question / required evidence |
 | --- | --- | --- |
 | O-01 | BLOCKER Phase 1 | Finite shoe vs independent-rank draw; count of decks; shuffle/replenish rules; conservation and repeatability. N-024 |

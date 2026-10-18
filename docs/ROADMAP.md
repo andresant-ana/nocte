@@ -18,6 +18,8 @@
 - Experimental asymmetric `DF-ASYM-0.2` behind rule flag, no default promotion.
 - Gate G-ENGINE: determinism, action legality, score conservation and negative security tests pass; no unresolved ambiguity in a given config.
 
+**NOCTE-P1A implementation note (2026-10-18):** the symmetric lab slice, seeded local simulator, tests and an options RFC are in the Issue #3 branch/PR. This does not close O-01/O-02/O-03; finite shoe, mirror allocation and final natural handling remain open. Historical Python result parity, finite-deck behavior, asymmetric mode and G-ENGINE signoff remain unvalidated.
+
 ## Phase 2 — Minimal solo playable + human testing
 
 - Flat but usable keyboard/mouse/touch table supporting composition of four cards and dealer steps.
