@@ -5,7 +5,7 @@
 **Parâmetros e ações exemplificativas:** **N-043 — CANDIDATE**  
 **Escopo adiado:** **N-044 — DEFERRED**  
 **Balanceamento/viabilidade:** **N-045 — OPEN**  
-**Implementação:** **NÃO INICIADA / NÃO AUTORIZADA NESTE ADITIVO.**  
+**Implementação:** autorizada apenas em laboratório isolado por N-046/N-047 e Issue #14; este registro não torna a mecânica regra final.
 **Baseline de comparação:** DF-SYM-0.1, motor P1A e laboratório P1B/P1C; P2A segue independente.
 
 ## 1. Motivação e objetivo ratificados
@@ -81,3 +81,7 @@ Questões detalhadas: [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md), O-03 e O-17..O-21.
 ## 7. Adendo posterior — perfil de laboratório aprovado (2026-10-18)
 
 O fundador aprovou **somente como EXPERIMENTAL N-046/N-047** a opção B pós-peek: quinta carta Cofre visível, 3 Foco/Noite sem renovação, Manobra por 1, Leitura privada solo por 2, ambas opcionais e no máximo uma vez/rodada; teste principal com 10 rodadas e sensibilidades 5/20. 21 por Manobra é **21 comum auto-stand, sem natural retroativo**; sem janela se dealer natural ou ambas as mãos terminais. Esta aprovação **supersede apenas a pendência de escolha do primeiro perfil no texto histórico acima**, não ratifica valores permanentes nem autoriza multiplayer. Referência normativa de teste: [CF-RFC-P2B.md](CF-RFC-P2B.md).
+
+## 8. Implementação laboratorial P2B-E
+
+Issue #14 concretiza o perfil experimental em implementação própria e relatório reproduzível [LAB-P2B.md](LAB-P2B.md). O texto acima continua registrando a direção e a fronteira normativa; implementação e resultados não atualizam o status de N-042–N-047, nem alteram DF-SYM-0.1 ou a P2A. Controles diagnósticos do laboratório são contrafactuais técnicos, não opções de regra aprovadas.

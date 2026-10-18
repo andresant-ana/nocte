@@ -13,6 +13,7 @@
     "enumerate": "pnpm --filter @nocte/sim enumerate",
     "depth": "pnpm --filter @nocte/sim depth",
     "depth:report": "pnpm --filter @nocte/sim depth:report",
+    "cofre-foco": "pnpm --filter @nocte/sim cofre-foco",
     "dev": "pnpm --filter @nocte/web dev",
     "build": "pnpm --filter @nocte/web build"
   },

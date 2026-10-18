@@ -1,0 +1,2710 @@
+{
+  "result": {
+    "schemaVersion": 1,
+    "labVersion": "cofre-foco-named-lanes-v1",
+    "policyVersion": "resource-policies-explicit-v1",
+    "scoringVersion": "cf-lab-net-match-points-natural-opening-v1",
+    "prngVersion": "sha256-counter-rejection-v1",
+    "solverVersion": "dp-infinite-s17-v1",
+    "seed": "nocte-p2b-e-h5-main-v1",
+    "nights": 500,
+    "horizon": 5,
+    "budgetMode": "proportional-control",
+    "payout": "3:2",
+    "units": "net match points per Night; 10 points per initial hand exposure",
+    "protocol": "paired deterministic counterfactual scenarios; same four initial cards, dealer up/hole, and hand/dealer lanes for every profile; Cofre has its own lane; not a physical shoe or multiplayer mirror",
+    "policies": {
+      "conserve": "EV-optimal composition and P1B action choices; never reads or maneuvers; baseline resource control",
+      "eager": "EV-optimal composition; reads whenever affordable and maneuvers whenever a public total-distance heuristic strictly improves; uses a transparent hole-aware basic heuristic only after Read",
+      "horizon": "EV-optimal composition; delays Read to the final round, and maneuvers only in the final round when public total-distance improves; approximate horizon rule, not a dynamic-programming oracle"
+    },
+    "profiles": {
+      "baseline": {
+        "rulesId": "DF-SYM-0.1-lab-infinite-3to2-peek-natural-first",
+        "label": "DF-SYM-0.1",
+        "initialFocus": 0,
+        "agents": {
+          "conserve": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          },
+          "eager": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          },
+          "horizon": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          }
+        }
+      },
+      "cofreOnly": {
+        "rulesId": "DF-CF-0.1-control-cofre-free",
+        "label": "free-swap diagnostic control",
+        "initialFocus": 0,
+        "agents": {
+          "conserve": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          },
+          "eager": {
+            "score": {
+              "n": 500,
+              "mean": 13.989999999999991,
+              "variance": 1520.7714428857726,
+              "standardError": 1.744001974130633,
+              "confidence95": [
+                10.571756130703951,
+                17.408243869296033
+              ]
+            },
+            "scorePerRound": 2.7979999999999983,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 3.5099999999999993,
+              "variance": 1.056012024048096,
+              "standardError": 0.0459567628113229,
+              "confidence95": [
+                3.4199247448898062,
+                3.6000752551101924
+              ]
+            },
+            "hands": {
+              "wins": 2452,
+              "losses": 2022,
+              "pushes": 526
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              331,
+              359,
+              350,
+              344,
+              371
+            ],
+            "decisionExamples": [
+              {
+                "event": "maneuver",
+                "round": 3,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 4,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 2,
+                "hand": "sombra",
+                "cardIndex": 0,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "6"
+              },
+              {
+                "event": "maneuver",
+                "round": 3,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "A"
+              },
+              {
+                "event": "maneuver",
+                "round": 4,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "4"
+              },
+              {
+                "event": "maneuver",
+                "round": 1,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "9"
+              },
+              {
+                "event": "maneuver",
+                "round": 3,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 4,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              }
+            ]
+          },
+          "horizon": {
+            "score": {
+              "n": 500,
+              "mean": 16.590000000000025,
+              "variance": 1793.8095190380752,
+              "standardError": 1.8941011161171282,
+              "confidence95": [
+                12.877561812410454,
+                20.302438187589594
+              ]
+            },
+            "scorePerRound": 3.318000000000005,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0.7420000000000002,
+              "variance": 0.19181963927855722,
+              "standardError": 0.019586711785215875,
+              "confidence95": [
+                0.7036100449009771,
+                0.7803899550990233
+              ]
+            },
+            "hands": {
+              "wins": 2507,
+              "losses": 2000,
+              "pushes": 493
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              371
+            ],
+            "decisionExamples": [
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 0,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "9"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "A"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "8"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "8"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 0,
+                "focusAfter": 0,
+                "cofre": "8"
+              }
+            ]
+          }
+        }
+      },
+      "focusRead": {
+        "rulesId": "DF-CF-0.1-control-focus-read",
+        "label": "Focus + private Read diagnostic control",
+        "initialFocus": 2,
+        "agents": {
+          "conserve": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 2,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                2,
+                2
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          },
+          "eager": {
+            "score": {
+              "n": 500,
+              "mean": 17.409999999999982,
+              "variance": 1783.909719438877,
+              "standardError": 1.8888672369644601,
+              "confidence95": [
+                13.70782021554964,
+                21.112179784450323
+              ]
+            },
+            "scorePerRound": 3.4819999999999967,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 2,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                2,
+                2
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 1,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                1,
+                1
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2503,
+              "losses": 2006,
+              "pushes": 491
+            },
+            "readsByRound": [
+              466,
+              34,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": [
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "10",
+                "dealerHole": "4"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "3",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "4",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "3",
+                "dealerHole": "5"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "2"
+              },
+              {
+                "event": "read",
+                "round": 2,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "10",
+                "dealerHole": "2"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "10"
+              }
+            ]
+          },
+          "horizon": {
+            "score": {
+              "n": 500,
+              "mean": 16.909999999999997,
+              "variance": 1829.76142284569,
+              "standardError": 1.9129879366298628,
+              "confidence95": [
+                13.160543644205465,
+                20.65945635579453
+              ]
+            },
+            "scorePerRound": 3.3819999999999992,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 1.9239999999999986,
+              "variance": 0.14651703406813632,
+              "standardError": 0.01711823788058434,
+              "confidence95": [
+                1.8904482537540532,
+                1.957551746245944
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0.07600000000000005,
+              "variance": 0.14651703406813618,
+              "standardError": 0.017118237880584333,
+              "confidence95": [
+                0.04244825375405476,
+                0.10955174624594535
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0.9619999999999993,
+              "variance": 0.03662925851703408,
+              "standardError": 0.00855911894029217,
+              "confidence95": [
+                0.9452241268770266,
+                0.978775873122972
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2495,
+              "losses": 2011,
+              "pushes": 494
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              481
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": [
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "3",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "A",
+                "dealerHole": "6"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "8"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "8"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "4",
+                "dealerHole": "7"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "7",
+                "dealerHole": "6"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "2",
+                "dealerHole": "9"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "9",
+                "dealerHole": "10"
+              }
+            ]
+          }
+        }
+      },
+      "combined": {
+        "rulesId": "DF-CF-0.1-lab-infinite-3to2",
+        "label": "DF-CF-0.1-lab full experimental profile",
+        "initialFocus": 2,
+        "agents": {
+          "conserve": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 2,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                2,
+                2
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          },
+          "eager": {
+            "score": {
+              "n": 500,
+              "mean": 17.409999999999982,
+              "variance": 1783.909719438877,
+              "standardError": 1.8888672369644601,
+              "confidence95": [
+                13.70782021554964,
+                21.112179784450323
+              ]
+            },
+            "scorePerRound": 3.4819999999999967,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 2,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                2,
+                2
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 1,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                1,
+                1
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2503,
+              "losses": 2006,
+              "pushes": 491
+            },
+            "readsByRound": [
+              466,
+              34,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": [
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "10",
+                "dealerHole": "4"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "3",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "4",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "3",
+                "dealerHole": "5"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "2"
+              },
+              {
+                "event": "read",
+                "round": 2,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "10",
+                "dealerHole": "2"
+              },
+              {
+                "event": "read",
+                "round": 1,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "10"
+              }
+            ]
+          },
+          "horizon": {
+            "score": {
+              "n": 500,
+              "mean": 16.909999999999997,
+              "variance": 1829.76142284569,
+              "standardError": 1.9129879366298628,
+              "confidence95": [
+                13.160543644205465,
+                20.65945635579453
+              ]
+            },
+            "scorePerRound": 3.3819999999999992,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 1.9239999999999986,
+              "variance": 0.14651703406813632,
+              "standardError": 0.01711823788058434,
+              "confidence95": [
+                1.8904482537540532,
+                1.957551746245944
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0.07600000000000005,
+              "variance": 0.14651703406813618,
+              "standardError": 0.017118237880584333,
+              "confidence95": [
+                0.04244825375405476,
+                0.10955174624594535
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0.9619999999999993,
+              "variance": 0.03662925851703408,
+              "standardError": 0.00855911894029217,
+              "confidence95": [
+                0.9452241268770266,
+                0.978775873122972
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2495,
+              "losses": 2011,
+              "pushes": 494
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              481
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": [
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "3",
+                "dealerHole": "10"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "A",
+                "dealerHole": "6"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "8"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "5",
+                "dealerHole": "8"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "4",
+                "dealerHole": "7"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "7",
+                "dealerHole": "6"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "2",
+                "dealerHole": "9"
+              },
+              {
+                "event": "read",
+                "round": 5,
+                "focusBefore": 2,
+                "focusAfter": 0,
+                "dealerUp": "9",
+                "dealerHole": "10"
+              }
+            ]
+          }
+        }
+      },
+      "bm": {
+        "rulesId": "DF-CF-0.1-lab-bm-3to2",
+        "label": "B-M: Cofre + Focus + Manobra, no Read",
+        "initialFocus": 2,
+        "agents": {
+          "conserve": {
+            "score": {
+              "n": 500,
+              "mean": 17.829999999999995,
+              "variance": 1818.5782565130266,
+              "standardError": 1.9071330611748236,
+              "confidence95": [
+                14.09201920009734,
+                21.56798079990265
+              ]
+            },
+            "scorePerRound": 3.565999999999999,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 2,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                2,
+                2
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "hands": {
+              "wins": 2515,
+              "losses": 1986,
+              "pushes": 499
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "decisionExamples": []
+          },
+          "eager": {
+            "score": {
+              "n": 500,
+              "mean": 15.609999999999989,
+              "variance": 1580.5389779559105,
+              "standardError": 1.777942056398864,
+              "confidence95": [
+                12.125233569458215,
+                19.09476643054176
+              ]
+            },
+            "scorePerRound": 3.1219999999999977,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 1.9640000000000006,
+              "variance": 0.03878156312625251,
+              "standardError": 0.008806993031251075,
+              "confidence95": [
+                1.9467382936587485,
+                1.9812617063412528
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 0.03600000000000001,
+              "variance": 0.038781563126252507,
+              "standardError": 0.008806993031251075,
+              "confidence95": [
+                0.018738293658747903,
+                0.053261706341252116
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 1.9640000000000006,
+              "variance": 0.03878156312625251,
+              "standardError": 0.008806993031251075,
+              "confidence95": [
+                1.9467382936587485,
+                1.9812617063412528
+              ]
+            },
+            "hands": {
+              "wins": 2465,
+              "losses": 2014,
+              "pushes": 521
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              331,
+              359,
+              183,
+              81,
+              28
+            ],
+            "decisionExamples": [
+              {
+                "event": "maneuver",
+                "round": 3,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 4,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 1,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 2,
+                "hand": "sombra",
+                "cardIndex": 0,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "6"
+              },
+              {
+                "event": "maneuver",
+                "round": 3,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 1,
+                "focusAfter": 0,
+                "cofre": "A"
+              },
+              {
+                "event": "maneuver",
+                "round": 1,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "9"
+              },
+              {
+                "event": "maneuver",
+                "round": 3,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 1,
+                "focusAfter": 0,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 1,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "3"
+              },
+              {
+                "event": "maneuver",
+                "round": 2,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 1,
+                "focusAfter": 0,
+                "cofre": "10"
+              }
+            ]
+          },
+          "horizon": {
+            "score": {
+              "n": 500,
+              "mean": 16.590000000000025,
+              "variance": 1793.8095190380752,
+              "standardError": 1.8941011161171282,
+              "confidence95": [
+                12.877561812410454,
+                20.302438187589594
+              ]
+            },
+            "scorePerRound": 3.318000000000005,
+            "baselineModelEvReference": {
+              "n": 500,
+              "mean": 18.51245596364395,
+              "variance": 250.71934329179055,
+              "standardError": 0.7081233554851734,
+              "confidence95": [
+                17.124534186893012,
+                19.90037774039489
+              ]
+            },
+            "focusSpent": {
+              "n": 500,
+              "mean": 0.7420000000000002,
+              "variance": 0.19181963927855722,
+              "standardError": 0.019586711785215875,
+              "confidence95": [
+                0.7036100449009771,
+                0.7803899550990233
+              ]
+            },
+            "focusRemaining": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "focusExpired": {
+              "n": 500,
+              "mean": 1.2579999999999996,
+              "variance": 0.19181963927855722,
+              "standardError": 0.019586711785215875,
+              "confidence95": [
+                1.2196100449009764,
+                1.2963899550990228
+              ]
+            },
+            "readUses": {
+              "n": 500,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ]
+            },
+            "maneuverUses": {
+              "n": 500,
+              "mean": 0.7420000000000002,
+              "variance": 0.19181963927855722,
+              "standardError": 0.019586711785215875,
+              "confidence95": [
+                0.7036100449009771,
+                0.7803899550990233
+              ]
+            },
+            "hands": {
+              "wins": 2507,
+              "losses": 2000,
+              "pushes": 493
+            },
+            "readsByRound": [
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "maneuversByRound": [
+              0,
+              0,
+              0,
+              0,
+              371
+            ],
+            "decisionExamples": [
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "luz",
+                "cardIndex": 1,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 0,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "9"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "A"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "10"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "sombra",
+                "cardIndex": 1,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "8"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "8"
+              },
+              {
+                "event": "maneuver",
+                "round": 5,
+                "hand": "luz",
+                "cardIndex": 0,
+                "focusBefore": 2,
+                "focusAfter": 1,
+                "cofre": "8"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "comparisonsAgainstBaseline": {
+      "conserve": {
+        "baseline": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "cofreOnly": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        }
+      },
+      "eager": {
+        "baseline": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "cofreOnly": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -3.8400000000000007,
+            "variance": 655.3651302605214,
+            "standardError": 1.1448712855692742,
+            "confidence95": [
+              -6.083947719715779,
+              -1.5960522802842232
+            ]
+          },
+          "win": 180,
+          "loss": 227,
+          "push": 93
+        },
+        "focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -0.42000000000000015,
+            "variance": 74.1719438877755,
+            "standardError": 0.38515436876082687,
+            "confidence95": [
+              -1.1749025627712208,
+              0.33490256277122055
+            ]
+          },
+          "win": 57,
+          "loss": 71,
+          "push": 372
+        },
+        "combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -0.42000000000000015,
+            "variance": 74.1719438877755,
+            "standardError": 0.38515436876082687,
+            "confidence95": [
+              -1.1749025627712208,
+              0.33490256277122055
+            ]
+          },
+          "win": 57,
+          "loss": 71,
+          "push": 372
+        },
+        "bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -2.219999999999996,
+            "variance": 360.39238476953926,
+            "standardError": 0.8489904413708547,
+            "confidence95": [
+              -3.8840212650868713,
+              -0.5559787349131211
+            ]
+          },
+          "win": 170,
+          "loss": 210,
+          "push": 120
+        }
+      },
+      "horizon": {
+        "baseline": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "cofreOnly": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -1.2400000000000004,
+            "variance": 128.71983967935867,
+            "standardError": 0.5073851390794939,
+            "confidence95": [
+              -2.2344748725958086,
+              -0.2455251274041924
+            ]
+          },
+          "win": 92,
+          "loss": 129,
+          "push": 279
+        },
+        "focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -0.9200000000000006,
+            "variance": 71.29619238476953,
+            "standardError": 0.3776140685535154,
+            "confidence95": [
+              -1.6601235743648908,
+              -0.17987642563511042
+            ]
+          },
+          "win": 56,
+          "loss": 79,
+          "push": 365
+        },
+        "combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -0.9200000000000006,
+            "variance": 71.29619238476953,
+            "standardError": 0.3776140685535154,
+            "confidence95": [
+              -1.6601235743648908,
+              -0.17987642563511042
+            ]
+          },
+          "win": 56,
+          "loss": 79,
+          "push": 365
+        },
+        "bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -1.2400000000000004,
+            "variance": 128.71983967935867,
+            "standardError": 0.5073851390794939,
+            "confidence95": [
+              -2.2344748725958086,
+              -0.2455251274041924
+            ]
+          },
+          "win": 92,
+          "loss": 129,
+          "push": 279
+        }
+      }
+    },
+    "pairwiseProfileComparisons": {
+      "conserve": {
+        "baseline-minus-cofreOnly": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "baseline-minus-focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "baseline-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "baseline-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "cofreOnly-minus-focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "cofreOnly-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "cofreOnly-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "focusRead-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "focusRead-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "combined-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        }
+      },
+      "eager": {
+        "baseline-minus-cofreOnly": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 3.8400000000000007,
+            "variance": 655.3651302605214,
+            "standardError": 1.1448712855692742,
+            "confidence95": [
+              1.5960522802842232,
+              6.083947719715779
+            ]
+          },
+          "win": 227,
+          "loss": 180,
+          "push": 93
+        },
+        "baseline-minus-focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0.42000000000000015,
+            "variance": 74.1719438877755,
+            "standardError": 0.38515436876082687,
+            "confidence95": [
+              -0.33490256277122055,
+              1.1749025627712208
+            ]
+          },
+          "win": 71,
+          "loss": 57,
+          "push": 372
+        },
+        "baseline-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0.42000000000000015,
+            "variance": 74.1719438877755,
+            "standardError": 0.38515436876082687,
+            "confidence95": [
+              -0.33490256277122055,
+              1.1749025627712208
+            ]
+          },
+          "win": 71,
+          "loss": 57,
+          "push": 372
+        },
+        "baseline-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 2.219999999999996,
+            "variance": 360.39238476953926,
+            "standardError": 0.8489904413708547,
+            "confidence95": [
+              0.5559787349131211,
+              3.8840212650868713
+            ]
+          },
+          "win": 210,
+          "loss": 170,
+          "push": 120
+        },
+        "cofreOnly-minus-focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -3.4199999999999995,
+            "variance": 700.7050100200405,
+            "standardError": 1.1838116488867987,
+            "confidence95": [
+              -5.740270831818124,
+              -1.0997291681818742
+            ]
+          },
+          "win": 185,
+          "loss": 228,
+          "push": 87
+        },
+        "cofreOnly-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -3.4199999999999995,
+            "variance": 700.7050100200405,
+            "standardError": 1.1838116488867987,
+            "confidence95": [
+              -5.740270831818124,
+              -1.0997291681818742
+            ]
+          },
+          "win": 185,
+          "loss": 228,
+          "push": 87
+        },
+        "cofreOnly-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -1.6199999999999994,
+            "variance": 288.9535070140282,
+            "standardError": 0.7602019560801303,
+            "confidence95": [
+              -3.109995833917055,
+              -0.13000416608294407
+            ]
+          },
+          "win": 135,
+          "loss": 162,
+          "push": 203
+        },
+        "focusRead-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "focusRead-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 1.8,
+            "variance": 405.97194388777547,
+            "standardError": 0.9010792905041991,
+            "confidence95": [
+              0.03388459061176974,
+              3.5661154093882304
+            ]
+          },
+          "win": 204,
+          "loss": 177,
+          "push": 119
+        },
+        "combined-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 1.8,
+            "variance": 405.97194388777547,
+            "standardError": 0.9010792905041991,
+            "confidence95": [
+              0.03388459061176974,
+              3.5661154093882304
+            ]
+          },
+          "win": 204,
+          "loss": 177,
+          "push": 119
+        }
+      },
+      "horizon": {
+        "baseline-minus-cofreOnly": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 1.2400000000000004,
+            "variance": 128.71983967935867,
+            "standardError": 0.5073851390794939,
+            "confidence95": [
+              0.2455251274041924,
+              2.2344748725958086
+            ]
+          },
+          "win": 129,
+          "loss": 92,
+          "push": 279
+        },
+        "baseline-minus-focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0.9200000000000006,
+            "variance": 71.29619238476953,
+            "standardError": 0.3776140685535154,
+            "confidence95": [
+              0.17987642563511042,
+              1.6601235743648908
+            ]
+          },
+          "win": 79,
+          "loss": 56,
+          "push": 365
+        },
+        "baseline-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0.9200000000000006,
+            "variance": 71.29619238476953,
+            "standardError": 0.3776140685535154,
+            "confidence95": [
+              0.17987642563511042,
+              1.6601235743648908
+            ]
+          },
+          "win": 79,
+          "loss": 56,
+          "push": 365
+        },
+        "baseline-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 1.2400000000000004,
+            "variance": 128.71983967935867,
+            "standardError": 0.5073851390794939,
+            "confidence95": [
+              0.2455251274041924,
+              2.2344748725958086
+            ]
+          },
+          "win": 129,
+          "loss": 92,
+          "push": 279
+        },
+        "cofreOnly-minus-focusRead": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -0.3199999999999998,
+            "variance": 177.8533066132263,
+            "standardError": 0.5964114462570722,
+            "confidence95": [
+              -1.4889664346638614,
+              0.8489664346638617
+            ]
+          },
+          "win": 134,
+          "loss": 130,
+          "push": 236
+        },
+        "cofreOnly-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": -0.3199999999999998,
+            "variance": 177.8533066132263,
+            "standardError": 0.5964114462570722,
+            "confidence95": [
+              -1.4889664346638614,
+              0.8489664346638617
+            ]
+          },
+          "win": 134,
+          "loss": 130,
+          "push": 236
+        },
+        "cofreOnly-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "focusRead-minus-combined": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0,
+            "variance": 0,
+            "standardError": 0,
+            "confidence95": [
+              0,
+              0
+            ]
+          },
+          "win": 0,
+          "loss": 0,
+          "push": 500
+        },
+        "focusRead-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0.3199999999999998,
+            "variance": 177.8533066132263,
+            "standardError": 0.5964114462570722,
+            "confidence95": [
+              -0.8489664346638617,
+              1.4889664346638614
+            ]
+          },
+          "win": 130,
+          "loss": 134,
+          "push": 236
+        },
+        "combined-minus-bm": {
+          "scoreDifference": {
+            "n": 500,
+            "mean": 0.3199999999999998,
+            "variance": 177.8533066132263,
+            "standardError": 0.5964114462570722,
+            "confidence95": [
+              -0.8489664346638617,
+              1.4889664346638614
+            ]
+          },
+          "win": 130,
+          "loss": 134,
+          "push": 236
+        }
+      }
+    },
+    "limitations": [
+      "No exact finite-horizon EV/regret solver for shared Focus has been implemented; comparisons use fixed deterministic resource policies and report paired score differences against DF-SYM, not regret against an oracle.",
+      "Research-only proportional budget uses round(3 * H / 10) = 2; it is not the approved fixed-3 experimental configuration.",
+      "Post-Read action selection uses a simple explicit hole-aware heuristic, not a conditional EV solver; all other hand actions use the existing P1B solver.",
+      "Cofre-only and Focus+Read are diagnostic controls. The free-swap control has zero Focus cost; the Focus+Read control still samples an unused reserve lane but hides and disables Cofre, which is distributionally inert only under infinite-rank sampling with replacement.",
+      "Common random lanes provide reproducible offline coupling, not finite-shoe equivalence, live mirrored fairness, competitive skill evidence, or human playtest outcomes.",
+      "Confidence intervals are marginal normal intervals over paired Night score differences; profiles share scenarios, comparisons are correlated and no multiplicity adjustment is applied."
+    ]
+  },
+  "execution": {
+    "elapsedMs": 16410.6531,
+    "node": "v24.21.0",
+    "timingNote": "execution time is nondeterministic metadata; result reproduces byte-for-byte for the same options"
+  }
+}

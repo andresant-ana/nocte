@@ -11,12 +11,17 @@ describe("counterfactual streams and statistics", () => {
     const luz = new BenchmarkRandom("s", 1, "luz");
     const dealer = new BenchmarkRandom("s", 1, "dealer");
     const replay = new BenchmarkRandom("s", 1, "dealer");
+    const reserve = new BenchmarkRandom("s", 1, "cofre");
+    const reserveReplay = new BenchmarkRandom("s", 1, "cofre");
     Array.from({ length: 100 }, () => luz.card());
     expect(Array.from({ length: 20 }, () => dealer.card())).toEqual(
       Array.from({ length: 20 }, () => replay.card()),
     );
     expect(scenario("s", 1)).toEqual(scenario("s", 1));
     expect(scenario("s", 1)).not.toEqual(scenario("s", 2));
+    expect(Array.from({ length: 12 }, () => reserve.card())).toEqual(
+      Array.from({ length: 12 }, () => reserveReplay.card()),
+    );
   });
   it("uses unbiased bounded-word sampling and excludes invalid bounds", () => {
     const random = new BenchmarkRandom("ranks", 0, "initial");
