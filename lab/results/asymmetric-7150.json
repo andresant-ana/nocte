@@ -1,0 +1,10 @@
+{
+  "enumerated_scenarios": 7150,
+  "optimal_roles_ev_per_two_ten_point_hands": 0.37714053622819027,
+  "random_roles_ev_per_two_ten_point_hands": -0.0341438603657909,
+  "gain_optimal_over_random": 0.4112843965939812,
+  "initial_20_stake_optimal_expected_return": 0.18857026811409514,
+  "fraction_scenarios_large_EV_gap": 0.8036725712577553,
+  "fraction_luz_chooses_double": 0.313784531353956,
+  "fraction_sombra_chooses_retreat": 0.052734632756343366
+}
