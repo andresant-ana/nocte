@@ -1,0 +1,196 @@
+{
+  "catalogVersion": "p2a-pool-catalog-v1",
+  "generatedBy": "@nocte/sim generatePlaytestPools",
+  "profiles": [
+    {
+      "version": "p2a-pools-v1",
+      "streamVersion": "sha256-counter-rejection-v1",
+      "solverVersion": "dp-infinite-s17-v1",
+      "rulesId": "DF-SYM-0.1-lab-infinite-3to2-peek-natural-first",
+      "familiarization": [
+        {
+          "stage": "familiarization",
+          "seed": "nocte/p2a-pools-v1/3to2/familiarization",
+          "index": 0
+        },
+        {
+          "stage": "familiarization",
+          "seed": "nocte/p2a-pools-v1/3to2/familiarization",
+          "index": 1
+        },
+        {
+          "stage": "familiarization",
+          "seed": "nocte/p2a-pools-v1/3to2/familiarization",
+          "index": 2
+        }
+      ],
+      "teaching": [
+        {
+          "stage": "teaching",
+          "seed": "nocte/p2a-pools-v1/3to2/teaching",
+          "index": 0
+        }
+      ],
+      "assessment": [
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 17,
+          "dealerBucket": "2-6",
+          "decisionClass": "single-option"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 43,
+          "dealerBucket": "2-6",
+          "decisionClass": "close-options"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 2,
+          "dealerBucket": "2-6",
+          "decisionClass": "clear-best"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 10,
+          "dealerBucket": "7-9",
+          "decisionClass": "single-option"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 52,
+          "dealerBucket": "7-9",
+          "decisionClass": "close-options"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 0,
+          "dealerBucket": "7-9",
+          "decisionClass": "clear-best"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 1,
+          "dealerBucket": "10-A",
+          "decisionClass": "single-option"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 23,
+          "dealerBucket": "10-A",
+          "decisionClass": "close-options"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/3to2/assessment",
+          "index": 3,
+          "dealerBucket": "10-A",
+          "decisionClass": "clear-best"
+        }
+      ]
+    },
+    {
+      "version": "p2a-pools-v1",
+      "streamVersion": "sha256-counter-rejection-v1",
+      "solverVersion": "dp-infinite-s17-v1",
+      "rulesId": "DF-SYM-0.1-lab-infinite-1to1-peek-natural-first",
+      "familiarization": [
+        {
+          "stage": "familiarization",
+          "seed": "nocte/p2a-pools-v1/1to1/familiarization",
+          "index": 0
+        },
+        {
+          "stage": "familiarization",
+          "seed": "nocte/p2a-pools-v1/1to1/familiarization",
+          "index": 1
+        },
+        {
+          "stage": "familiarization",
+          "seed": "nocte/p2a-pools-v1/1to1/familiarization",
+          "index": 2
+        }
+      ],
+      "teaching": [
+        {
+          "stage": "teaching",
+          "seed": "nocte/p2a-pools-v1/1to1/teaching",
+          "index": 0
+        }
+      ],
+      "assessment": [
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 10,
+          "dealerBucket": "2-6",
+          "decisionClass": "single-option"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 21,
+          "dealerBucket": "2-6",
+          "decisionClass": "close-options"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 0,
+          "dealerBucket": "2-6",
+          "decisionClass": "clear-best"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 6,
+          "dealerBucket": "7-9",
+          "decisionClass": "single-option"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 102,
+          "dealerBucket": "7-9",
+          "decisionClass": "close-options"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 3,
+          "dealerBucket": "7-9",
+          "decisionClass": "clear-best"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 46,
+          "dealerBucket": "10-A",
+          "decisionClass": "single-option"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 55,
+          "dealerBucket": "10-A",
+          "decisionClass": "close-options"
+        },
+        {
+          "stage": "assessment",
+          "seed": "nocte/p2a-pools-v1/1to1/assessment",
+          "index": 2,
+          "dealerBucket": "10-A",
+          "decisionClass": "clear-best"
+        }
+      ]
+    }
+  ]
+}
