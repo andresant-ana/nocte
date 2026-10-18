@@ -42,5 +42,17 @@ describe("solo prototype landing", () => {
     expect(screen.getByLabelText("Placar da Noite")).toHaveTextContent("0");
     expect(screen.queryByRole("combobox", { name: /perfil experimental/i })).toBeNull();
   });
+
+  it("shows the study consent briefing before logging and returns to unrecorded free play when declined", async () => {
+    vi.stubGlobal("crypto", webcrypto as Crypto);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.click(screen.getByRole("button", { name: "Iniciar estudo" }));
+    expect(screen.getByRole("heading", { name: "Estudo local" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Confirmar composição/i })).toBeNull();
+    await user.click(screen.getByRole("button", { name: /Declinar e jogar livre/i }));
+    expect(await screen.findByRole("heading", { name: "Mesa Duas Faces" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Exportar JSON/i })).toBeNull();
+  });
 });
 

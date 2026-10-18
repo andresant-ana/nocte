@@ -28,7 +28,7 @@ function setup(initial = [card("5"), card("6"), card("8"), card("9"), card("6"),
   const onNewNight = vi.fn();
   const view = active.current;
   const session = active;
-  return { active, onUpdate, onNextRound, onNewNight, render: () => render(<GameTable session={session} round={view} onRoundChange={onUpdate} roundNumber={1} nightScore={0} onNextRound={onNextRound} onNewNight={onNewNight} />) };
+  return { active, onUpdate, onNextRound, onNewNight, render: () => render(<GameTable session={session} round={view} onRoundChange={onUpdate} roundNumber={1} profileLabel="3:2" nightScore={0} onNextRound={onNextRound} onNewNight={onNewNight} />) };
 }
 
 describe("solo game table", () => {

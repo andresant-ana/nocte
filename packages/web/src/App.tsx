@@ -8,6 +8,7 @@ import {
 import { GameTable } from "./game/GameTable";
 import { SoloRoundController } from "./game/controller";
 import { prepareRound } from "./game/random";
+import { StudyFlow } from "./study/StudyFlow";
 
 type ProfileId = RuleProfile["id"];
 type ActiveGame = { controller: SoloRoundController; view: PublicRound };
@@ -25,7 +26,7 @@ export function App() {
   const [nightScore, setNightScore] = useState(0);
   const [roundNumber, setRoundNumber] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [studyNotice, setStudyNotice] = useState(false);
+  const [showStudy, setShowStudy] = useState(false);
   const scoreApplied = useRef(false);
 
   const startRound = async (selectedProfile = profile, resetNight = false) => {
@@ -51,14 +52,26 @@ export function App() {
     }
   };
 
+  if (showStudy) {
+    return (
+      <StudyFlow
+        profile={getProfile(profile)}
+        onDecline={() => { setShowStudy(false); void startRound(); }}
+        onExit={() => setShowStudy(false)}
+      />
+    );
+  }
+
   if (active) {
     return (
       <main className="app-shell">
         <GameTable
+          key={`free-round-${roundNumber}`}
           session={active.controller}
           round={active.view}
           onRoundChange={onRoundChange}
           roundNumber={roundNumber}
+          profileLabel={getProfile(profile).naturalPayout}
           nightScore={nightScore}
           {...(active.view.phase === "complete" ? { roundScore: active.controller.score() } : {})}
           onNextRound={() => void startRound()}
@@ -95,14 +108,9 @@ export function App() {
       <p className="experimental-note">As regras e os dois perfis são experimentais.</p>
 
       {error && <p role="alert" className="recoverable-error">{error}</p>}
-      {studyNotice && (
-        <p className="study-notice" role="status">
-          O protocolo de estudo será apresentado antes de qualquer coleta nesta versão do protótipo.
-        </p>
-      )}
       <div className="landing-actions">
         <button type="button" onClick={() => void startRound()}>Jogar livre</button>
-        <button type="button" className="secondary-action" onClick={() => setStudyNotice(true)}>Iniciar estudo</button>
+        <button type="button" className="secondary-action" onClick={() => setShowStudy(true)}>Iniciar estudo</button>
       </div>
     </main>
   );

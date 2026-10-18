@@ -1,4 +1,4 @@
-import { DF_SYM_01_3_TO_2 } from "@nocte/engine";
+import { DF_SYM_01_1_TO_1, DF_SYM_01_3_TO_2 } from "@nocte/engine";
 import { describe, expect, it } from "vitest";
 import { generatePlaytestPools, PLAYTEST_POOL_VERSION, type DecisionClass, type DealerBucket } from "./playtest-pools.js";
 
@@ -22,6 +22,9 @@ describe("P2A fixed scenario pools", () => {
     const all = [...first.familiarization, ...first.teaching, ...first.assessment];
     expect(new Set(all.map((entry) => `${entry.seed}:${entry.index}`)).size).toBe(all.length);
     expect(first.rulesId).toBe(DF_SYM_01_3_TO_2.id);
+    const sensitivity = generatePlaytestPools(DF_SYM_01_1_TO_1);
+    expect(sensitivity.rulesId).toBe(DF_SYM_01_1_TO_1.id);
+    expect(sensitivity.assessment.every((entry) => entry.seed !== first.assessment[0]!.seed)).toBe(true);
   }, 120_000);
 });
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { partitions, type Action, type Card, type Partition, type PublicRound } from "@nocte/engine";
+import { handValue, partitions, type Action, type Card, type Partition, type PublicRound } from "@nocte/engine";
 import type { SoloRoundController } from "./controller";
 
 type GameTableProps = {
@@ -7,8 +7,11 @@ type GameTableProps = {
   round: PublicRound;
   onRoundChange: (round: PublicRound) => void;
   roundNumber: number;
+  profileLabel: string;
   nightScore: number;
   roundScore?: number;
+  showNewNightButton?: boolean;
+  nextDisabled?: boolean;
   onNextRound: () => void;
   onNewNight: () => void;
 };
@@ -42,8 +45,11 @@ export function GameTable({
   round,
   onRoundChange,
   roundNumber,
+  profileLabel,
   nightScore,
   roundScore,
+  showNewNightButton = true,
+  nextDisabled = false,
   onNextRound,
   onNewNight,
 }: GameTableProps) {
@@ -92,6 +98,7 @@ export function GameTable({
         <div>
           <p className="eyebrow">NOITE · RODADA {roundNumber}</p>
           <h2 id="table-title">Mesa Duas Faces</h2>
+          <p className="table-profile">Perfil experimental · natural paga {profileLabel}</p>
         </div>
         <div className="scoreboard" aria-label="Placar da Noite">
           <span>Pontuação da Noite</span>
@@ -146,10 +153,12 @@ export function GameTable({
           {(["luz", "sombra"] as const).map((name) => {
             const hand = view.hands![name];
             const result = view.settlement?.[name];
+            const value = handValue(hand.cards);
             return (
               <section className={`hand-panel ${view.currentHand === name ? "active-hand" : ""}`} key={name} aria-labelledby={`${name}-title`}>
                 <h3 id={`${name}-title`}>{name === "luz" ? "Luz" : "Sombra"}</h3>
                 <Cards cards={hand.cards} label={`Cartas da mão ${name === "luz" ? "Luz" : "Sombra"}`} />
+                <p>Total: {value.total}{value.soft ? " suave" : ""}{value.natural ? " · natural" : ""}{value.bust ? " · estouro" : ""}</p>
                 <p>Exposição: {hand.exposure} · Estado: {statusLabels[hand.status]}</p>
                 {result && <p className="hand-result">{outcomeLabels[result.outcome]} · {scoreText(result.score)} pontos</p>}
               </section>
@@ -171,8 +180,8 @@ export function GameTable({
           {view.naturalPeek && <p>Natural do dealer: as mãos foram liquidadas pela regra experimental.</p>}
           <p>Pontuação da rodada: {completeScore === null ? "—" : scoreText(completeScore)}</p>
           <div className="landing-actions">
-            <button type="button" onClick={onNextRound}>Próxima rodada</button>
-            <button type="button" className="secondary-action" onClick={onNewNight}>Nova Noite</button>
+            <button type="button" disabled={nextDisabled} onClick={onNextRound}>{nextDisabled ? "Salvando rodada…" : "Próxima rodada"}</button>
+            {showNewNightButton && <button type="button" className="secondary-action" onClick={onNewNight}>Nova Noite</button>}
           </div>
         </section>
       )}

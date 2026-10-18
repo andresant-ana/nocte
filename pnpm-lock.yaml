@@ -219,6 +219,9 @@ importers:
       '@nocte/engine':
         specifier: workspace:*
         version: link:../engine
+      '@nocte/sim':
+        specifier: workspace:*
+        version: link:../sim
       react:
         specifier: ^19.0.0
         version: 19.3.1
