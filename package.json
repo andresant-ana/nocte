@@ -2,7 +2,9 @@
   "name": "nocte-lab",
   "private": true,
   "packageManager": "pnpm@12.9.1",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --build",
@@ -10,13 +12,22 @@
     "benchmark": "pnpm --filter @nocte/sim benchmark",
     "enumerate": "pnpm --filter @nocte/sim enumerate",
     "depth": "pnpm --filter @nocte/sim depth",
-    "depth:report": "pnpm --filter @nocte/sim depth:report"
+    "depth:report": "pnpm --filter @nocte/sim depth:report",
+    "dev": "pnpm --filter @nocte/web dev",
+    "build": "pnpm --filter @nocte/web build"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
     "fast-check": "^3.23.2",
     "typescript": "^5.8.3",
     "tsx": "^4.19.3",
-    "vitest": "^3.1.1"
+    "vitest": "^3.1.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^26.0.0",
+    "vite": "^6.1.0"
   }
 }

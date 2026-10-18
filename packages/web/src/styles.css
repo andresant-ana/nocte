@@ -1,0 +1,35 @@
+:root {
+  color: #eee8d8;
+  background: #11100e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
+  font-weight: 400;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, select { font: inherit; }
+button:focus-visible, select:focus-visible { outline: 3px solid #d0b36b; outline-offset: 3px; }
+
+.landing-shell {
+  width: min(100% - 2rem, 42rem);
+  margin: 8vh auto;
+  padding: clamp(1.5rem, 6vw, 4rem);
+  border: 1px solid #77633a;
+  background: #191714;
+  text-align: center;
+}
+.eyebrow, .experimental-note { color: #c1ad78; font: 600 .75rem/1.5 system-ui, sans-serif; letter-spacing: .14em; }
+h1 { margin: .25rem 0; color: #f0d897; font-size: clamp(3.5rem, 15vw, 7rem); letter-spacing: .12em; }
+.subtitle { margin: 0 0 2rem; color: #c8bfa9; font-size: 1.2rem; letter-spacing: .22em; }
+.local-notice { margin: 0 auto 2rem; max-width: 32rem; color: #ded6c3; font: 1rem/1.6 system-ui, sans-serif; }
+.profile-label { display: block; margin-bottom: .5rem; color: #c1ad78; font: 600 .9rem system-ui, sans-serif; }
+select { width: min(100%, 24rem); min-height: 2.8rem; padding: .6rem .8rem; color: #eee8d8; background: #11100e; border: 1px solid #77633a; }
+.experimental-note { letter-spacing: .04em; text-transform: uppercase; }
+.landing-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+button { min-height: 2.9rem; padding: .65rem 1.2rem; color: #15130e; background: #d0b36b; border: 1px solid #d0b36b; cursor: pointer; font: 700 .95rem system-ui, sans-serif; }
+button:hover { background: #e1ca8b; }
+button.secondary-action { color: #eee8d8; background: transparent; }
+@media (max-width: 480px) { .landing-shell { margin: 1rem auto; } .landing-actions { flex-direction: column; } }
