@@ -1,8 +1,9 @@
 {
   "name": "@nocte/sim",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "scripts": { "simulate": "tsx src/cli.ts" },
+  "exports": { ".": "./src/lab.ts" },
+  "scripts": { "simulate": "tsx src/cli.ts", "benchmark": "tsx src/lab-cli.ts", "enumerate": "tsx src/lab-cli.ts --mode enumerate" },
   "dependencies": { "@nocte/engine": "workspace:*" }
 }

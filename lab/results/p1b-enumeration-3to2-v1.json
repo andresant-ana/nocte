@@ -1,0 +1,131 @@
+{
+  "result": {
+    "schemaVersion": 2,
+    "kind": "weighted-enumeration",
+    "solverVersion": "dp-infinite-s17-v1",
+    "scoringVersion": "df-sym-net-points-natural-priority-v1",
+    "rules": "DF-SYM-0.1-lab-infinite-3to2-peek-natural-first",
+    "classes": 7150,
+    "totalWeight": 0.9999999999999497,
+    "units": "initial-hand exposure (10 match points)",
+    "bestEv": 0.37923591964256986,
+    "randomDistinctEv": 0.001721173967339258,
+    "randomIndexedEv": -0.02173484549081222,
+    "distinctMargin": 0.3775147456752306,
+    "indexedMargin": 0.4009707651333821,
+    "fractionBestWorstGapAbove02": 0.7929425009358997,
+    "fractionMultipleOptimalDistinctPartitions": 0.002989552725206239,
+    "historicalComparison": {
+      "file": "lab/results/exact-weighted-7150.json",
+      "reference": {
+        "natural_payout": 1.5,
+        "count_equivalence_classes": 7150,
+        "total_weight_check": 0.9999999999999497,
+        "optimized_ev_per_2_unit_stakes": 0.3792359196425889,
+        "random_ev_per_2_unit_stakes": -0.02173484549081334,
+        "mean_gap_2_unit_stakes": 0.4009707651334022,
+        "optimal_player_edge_on_20_staked": 0.18961795982129445,
+        "fraction_gap_best_worst_gt_0_2": 0.7929425009359395,
+        "illustrative_large_gap_without_constructed_natural": {
+          "cards": [
+            5,
+            6,
+            10,
+            10
+          ],
+          "dealer_up": 7,
+          "gap": 2.020656824543817,
+          "values": [
+            1.2361161754014658,
+            -0.7845406491423512,
+            -0.7845406491423512
+          ]
+        }
+      },
+      "optimizedDelta": -1.9040324872321435e-14,
+      "randomDistinctDelta": 0.023456019458152597,
+      "randomIndexedDelta": 1.1206313654810174e-15,
+      "caution": "Python source absent; indexed versus distinct random pairing conventions both reported; deltas are not fitted."
+    },
+    "cacheSizes": {
+      "dealerStates": 48,
+      "distributions": 10,
+      "actionStates": 610
+    }
+  },
+  "caseStudy": {
+    "cards": [
+      {
+        "rank": "5"
+      },
+      {
+        "rank": "6"
+      },
+      {
+        "rank": "10"
+      },
+      {
+        "rank": "10"
+      }
+    ],
+    "dealerUp": "7",
+    "units": "initial-hand exposure; multiply by 10 for match points",
+    "partitions": [
+      {
+        "partition": {
+          "luz": [
+            0,
+            1
+          ],
+          "sombra": [
+            2,
+            3
+          ]
+        },
+        "luz": {
+          "exAnte": 0.4628889488642908,
+          "afterPeek": 0.4628889488642908
+        },
+        "sombra": {
+          "exAnte": 0.773227226537175,
+          "afterPeek": 0.773227226537175
+        },
+        "ev": 1.2361161754014658
+      },
+      {
+        "partition": {
+          "luz": [
+            0,
+            2
+          ],
+          "sombra": [
+            1,
+            3
+          ]
+        },
+        "luz": {
+          "exAnte": -0.36976181807381175,
+          "afterPeek": -0.36976181807381175
+        },
+        "sombra": {
+          "exAnte": -0.41477883106853947,
+          "afterPeek": -0.41477883106853947
+        },
+        "ev": -0.7845406491423512
+      }
+    ],
+    "bestIndex": 0,
+    "bestIndices": [
+      0
+    ],
+    "bestEv": 1.2361161754014658,
+    "randomDistinctEv": 0.22578776312955728,
+    "randomIndexedEv": -0.11098837429441223,
+    "optimizedMargin": 1.0103284122719085
+  },
+  "execution": {
+    "elapsedMs": 606.4223999999999,
+    "node": "v24.21.0",
+    "timingNote": "execution timing is nondeterministic metadata; result and caseStudy reproduce exactly"
+  }
+}

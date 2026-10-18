@@ -32,7 +32,7 @@ See [execution model](docs/EXECUTION-MODEL.md) (N-041).
 
 Documentation baseline → TypeScript game engine and simulation lab → gameplay validation with friends → browser multiplayer → economy/ranking → premium audiovisual layer.
 
-The repository is not yet a live game. The NOCTE-P1A branch adds an experimental, offline-only symmetric engine and strategy simulator; it is not production gameplay or balance evidence. All historical simulation figures and modeling limitations are documented in [VALIDATION.md](docs/VALIDATION.md).
+The repository is not yet a live game. NOCTE-P1A is integrated into main and supplies an experimental offline symmetric engine and strategy simulator. P1B adds a model EV solver and controlled strategy benchmark; its methods, quantitative results and limitations are in [LAB-P1B.md](docs/LAB-P1B.md). Historical figures remain in [VALIDATION.md](docs/VALIDATION.md).
 
 ## Local lab (NOCTE-P1A)
 
@@ -43,3 +43,14 @@ pnpm simulate -- --seed demo-1 --scenarios 1000 --rules DF-SYM-0.1-lab-infinite-
 ```
 
 Use `DF-SYM-0.1-lab-infinite-1to1-peek-natural-first` for the natural-payout sensitivity. Both profiles and strategy limitations are documented in [the P1A RFC](docs/ENGINE-RFC-P1A.md); outputs do not reproduce the historical Python results.
+
+## EV laboratory (NOCTE-P1B)
+
+The new CLI preserves the legacy `simulate` command and uses a versioned report schema:
+
+```sh
+pnpm benchmark -- --seed nocte-p1b-main-v1 --scenarios 100000 --out ../../lab/results/p1b-benchmark-3to2-v1.json
+pnpm enumerate -- --out ../../lab/results/p1b-enumeration-3to2-v1.json
+```
+
+Output paths are relative to `packages/sim`. The [P1B contract](docs/LAB-P1B.md) includes both payout commands, pilot/sample rationale, solver APIs, the [5,6,10,10] study and historical comparisons. These offline model results do not validate human gameplay.

@@ -2,6 +2,8 @@
 
 **Date:** 2026-10-18. **Status:** EXPLORATORY. These are previously generated calculations and modeled simulations, not human playtests or certified production-engine results. Raw result files are preserved in [lab/results](../lab/results), with input model described below.
 
+**P1B evidence addendum (2026-10-18):** the independent TypeScript solver and weighted enumeration reproduce the historical optimal/indexed-random aggregates for both payouts within 2e-14 unit. P1A's uniform-distinct random policy has different weights and different EV; both conventions are reported explicitly. A separate 100k-scenario/profile benchmark uses shared named lanes and identical optimal actions for all composition agents. See [LAB-P1B.md](LAB-P1B.md) for methods, uncertainty and results. The historical record below remains unchanged; original Python source remains absent, the conditional 40k and 30k match experiments were not rerun, and no human validation is implied.
+
 ## Evaluation question
 
 Does the **initial composition** of four cards into two hands create meaningful decisions, independent of conventional hit/stand/double skill?

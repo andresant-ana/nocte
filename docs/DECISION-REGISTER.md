@@ -57,3 +57,7 @@
 ## New entries
 
 Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-042 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+
+## P1B evidence addendum — 2026-10-18
+
+N-033/N-034/N-035 retain their **EXPERIMENTAL** statuses. [LAB-P1B](LAB-P1B.md) records independent aggregate numerical reproduction of the 7,150-class symmetric model, distinguishes indexed versus distinct random baselines, and adds a controlled offline benchmark. It does not rerun the conditional 40k or old 30k match-length studies. N-019/N-020 remain EXPERIMENTAL; N-024 and O-01/O-02/O-03 remain OPEN. No product rule is ratified or changed by this evidence update.

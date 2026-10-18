@@ -2,6 +2,8 @@
 
 **Status:** implementation proposal with explicitly experimental lab defaults; not a gameplay ratification. **Date:** 2026-10-18. **Scope:** `DF-SYM-0.1` local engine and simulator only.
 
+P1B addendum: this RFC describes P1A and the preserved legacy schema-1 simulator. The new [P1B laboratory](LAB-P1B.md) adds a DP solver and schema-2 counterfactual benchmark with separate named streams. It does not change the P1A gameplay profiles or finalize a live mirror/shoe policy.
+
 ## Unresolved questions and alternatives
 
 | Question | Alternatives | Tradeoffs | P1A lab default | Status after P1A |

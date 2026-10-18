@@ -6,7 +6,9 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --build",
-    "simulate": "pnpm --filter @nocte/sim simulate"
+    "simulate": "pnpm --filter @nocte/sim simulate",
+    "benchmark": "pnpm --filter @nocte/sim benchmark",
+    "enumerate": "pnpm --filter @nocte/sim enumerate"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

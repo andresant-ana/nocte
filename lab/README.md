@@ -13,3 +13,11 @@ These JSON files are **snapshots generated during the 2026-10-18 Duas Faces expl
 Details/limitations: [docs/VALIDATION.md](../docs/VALIDATION.md).
 
 The TypeScript engine and simulator introduced by NOCTE-P1A are new implementations under versioned experimental profiles. The simulator's heuristic is not an exact EV solver, and its output must not be presented as a reproduction of the historical snapshots above. The profile and open draw/natural/mirror choices are documented in [ENGINE-RFC-P1A.md](../docs/ENGINE-RFC-P1A.md).
+
+## P1B new evidence (separate from immutable historical snapshots)
+
+- `results/p1b-enumeration-{3to2,1to1}-v1.json`: independent TS model enumeration, 7,150 weighted classes, both random conventions and historical deltas.
+- `results/p1b-pilot-{3to2,1to1}-v1.json`: seed `nocte-p1b-pilot-v1`, n=2,000 per profile, used only to fix main sample size.
+- `results/p1b-benchmark-{3to2,1to1}-v1.json`: seed `nocte-p1b-main-v1`, n=100,000 per profile; three composition agents with identical optimal actions and isolated counterfactual streams.
+
+Methods, commands, statistical assumptions, readable decision study and limitations are in [LAB-P1B.md](../docs/LAB-P1B.md). `result` and `caseStudy` are deterministic; `execution` contains variable timing/environment metadata. The new port reproduces historical optimal/indexed-random aggregate values under matching assumptions; this does not recover the absent Python source or reproduce old conditional/match simulations.

@@ -1,0 +1,327 @@
+{
+  "result": {
+    "schemaVersion": 2,
+    "benchmarkVersion": "composition-optimal-actions-v2",
+    "solverVersion": "dp-infinite-s17-v1",
+    "prngVersion": "sha256-counter-rejection-v1",
+    "scoringVersion": "df-sym-net-points-natural-priority-v1",
+    "rules": "DF-SYM-0.1-lab-infinite-3to2-peek-natural-first",
+    "seed": "nocte-p1b-main-v1",
+    "scenarios": 100000,
+    "units": "net match points per round; 10 points per initial hand exposure",
+    "actionPolicy": "identical EV-optimal negative-peek actions for all agents",
+    "randomPolicy": "uniform distinct rank partitions",
+    "pairing": "common initial/dealer/luz/sombra lanes; counterfactual lab only, not physical mirroring",
+    "strategies": {
+      "random": {
+        "ev": {
+          "n": 100000,
+          "mean": 0.00878562266833809,
+          "variance": 51.923313440960435,
+          "standardError": 0.02278668765770059,
+          "confidence95": [
+            -0.03587628514075507,
+            0.05344753047743124
+          ]
+        },
+        "policyEv": {
+          "n": 100000,
+          "mean": 0.009581510100092108,
+          "variance": 33.757603776225025,
+          "standardError": 0.018373242440087985,
+          "confidence95": [
+            -0.02643004508248034,
+            0.04559306528266456
+          ]
+        },
+        "score": {
+          "n": 100000,
+          "mean": -0.021050000000000218,
+          "variance": 332.7631345288453,
+          "standardError": 0.05768562511829488,
+          "confidence95": [
+            -0.13411382523185816,
+            0.09201382523185773
+          ]
+        },
+        "luckResidual": {
+          "n": 100000,
+          "mean": -0.029835622668338287,
+          "variance": 280.4213826544459,
+          "standardError": 0.05295482817028546,
+          "confidence95": [
+            -0.1336270858820978,
+            0.0739558405454212
+          ]
+        },
+        "optimalChoiceRate": 0.48936
+      },
+      "heuristic": {
+        "ev": {
+          "n": 100000,
+          "mean": 3.128402129180057,
+          "variance": 54.67177930871409,
+          "standardError": 0.023381997200563106,
+          "confidence95": [
+            3.0825734146669532,
+            3.1742308436931603
+          ]
+        },
+        "policyEv": {
+          "n": 100000,
+          "mean": 3.128402129180057,
+          "variance": 54.67177930871409,
+          "standardError": 0.023381997200563106,
+          "confidence95": [
+            3.0825734146669532,
+            3.1742308436931603
+          ]
+        },
+        "score": {
+          "n": 100000,
+          "mean": 3.12124999999999,
+          "variance": 324.25979103541215,
+          "standardError": 0.0569438136267156,
+          "confidence95": [
+            3.0096401252916274,
+            3.232859874708353
+          ]
+        },
+        "luckResidual": {
+          "n": 100000,
+          "mean": -0.007152129180057357,
+          "variance": 269.05706164285573,
+          "standardError": 0.05187071058341651,
+          "confidence95": [
+            -0.10881872192355371,
+            0.09451446356343901
+          ]
+        },
+        "optimalChoiceRate": 0.80637
+      },
+      "optimal": {
+        "ev": {
+          "n": 100000,
+          "mean": 3.7851290606757386,
+          "variance": 48.66379442529292,
+          "standardError": 0.022059871809530743,
+          "confidence95": [
+            3.7418917119290582,
+            3.828366409422419
+          ]
+        },
+        "policyEv": {
+          "n": 100000,
+          "mean": 3.7851290606757386,
+          "variance": 48.66379442529292,
+          "standardError": 0.022059871809530743,
+          "confidence95": [
+            3.7418917119290582,
+            3.828366409422419
+          ]
+        },
+        "score": {
+          "n": 100000,
+          "mean": 3.791749999999999,
+          "variance": 357.05445248202545,
+          "standardError": 0.059754033544357946,
+          "confidence95": [
+            3.6746320942530577,
+            3.9088679057469404
+          ]
+        },
+        "luckResidual": {
+          "n": 100000,
+          "mean": 0.0066209393242722915,
+          "variance": 307.732930467405,
+          "standardError": 0.05547368118913734,
+          "confidence95": [
+            -0.10210747580643689,
+            0.11534935445498148
+          ]
+        },
+        "optimalChoiceRate": 1
+      }
+    },
+    "comparisons": {
+      "optimal-minus-random": {
+        "ev": {
+          "n": 100000,
+          "mean": 3.7763434380073897,
+          "variance": 28.694271641303693,
+          "standardError": 0.016939383590114397,
+          "confidence95": [
+            3.7431422461707653,
+            3.809544629844014
+          ]
+        },
+        "score": {
+          "n": 100000,
+          "mean": 3.812800000000018,
+          "variance": 162.9561857218574,
+          "standardError": 0.040367831960839484,
+          "confidence95": [
+            3.7336790493567724,
+            3.8919209506432635
+          ]
+        },
+        "luckResidual": {
+          "n": 100000,
+          "mean": 0.036456561992608015,
+          "variance": 134.26096944987992,
+          "standardError": 0.036641638807493306,
+          "confidence95": [
+            -0.03536105007007886,
+            0.10827417405529488
+          ]
+        }
+      },
+      "optimal-minus-heuristic": {
+        "ev": {
+          "n": 100000,
+          "mean": 0.6567269314956634,
+          "variance": 3.5271432129928506,
+          "standardError": 0.005938975680193388,
+          "confidence95": [
+            0.6450865391624844,
+            0.6683673238288425
+          ]
+        },
+        "score": {
+          "n": 100000,
+          "mean": 0.6704999999999919,
+          "variance": 66.06759042590339,
+          "standardError": 0.025703616559913,
+          "confidence95": [
+            0.6201209115425624,
+            0.7208790884574213
+          ]
+        },
+        "luckResidual": {
+          "n": 100000,
+          "mean": 0.01377306850432833,
+          "variance": 62.51968001626579,
+          "standardError": 0.025003935693459496,
+          "confidence95": [
+            -0.03523464545485228,
+            0.06278078246350895
+          ]
+        }
+      },
+      "heuristic-minus-random": {
+        "ev": {
+          "n": 100000,
+          "mean": 3.1196165065116883,
+          "variance": 32.53023319976442,
+          "standardError": 0.018036139609063914,
+          "confidence95": [
+            3.084265672877923,
+            3.1549673401454537
+          ]
+        },
+        "score": {
+          "n": 100000,
+          "mean": 3.1422999999999885,
+          "variance": 160.95106022060207,
+          "standardError": 0.04011870638749486,
+          "confidence95": [
+            3.0636673354804986,
+            3.2209326645194785
+          ]
+        },
+        "luckResidual": {
+          "n": 100000,
+          "mean": 0.022683493488281043,
+          "variance": 128.73467851929465,
+          "standardError": 0.03587961517621038,
+          "confidence95": [
+            -0.04764055225709131,
+            0.09300753923365339
+          ]
+        }
+      }
+    },
+    "multipleOptimalDistinctPartitionsRate": 0.00296,
+    "singleDistinctPartitionRate": 0.10424,
+    "cacheSizes": {
+      "dealerStates": 48,
+      "distributions": 10,
+      "actionStates": 610
+    }
+  },
+  "caseStudy": {
+    "cards": [
+      {
+        "rank": "5"
+      },
+      {
+        "rank": "6"
+      },
+      {
+        "rank": "10"
+      },
+      {
+        "rank": "10"
+      }
+    ],
+    "dealerUp": "7",
+    "units": "initial-hand exposure; multiply by 10 for match points",
+    "partitions": [
+      {
+        "partition": {
+          "luz": [
+            0,
+            1
+          ],
+          "sombra": [
+            2,
+            3
+          ]
+        },
+        "luz": {
+          "exAnte": 0.4628889488642908,
+          "afterPeek": 0.4628889488642908
+        },
+        "sombra": {
+          "exAnte": 0.773227226537175,
+          "afterPeek": 0.773227226537175
+        },
+        "ev": 1.2361161754014658
+      },
+      {
+        "partition": {
+          "luz": [
+            0,
+            2
+          ],
+          "sombra": [
+            1,
+            3
+          ]
+        },
+        "luz": {
+          "exAnte": -0.36976181807381175,
+          "afterPeek": -0.36976181807381175
+        },
+        "sombra": {
+          "exAnte": -0.41477883106853947,
+          "afterPeek": -0.41477883106853947
+        },
+        "ev": -0.7845406491423512
+      }
+    ],
+    "bestIndex": 0,
+    "bestIndices": [
+      0
+    ],
+    "bestEv": 1.2361161754014658,
+    "randomDistinctEv": 0.22578776312955728,
+    "randomIndexedEv": -0.11098837429441223,
+    "optimizedMargin": 1.0103284122719085
+  },
+  "execution": {
+    "elapsedMs": 64649.6326,
+    "node": "v24.21.0",
+    "timingNote": "execution timing is nondeterministic metadata; result and caseStudy reproduce exactly"
+  }
+}

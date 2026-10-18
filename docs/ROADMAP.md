@@ -1,6 +1,6 @@
 # Execution roadmap and release gates
 
-**As of 2026-10-18:** Only design, model exploration and initial canonical documentation are confirmed. No shipped game, backend, accounts, WebSockets, or production balance. Sequence below is a plan, not a status report.
+**As of 2026-10-18:** P1A's experimental engine and offline simulator are integrated in main. P1B's model solver and comparison evidence are submitted for review. No shipped live game, backend, accounts, WebSockets, or production balance. Remaining phases below are plans.
 
 ## Phase 0 — Documentation baseline (current)
 
@@ -18,7 +18,7 @@
 - Experimental asymmetric `DF-ASYM-0.2` behind rule flag, no default promotion.
 - Gate G-ENGINE: determinism, action legality, score conservation and negative security tests pass; no unresolved ambiguity in a given config.
 
-**NOCTE-P1A implementation note (2026-10-18):** the symmetric lab slice, seeded local simulator, tests and an options RFC are in the Issue #3 branch/PR. This does not close O-01/O-02/O-03; finite shoe, mirror allocation and final natural handling remain open. Historical Python result parity, finite-deck behavior, asymmetric mode and G-ENGINE signoff remain unvalidated.
+**NOCTE-P1A implementation note (2026-10-18):** PR #4 integrated the symmetric lab slice, seeded local simulator, tests and options RFC. **P1B:** [LAB-P1B](LAB-P1B.md) supplies solver/benchmark evidence, including independent aggregate reproduction for the symmetric 7,150-class model. This does not close O-01/O-02/O-03; finite shoe, mirror allocation, final natural handling, asymmetric mode, human validation and full G-ENGINE signoff remain open/unvalidated.
 
 ## Phase 2 — Minimal solo playable + human testing
 
