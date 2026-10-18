@@ -39,14 +39,13 @@ A conventional blackjack round mostly presents sequential hit/stand choices. Dua
 - Initial idea "two blackjack hands plus decorative achievements" is **insufficient alone** to meet strategic ambition; construction choice, mirror fairness and validation are necessary.
 - The original third-card **Reserva** was a brainstormed predecessor. It is **SUPERSEDED as primary mechanic** by Duas Faces; avoid reintroducing without explicit experiment and approval.
 
-## Future systems (DEFERRED; **not engine v0.1**)
+## Próxima direção ratificada: Cofre + Foco (N-042; sem implementação na v0.1)
 
-- **Cofre:** proposed 5th card held outside the two hands, usable via a controlled exchange.
-- **Foco:** candidate 3 points per Noite; *Manobra* (1) replaces an initial hand card with Cofre; *Leitura* (2) reveals the dealer hole card to that player. All costs/timing/balance are proposals.
-- **Contratos:** opt-in secondary conditions rewarding **Prestígio**, not guaranteed chips; examples "Precisão" (21 exactly), "Fronteira" (4+ cards), "Sangue-frio" (no double/Cofre).
-- **Protocolos:** selected rule modifiers, only after proving fair competition, with possible separate experimental non-ranked mode.
+O fundador aprovou **a direção de design**, em 2026-10-18, de criar uma **carta de reserva (Cofre)** e **um recurso compartilhado e limitado ao longo de uma Noite (Foco)**. O propósito é que decisões afetem as duas mãos e as rodadas futuras, introduzindo custo de oportunidade que não existe na variante simétrica atual. Esta aprovação não fixa custos, timings, impactos ou recompensas.
 
-These features must not be confused with locked rules, and no "Balatro-like" modifier should evade competitive balance.
+A proposta de teste N-043 considera a quinta carta como Cofre e ações chamadas Manobra e Leitura; **3 Foco/Noite; Manobra por 1 e Leitura por 2 são apenas exemplos**. Veja o contrato de design e critérios de teste em [COFRE-FOCO.md](COFRE-FOCO.md).
+
+**DF-SYM-0.1 permanece inalterado, sem Cofre/Foco.** Não adicionar essas mecânicas ao protótipo P2A em andamento; implementar somente em task Codex separada e versionada após revisão do escopo. **Contratos** (ex.: Precisão, Fronteira, Sangue-frio) e **Protocolos** continuam DEFERRED (N-044), não pertencendo ao primeiro teste de Cofre + Foco. Os recursos não devem criar vantagens compráveis nem vulnerabilidades de exposição de cartas ocultas.
 
 ## Suggested state machine (candidate)
 
