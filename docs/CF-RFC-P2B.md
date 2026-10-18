@@ -1,17 +1,17 @@
 # NOCTE-P2B-D — Cofre + Foco: regras para um primeiro experimento
 
-**Status:** proposta de design para revisão do fundador; **não RATIFIED e não implementada**.<br>
+**Status:** **configuração EXPERIMENTAL aprovada pelo fundador para implementação solo** (N-046/N-047); não RATIFIED como regra final nem implementada.<br>
 **Data:** 2026-10-18.<br>
-**Versão de regra proposta:** `DF-CF-0.1-candidate` (nome de trabalho; sem contrato executável).<br>
+**Versão de regra autorizada para teste:** `DF-CF-0.1-lab` (identificador experimental; código ainda inexistente).<br>
 **Baseline preservada:** `DF-SYM-0.1` e protótipo P2A, sem alteração.<br>
-**Decisões relacionadas:** N-042 RATIFIED apenas como direção; N-043 CANDIDATE; N-044 DEFERRED; N-045 OPEN.
-**Escopo:** análise de regras, alternativas, matemática e validação futura. Não autoriza código, mudança de status, Cofre/Foco em P2A, multiplayer, economia ou deploy.
+**Decisões relacionadas:** N-042 RATIFIED como direção; N-043 CANDIDATE para adoção final; N-044 DEFERRED; N-045 OPEN em balanceamento/fairness; **N-046/N-047 EXPERIMENTAL** para o primeiro teste.
+**Escopo:** RFC de regras do primeiro experimento a executar em uma issue Codex **separada**, sem modificar DF-SYM-0.1/P2A e sem multiplayer, créditos, economia ou deploy. Este PR documental não implementa código.
 
 ## 1. Resumo executivo
 
 N-042 ratifica explorar uma reserva de carta e um recurso limitado que conecte escolhas entre Luz, Sombra e rodadas. Não fixa quinta carta, dotação de Foco, custos, timing ou informação. Este RFC recomenda testar primeiro uma janela de habilidade **depois do peek de natural do dealer e antes das ações do jogador**. A recomendação preserva a ordem experimental de `DF-SYM-0.1`, evita gastar Foco numa rodada encerrada pelo natural do dealer e cria uma decisão de conservar ou gastar que alcança as duas mãos e o restante da Noite.
 
-O perfil candidato para análise usa uma quinta carta aberta no Cofre, 3 Focos por Noite, Manobra por 1 e Leitura por 2. Um Foco compartilhado não se renova por rodada. A Manobra troca uma carta de uma mão ainda ativa com a carta do Cofre, devolvendo a carta removida ao Cofre; a Leitura revela somente a hole card do dealer, após confirmação de que ele não tem natural. Cada ação pode ocorrer no máximo uma vez por rodada. Essas quantidades e efeitos são hipóteses para `DF-CF-0.1-candidate`, não escolhas aprovadas.
+O perfil candidato para análise usa uma quinta carta aberta no Cofre, 3 Focos por Noite, Manobra por 1 e Leitura por 2. Um Foco compartilhado não se renova por rodada. A Manobra troca uma carta de uma mão ainda ativa com a carta do Cofre, devolvendo a carta removida ao Cofre; a Leitura revela somente a hole card do dealer, após confirmação de que ele não tem natural. Cada ação pode ocorrer no máximo uma vez por rodada. Essas quantidades e efeitos foram **aprovados após a redação inicial como parâmetros do primeiro teste** (N-046), mas NÃO como regras definitivas.
 
 A Leitura privada limita a recomendação a investigação solo. Ela cria assimetria de informação em qualquer partida espelhada futura; este RFC não declara a variante justa para multiplayer. Uma alternativa mais simples para o primeiro protótipo é testar somente Manobra e Foco, adiando Leitura.
 
@@ -20,12 +20,14 @@ A Leitura privada limita a recomendação a investigação solo. Ela cria assime
 | Item | Estado preservado neste RFC |
 | --- | --- |
 | Explorar Cofre + Foco como próxima direção de profundidade | **N-042 RATIFIED (direção)** |
-| 5ª carta, 3 Foco/Noite, Manobra=1 e Leitura=2 | **N-043 CANDIDATE**; exemplos numéricos, sem aprovação |
+| 5ª carta, 3 Foco/Noite, Manobra=1 e Leitura=2 | **N-043 CANDIDATE** para produto final; **N-046 EXPERIMENTAL** para teste aprovado |
 | Contratos, Protocolos, conquistas e progressão | **N-044 DEFERRED** |
-| Timing do peek, ações, renovação, balanceamento, diversidade, fairness e validação humana | **N-045 OPEN** |
-| Contrato deste RFC | **DESIGN PROPOSAL**; não é regra experimental implementada nem status novo |
+| Timing e custos do primeiro teste solo | **N-046 EXPERIMENTAL** aprovado |
+| Natural pós-troca e janela sem mão ativa | **N-047 EXPERIMENTAL** aprovado |
+| Balanceamento, diversidade, fairness multiplayer e validação humana | **N-045 OPEN** |
+| Contrato deste RFC | **APROVADO PARA IMPLEMENTAÇÃO EXPERIMENTAL ISOLADA**; ainda não implementado nem ratificado como final |
 
-O RFC não altera o registro de decisões e não fecha O-17..O-21. Uma escolha do fundador sobre o RFC deverá ser registrada em etapa própria antes de criar a Issue de implementação. Aprovar a direção de teste descrita aqui não equivale a ratificar gameplay.
+O fundador aprovou a primeira configuração experimental (N-046/N-047) e a decisão foi registrada no Decision Register; O-17..O-21 continuam OPEN para validação e produto final. O RFC não altera o jogo por si mesmo: a implementação exige sua própria issue Codex.
 
 ## 3. Objetivo, limites e baseline
 
@@ -113,6 +115,17 @@ Regras de ações de mão, settlement, naturals, exposições e dealer são herd
 - Manobra mantém duas cartas e não consome hit; o jogador retém as opções e exposição previstas para uma mão inicial de duas cartas, incluindo double se permitido pelo estado-base. O double continua comprando exatamente uma carta e encerra essa mão conforme DF-SYM-0.1.
 - Depois do primeiro hit/double/stand, Manobra não pode atuar na Opção B. Hit e bust seguem o baseline e não podem ser revertidos por Cofre.
 - Dealer não vê nem reage a cartas ou intenção de gasto. Ele compra depois das duas mãos e para em qualquer 17, como S17. No final, hole e draws são revelados segundo a projeção pública terminal já corrigida na P2A.
+
+### 5.6 Esclarecimentos aprovados sobre natural e terminalidade (N-047)
+
+**Contrato experimental obrigatório:**
+- Elegibilidade de **blackjack natural é fixada na composição ORIGINAL, antes do peek**. O motor DF-SYM usa `handValue(...).natural` em toda mão de duas cartas; por isso, a variante **deve distinguir** a classificação por valor das cartas da **elegibilidade de natural de abertura**. Não deixar que o wrapper reinterprete o 21 de uma Manobra como natural.
+- **Manobra que produza Ás+10 = total 21 comum e auto-stand.** Não recebe 3:2 nem prioridade de natural sobre 21 não-natural do dealer; também não pode comprar/dobrar; vale o pagamento de 21 ordinário no perfil 3:2 ou 1:1. Naturais iniciais permanecem terminais e inelegíveis para troca.
+- Se dealer tiver natural, o peek encerra como no baseline **sem oferecer Foco**. Se **ambas** as mãos já estiverem terminais após peek negativo (p.ex. duas naturais de abertura), **pular FOCUS_WINDOW**, sem oferecer Manobra/Leitura ou gastar recurso, e seguir ao dealer/settlement.
+- Com **somente uma mão ativa**, Manobra pode atingir apenas essa mão; Leitura só existe se ainda houver decisão legal pendente. Se Manobra resultar em ambas as mãos terminais, fechar a janela e prosseguir sem oferecer ações inúteis.
+- A janela segue ordem **Leitura opcional → Manobra opcional → continuar**, cada uma no máximo uma vez por rodada, com débito atômico após confirmação e opção legítima de não gastar.
+
+Essas definições são do **perfil DF-CF-0.1-lab**, não modificam o comportamento/payout do DF-SYM-0.1. Cobertura obrigatória: natural inicial, dealer natural, duas mãos terminais, Ás+10 após swap, dealer 21 ordinário, ambos os subperfis 3:2/1:1, score, ação proibida e estado imutável quando inválido.
 
 ## 6. Perfis de comparação
 
@@ -260,18 +273,29 @@ Após aprovação de um perfil executável, usar o protocolo de consentimento P2
 | P2A e estudo humano | Interface atual não implementa esta mecânica. | Criar Issue/versão/branch separada; não editar baseline ou relatório humano. |
 | Complexidade do solver | EV de leitura e recurso é dinâmica de horizonte, não soma das duas mãos. | Especificar solver que usa apenas informação disponível e cross-check independente. |
 
-## 13. Decisões que o fundador precisa tomar
+## 13. Decisão do fundador — perfil aprovado para TESTE (2026-10-18)
 
-1. Aprovar, modificar ou rejeitar a **janela B pós-peek** como hipótese para primeiro protótipo; reconhecer que manter timing não resolve O-03 em geral.
-2. Escolher se primeiro build inclui **Leitura** ou começa minimalista com **B-M**; definir modelo privado/publico só para o contexto aprovado (proposta inicial é solo privado).
-3. Aprovar ou substituir valores candidates 3 Foco, Manobra 1, Leitura 2 e sem renovação; definir se o primeiro protocolo usa Foco fixo ou orçamento proporcional como regra experimental (ambos ainda podem ser só condições de simulação).
-4. Confirmar elegibilidade de Manobra e tratamento de 21/natural após troca; proposta: uma troca pré-ação em mão ativa e bônus natural não retroativo.
-5. Definir o próximo gate: sandbox/simulador matemático `DF-CF-0.x`, ou outra comparação antes de código. Não há implementação autorizada por este RFC.
+**N-046/N-047 EXPERIMENTAL.** A aprovação do fundador encerra a escolha necessária para **o primeiro protótipo solo**, não O-03/O-17..O-21 em relação à versão definitiva.
 
-Qualquer seleção é nova aprovação de design e requer atualização rastreável do registro/contrato antes de habilitar implementação. Até lá todas as proposições continuam **CANDIDATE** ou **OPEN**.
+| Dimensão | Configuração aprovada somente para experimentar |
+| --- | --- |
+| Fluxo | **Opção B**, pós-peek negativo e antes da primeira ação |
+| Cofre | Quinta carta aberta; por rodada, no máximo uma troca com mão ativa de 2 cartas; substituída passa ao Cofre; descartado ao fim |
+| Foco | **3 pontos por Noite**, sem renovação, não transferível, saldo restante expira |
+| Manobra | **1 Foco**, uma troca por rodada |
+| Leitura | **2 Focos**, privada e exclusivamente solo, uma por rodada; revela a hole após peek negativo |
+| Sequência | Leitura? → Manobra? → continuar; pode usar ambas ou nenhuma |
+| Naturais/21 | Naturais iniciais fixados pré-peek; 21 obtido em swap auto-stand **sem status/benefício natural retroativo** |
+| Mãos terminais | Sem janela Foco se dealer natural ou duas mãos terminais; somente mão ativa é elegível |
+| Horizonte | **10 rodadas principal**, 5 e 20 de sensibilidade; orçamento proporcional só diagnóstico estatístico |
+| Perfis | 3:2 atual como estudo principal com 1:1 sensibilidade; ambos EXPERIMENTAL |
+| Controles | DF-SYM, Cofre gratuito, Foco+Leitura, B completo e B-M (só Manobra) |
+| Implementação | Issue separada Codex, motor/simulador primeiro; UI solo em etapa posterior se autorizado |
+
+Balanceamento, retenção, estratégia ótima entre experts, Leitura em multiplayer, shoe finito e payout final continuam **OPEN**. Não atribuir resultados humanos inexistentes ou alterar o baseline.
 
 ## 14. Limitações e recomendação
 
 O modelo infinito dá controle reproduzível, mas ignora esgotamento de ranks, contagem e restrições físicas do baralho. A Leitura pode mudar dramaticamente EV e fairness; nenhum número de valor ou taxa de uso foi calculado neste RFC. O solver P1B otimiza a decisão existente com informação atual e não é, sem extensão e validação, um solver de horizonte de Foco. Políticas de software não representam jogadores. Resultados de P1C motivam teste de custo intertemporal, mas não provam que a mecânica proposta corrige monotonia. A observação inicial do fundador (n=1) continua sendo feedback informal, separada do protocolo estruturado P2A. P2A está preservada como baseline e não há resultados humanos estruturados reivindicados.
 
-**Recomendação:** se o fundador aceitar uma primeira hipótese executável, começar com a **Opção B** em solo, `DF-CF-0.x` isolado, cenários pareados, e tratar 3/1/2 como parâmetros configuráveis. Comparar o combinado com a alternativa minimalista B-M e controles sem mecânicas. Manter a Leitura fora de qualquer alegação competitiva até resolver informação privada e fairness. Só depois de evidência quantitativa e playtest humano consentido decidir se calibrar, simplificar ou descartar a implementação experimental; nenhuma delas muda DF-SYM-0.1.
+**Decisão para o experimento:** o fundador aprovou a **Opção B** em solo, `DF-CF-0.1-lab` isolado, cenários pareados, e 3/1/2 como parâmetros versionados deste teste. Comparar o combinado com a alternativa minimalista B-M e controles sem mecânicas. Manter a Leitura fora de qualquer alegação competitiva até resolver informação privada e fairness. Só depois de evidência quantitativa e playtest humano consentido decidir se calibrar, simplificar ou descartar a implementação experimental; nenhuma delas muda DF-SYM-0.1.

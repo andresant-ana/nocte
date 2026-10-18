@@ -74,3 +74,7 @@ Coding and software architecture implementation are owned by **Codex**. ChatGPT 
 ## Immediate follow-up
 
 P1C's conditional recommendation has a local prototype and study protocol in P2A, but recruitment and human evidence are still pending; this does not satisfy G-FUN/G-SKILL. Competitive online/ranking investment is not supported yet. If playtests suggest simple-rule teaching removes decision interest, propose a separately reviewed DF-ASYM comparison before competitive implementation. O-01/O-02/O-03 remain open. See [LAB-P1C](LAB-P1C.md) for evidence and stop conditions and [PLAYTEST-P2A](PLAYTEST-P2A.md) for the protocol.
+
+## Experimento Cofre + Foco — gate pós-RFC (2026-10-18)
+
+O fundador aprovou a configuração **N-046/N-047 EXPERIMENTAL** para teste solo separado, como variante `DF-CF-0.1-lab`. A primeira tarefa Codex deve implementar **motor determinístico versionado e simulador** com Manobra/Leitura, 3/1/2, 10 rodadas principal (5/20 sensibilidades) e controles B-M/baseline; preservar P2A intacta. Após revisão da engenharia e análise, uma segunda task poderá integrar a variante a uma interface jogável para testes humanos consentidos. Sem promessa de melhora, regras finais, multiplayer ou pagamentos.

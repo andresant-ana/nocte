@@ -48,7 +48,9 @@
 | N-042 | RATIFIED (direção) | **Cofre + Foco é a próxima direção de aprofundamento de Duas Faces:** carta adicional de reserva, recurso limitado compartilhado na Noite e escolhas com custo de oportunidade entre mãos/rodadas. Ratificação do conceito, **não** dos números nem implementação automática. | [COFRE-FOCO](COFRE-FOCO.md) |
 | N-043 | CANDIDATE | Protótipo ilustrativo: 5ª carta no Cofre; orçamento de 3 Foco/Noite, Manobra (troca de carta por 1), Leitura (consulta da carta oculta por 2) e opção conservar Foco. Custos, timing, efeitos, elegibilidade e informação permanecem por validar. | [COFRE-FOCO](COFRE-FOCO.md), [OPEN-QUESTIONS](OPEN-QUESTIONS.md) |
 | N-044 | DEFERRED | Contratos, Protocolos, conquistas e progressão econômica/competitiva ficam fora do primeiro experimento Cofre + Foco; fases posteriores mediante tarefa própria. | [COFRE-FOCO](COFRE-FOCO.md), [ROADMAP](ROADMAP.md) |
-| N-045 | OPEN | Desenho final de ações/custos/renovação de Foco, sequência de dealer peek, pontuação, fairness de multiplayer, diversidade estratégica e evidência humana para Cofre + Foco. | [OPEN-QUESTIONS](OPEN-QUESTIONS.md), [COFRE-FOCO](COFRE-FOCO.md) |
+| N-045 | OPEN | Balanceamento e **regras finais** de Cofre/Foco, fairness multiplayer, diversidade estratégica e evidência humana; não encerrados pela aprovação de um primeiro teste. | [OPEN-QUESTIONS](OPEN-QUESTIONS.md), [COFRE-FOCO](COFRE-FOCO.md) |
+| N-046 | EXPERIMENTAL | Fundador autorizou como **primeira configuração de teste solo** a opção B pós-peek; Cofre como 5ª carta aberta; 3 Foco/Noite sem renovação; Manobra 1 e Leitura 2 (solo privada), até uma vez cada por rodada, ordem Leitura→Manobra; 10 rodadas principal, 5/20 sensibilidades, controles B-M/baseline. **Não ratifica regras finais.** | [CF-RFC-P2B](CF-RFC-P2B.md) |
+| N-047 | EXPERIMENTAL | No perfil N-046: natural elegível fixado na composição pré-peek; Ás+10 criado por Manobra é 21 comum auto-stand, sem bônus/precedência natural; se dealer tem natural ou todas as mãos já estão terminais, não abrir janela Foco; alvo Manobra sempre mão ativa. | [CF-RFC-P2B](CF-RFC-P2B.md) |
 
 ## Decisions not to infer
 
@@ -60,7 +62,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-046 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-048 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 
@@ -77,3 +79,7 @@ Issue #9 authorizes a local solo prototype and a consent-based validation protoc
 ## Aditivo de direção Cofre + Foco — 2026-10-18
 
 A aprovação expressa do fundador em conversa de produto é N-042: aprofundar Duas Faces com carta de reserva + orçamento limitado de ações especiais entre rodadas. Os exemplos quantitativos são **N-043 CANDIDATE**, não resultados de teste nem regras já implementadas. N-028 preserva o histórico como SUPERSEDED; N-044 mantém separadamente o adiamento de Contratos/Protocolos. P1A–P1C e P2A conservam integralmente suas regras e evidências. A P2A ainda tem PR próprio de UI para revisão; este aditivo de documentação não autoriza alteração desse escopo.
+
+## Aprovação do RFC Cofre + Foco — 2026-10-18
+
+O fundador aprovou **N-046/N-047 EXPERIMENTAL** para implementação em task Codex isolada; N-043 preserva o caráter CANDIDATE dos valores em **produto final**, N-042 segue RATIFIED somente como direção e N-045 permanece OPEN para adoção definitiva e resultados. Ações normais da P2A, motor DF-SYM e evidências P1A–P1C não foram alterados neste PR documental.
