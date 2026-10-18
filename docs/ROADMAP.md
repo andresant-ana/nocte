@@ -1,6 +1,6 @@
 # Execution roadmap and release gates
 
-**As of 2026-10-18:** P1A's experimental engine and offline simulator are integrated in main. P1B's model solver and comparison evidence are integrated through PR #6. P1C's offline depth audit is submitted for review; see [LAB-P1C](LAB-P1C.md). No shipped live game, backend, accounts, WebSockets, or production balance. Remaining phases below are plans.
+**As of 2026-10-18:** P1A's experimental engine and offline simulator, P1B's model solver and comparison evidence, and P1C's offline depth audit are integrated. P2A adds a local browser prototype and a consent-based validation protocol; it has not been deployed or tested with human participants. See [PLAYTEST-P2A](PLAYTEST-P2A.md). No backend, accounts, WebSockets, or production balance. Remaining phases below are plans.
 
 ## Phase 0 — Documentation baseline (current)
 
@@ -21,6 +21,8 @@
 **NOCTE-P1A implementation note (2026-10-18):** PR #4 integrated the symmetric lab slice, seeded local simulator, tests and options RFC. **P1B:** [LAB-P1B](LAB-P1B.md) supplies solver/benchmark evidence, including independent aggregate reproduction for the symmetric 7,150-class model. This does not close O-01/O-02/O-03; finite shoe, mirror allocation, final natural handling, asymmetric mode, human validation and full G-ENGINE signoff remain open/unvalidated.
 
 ## Phase 2 — Minimal solo playable + human testing
+
+**NOCTE-P2A implementation note (2026-10-18):** The local, browser-only solo prototype and pre-registered study flow are available in this repository. This is implementation status, not evidence that the study was run. The pool is stratified, the teaching aid is an explicitly experimental suggestion, and outcomes cannot establish population balance, retention or commercial viability. Human recruitment and results remain pending; see [PLAYTEST-P2A](PLAYTEST-P2A.md).
 
 - Flat but usable keyboard/mouse/touch table supporting composition of four cards and dealer steps.
 - Invite 5–20 friends for short comparative play; log rounds and feedback **with consent**.

@@ -1,6 +1,6 @@
 # NOCTE
 
-> **A blackjack-based strategy card game.** Art Déco / noir, browser-native, solo and social. **Status: design and mathematical validation; production engine not implemented.**
+> **A blackjack-based strategy card game.** Art Déco / noir, browser-native, solo and social. **Status: local experimental solo prototype; no production service or human playtest results.**
 
 This is a **new, independent project**. MESA/21 was discontinued because it had become too close to conventional blackjack.
 
@@ -32,7 +32,11 @@ See [execution model](docs/EXECUTION-MODEL.md) (N-041).
 
 Documentation baseline → TypeScript game engine and simulation lab → gameplay validation with friends → browser multiplayer → economy/ranking → premium audiovisual layer.
 
-The repository is not yet a live game. NOCTE-P1A is integrated into main and supplies an experimental offline symmetric engine and strategy simulator. P1B adds a model EV solver and controlled strategy benchmark; its methods, quantitative results and limitations are in [LAB-P1B.md](docs/LAB-P1B.md). Historical figures remain in [VALIDATION.md](docs/VALIDATION.md).
+The repository is not a live or networked game. NOCTE-P1A supplies the experimental symmetric engine and strategy simulator. P1B adds a model EV solver and controlled strategy benchmark; P1C audits strategic depth. NOCTE-P2A adds a local solo browser prototype and a consent-based playtest protocol. Its rules remain experimental, and no human study has been conducted. See [LAB-P1B.md](docs/LAB-P1B.md), [LAB-P1C.md](docs/LAB-P1C.md), and [PLAYTEST-P2A.md](docs/PLAYTEST-P2A.md). Historical figures remain in [VALIDATION.md](docs/VALIDATION.md).
+
+## Solo prototype (NOCTE-P2A)
+
+Requires Node.js 22+ and pnpm 12.9.1. Run `pnpm install` and `pnpm dev`, then open the local URL printed by Vite. The prototype reuses the existing engine, runs in the browser, and keeps study records in memory only. Joining a study is optional; exports require an explicit action, and records can be cleared. Read the [P2A protocol](docs/PLAYTEST-P2A.md) before facilitating or interpreting any session. No human results or definitive rules are implied.
 
 ## Local lab (NOCTE-P1A)
 

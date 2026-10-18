@@ -37,7 +37,7 @@ Applies to every coding task in this repository. Read this file, then [docs/INDE
 
 ## Current authorized implementation scope
 
-P1A's experimental engine and offline simulator were integrated through PR #4 (main `447fb187277516271184bf642f55d9bbb80163b6`). P1B was integrated through PR #6 (main `f9a91ab4e94932d5d34293b4a01199269f069007`). Issue #7 authorizes P1C's offline strategic-depth audit, supporting instruments, tests and evidence; see [LAB-P1C.md](docs/LAB-P1C.md). No rules or product gates are ratified by the audit. The exact rules for a finite shoe, final natural resolution, mirror draw allocation, match timeout and economy distribution remain open; see [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md). No UI, live infrastructure or economy is authorized by P1C.
+P1A's experimental engine and offline simulator, P1B's model solver/comparison lab, and P1C's strategic-depth audit are integrated. Issue #9 authorizes a local solo browser prototype and consent-based human-validation protocol; see [PLAYTEST-P2A.md](docs/PLAYTEST-P2A.md) and [LAB-P1C.md](docs/LAB-P1C.md). The prototype reuses the existing experimental engine without changing rules. No networked play, identity, persistence, economy, deployment, or balance claim is authorized by P2A. N-019/N-020 remain EXPERIMENTAL; N-036, N-024 and O-01/O-02/O-03 remain OPEN. See [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md).
 
 ## PR requirements
 

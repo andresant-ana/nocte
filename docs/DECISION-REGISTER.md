@@ -65,3 +65,7 @@ N-033/N-034/N-035 retain their **EXPERIMENTAL** statuses. [LAB-P1B](LAB-P1B.md) 
 ## P1C evidence addendum — 2026-10-18
 
 [LAB-P1C](LAB-P1C.md) adds an exact weighted depth/compression audit and controlled 5/10/20-round sessions. N-033/N-034/N-035 and N-019/N-020 remain **EXPERIMENTAL**; N-036, N-024 and O-01/O-02/O-03 remain **OPEN**. Simple competent policies retain most model EV, so competitive depth is not established. The conditional solo-learning recommendation is evidence for a future decision, not authorization of UI, ASYM or a status change. Exploratory v1 artifacts are preserved and explicitly superseded by dealt-order v2. No canonical rule changes.
+
+## P2A implementation addendum — 2026-10-18
+
+Issue #9 authorizes a local solo prototype and a consent-based validation protocol, not a rule or product-status change. The prototype exposes the existing DF-SYM-0.1 experimental profiles, optional experimental teaching suggestions, and post-settlement solver analysis for research. [PLAYTEST-P2A](PLAYTEST-P2A.md) describes the fixed stratified study pools, consent, local in-memory handling, export/clear controls, and interpretation limits. No human sessions or outcomes are represented as completed. N-019/N-020 remain **EXPERIMENTAL**; N-036, N-024 and O-01/O-02/O-03 remain **OPEN**. This addendum does not ratify gameplay, balance, teaching guidance, or release readiness.
