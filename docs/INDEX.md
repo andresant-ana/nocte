@@ -1,7 +1,7 @@
 # NOCTE — canonical document map
 
 **Baseline:** 2026-10-18, v0.1 (initial recording of founder decisions and exploratory Duas Faces research).
-**Stage:** OFFLINE LAB; P1A engine/simulator integrated; P1B model solver and benchmark submitted for review. No live game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
+**Stage:** OFFLINE LAB; P1A engine/simulator integrated; P1B model solver/benchmark integrated; P1C strategic-depth audit submitted for review. No live game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
 
 | Document | Authority / purpose |
 | --- | --- |
@@ -14,6 +14,7 @@
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |
 | [LAB-P1B.md](LAB-P1B.md) | Model EV solver, fair counterfactual benchmark, reproduction and quantitative evidence |
+| [LAB-P1C.md](LAB-P1C.md) | Strategic-depth audit, compression risk, paired sessions and conditional next gate |
 | [ROADMAP.md](ROADMAP.md) | Phases and go/no-go gates; no fabricated progress |
 | [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md) | Explicit unresolved decisions and experiments |
 | [RESEARCH-CONTEXT.md](RESEARCH-CONTEXT.md) | Balatro/blackjack motivation and limits of inference |

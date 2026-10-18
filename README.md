@@ -54,3 +54,13 @@ pnpm enumerate -- --out ../../lab/results/p1b-enumeration-3to2-v1.json
 ```
 
 Output paths are relative to `packages/sim`. The [P1B contract](docs/LAB-P1B.md) includes both payout commands, pilot/sample rationale, solver APIs, the [5,6,10,10] study and historical comparisons. These offline model results do not validate human gameplay.
+
+## Strategic-depth audit (NOCTE-P1C)
+
+```sh
+pnpm depth -- --mode exact --out ../../lab/results/p1c-exact-3to2-v2.json --csv ../../lab/results/p1c-scenarios-3to2-v2.csv
+pnpm depth -- --mode sessions --seed nocte-p1c-main-v1 --sessions 10000 --out ../../lab/results/p1c-sessions-3to2-v2.json
+pnpm depth:report
+```
+
+See [LAB-P1C.md](docs/LAB-P1C.md) for both profiles, pilots, held-out policy checks, the dealt-order correction, quantitative conclusions and conditional next gate. The audit reuses the engine/solver without changing gameplay.

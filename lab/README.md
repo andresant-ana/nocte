@@ -21,3 +21,9 @@ The TypeScript engine and simulator introduced by NOCTE-P1A are new implementati
 - `results/p1b-benchmark-{3to2,1to1}-v1.json`: seed `nocte-p1b-main-v1`, n=100,000 per profile; three composition agents with identical optimal actions and isolated counterfactual streams.
 
 Methods, commands, statistical assumptions, readable decision study and limitations are in [LAB-P1B.md](../docs/LAB-P1B.md). `result` and `caseStudy` are deterministic; `execution` contains variable timing/environment metadata. The new port reproduces historical optimal/indexed-random aggregate values under matching assumptions; this does not recover the absent Python source or reproduce old conditional/match simulations.
+
+## P1C strategic-depth evidence
+
+Authoritative final evidence uses **v2**: `p1c-exact-{3to2,1to1}-v2.json`, representative alternatives `p1c-scenarios-{3to2,1to1}-v2.csv`, independent 500-session `p1c-pilot-{3to2,1to1}-v2.json`, and 10,000-session `p1c-sessions-{3to2,1to1}-v2.json`. `p1c-tables-v2.md` renders all strata, policies, learned rules and session comparisons. Full distributions remain in JSON; units and uncertainty are explicit.
+
+**All P1C v1 artifacts are exploratory/superseded:** sorted-card inference changed first-available policy tie breaks compared with P1A on original deals. Retained for provenance, never pooled with v2. V2 integrates every dealt permutation exactly and preserves original order in sessions; sample sizes/policies were not retuned. See [LAB-P1C](../docs/LAB-P1C.md) for the correction, frozen protocol, reproduction and limitations. Historical P1A/P1B evidence is unchanged.

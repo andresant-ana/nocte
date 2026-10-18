@@ -8,7 +8,9 @@
     "typecheck": "tsc --build",
     "simulate": "pnpm --filter @nocte/sim simulate",
     "benchmark": "pnpm --filter @nocte/sim benchmark",
-    "enumerate": "pnpm --filter @nocte/sim enumerate"
+    "enumerate": "pnpm --filter @nocte/sim enumerate",
+    "depth": "pnpm --filter @nocte/sim depth",
+    "depth:report": "pnpm --filter @nocte/sim depth:report"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

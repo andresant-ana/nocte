@@ -1,6 +1,6 @@
 # Execution roadmap and release gates
 
-**As of 2026-10-18:** P1A's experimental engine and offline simulator are integrated in main. P1B's model solver and comparison evidence are submitted for review. No shipped live game, backend, accounts, WebSockets, or production balance. Remaining phases below are plans.
+**As of 2026-10-18:** P1A's experimental engine and offline simulator are integrated in main. P1B's model solver and comparison evidence are integrated through PR #6. P1C's offline depth audit is submitted for review; see [LAB-P1C](LAB-P1C.md). No shipped live game, backend, accounts, WebSockets, or production balance. Remaining phases below are plans.
 
 ## Phase 0 — Documentation baseline (current)
 
@@ -63,4 +63,4 @@ Coding and software architecture implementation are owned by **Codex**. ChatGPT 
 
 ## Immediate follow-up
 
-Codex prepares a prototype-specific finite dealing/mirroring RFC in [OPEN-QUESTIONS](OPEN-QUESTIONS.md), then implement Phase 1. No signup, premium animation or live financial mechanics required for this.
+P1C recommends a conditional minimal solo experiment to test learning, routine and residual decision interest; this is a recommendation requiring a separately scoped task, not G-FUN/G-SKILL approval. Competitive online/ranking investment is not supported yet. If simple-rule teaching removes decision interest, propose a separate DF-ASYM comparison before competitive implementation. O-01/O-02/O-03 remain open. See [LAB-P1C](LAB-P1C.md) for evidence and stop conditions.
