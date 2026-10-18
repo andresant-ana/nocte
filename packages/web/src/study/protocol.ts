@@ -35,4 +35,3 @@ export type CompletedRoundRecord = Readonly<{
   bestEv: number;
   regret: number;
 }>;
-

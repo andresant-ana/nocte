@@ -27,4 +27,3 @@ describe("P2A fixed scenario pools", () => {
     expect(sensitivity.assessment.every((entry) => entry.seed !== first.assessment[0]!.seed)).toBe(true);
   }, 120_000);
 });
-

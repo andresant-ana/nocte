@@ -91,6 +91,7 @@ export function StudyFlow({ profile, onDecline, onExit }: StudyFlowProps) {
     dataGeneration.current += 1;
     consentRef.current = false;
     setConsented(false);
+    setAnswers({});
     setActive(null);
     setStage("withdrawn");
     setRecordPending(false);
@@ -289,6 +290,7 @@ export function StudyFlow({ profile, onDecline, onExit }: StudyFlowProps) {
             <button type="button" disabled={!records.length} onClick={() => downloadRecords("json", records, answers)}>Exportar JSON</button>
             <button type="button" className="secondary-action" disabled={!records.length} onClick={() => downloadRecords("csv", records, answers)}>Exportar CSV</button>
           </div>
+          <button className="text-button" type="button" onClick={withdrawConsent}>Retirar consentimento</button>
           <button className="text-button" type="button" onClick={clearData}>Apagar todos os dados</button>
           {message && <p role="status">{message}</p>}
           <button className="text-button" type="button" onClick={exit}>Encerrar e voltar ao início</button>

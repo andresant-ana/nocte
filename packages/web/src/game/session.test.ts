@@ -90,5 +90,3 @@ describe("browser random stream and solo session", () => {
     expect(session.currentPublic()).toEqual(before);
   });
 });
-
-

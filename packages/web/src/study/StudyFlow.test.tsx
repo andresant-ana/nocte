@@ -6,8 +6,13 @@ import { webcrypto } from "node:crypto";
 import { DF_SYM_01_3_TO_2 } from "@nocte/engine";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { StudyFlow } from "./StudyFlow";
-import { serializeCsv, serializeJson } from "./export";
+import { downloadRecords, serializeCsv, serializeJson } from "./export";
 import type { CompletedRoundRecord } from "./protocol";
+
+vi.mock("./export", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./export")>();
+  return { ...actual, downloadRecords: vi.fn() };
+});
 
 async function finishCurrentRound(user: ReturnType<typeof userEvent.setup>) {
   if (screen.queryByRole("button", { name: /Confirmar composição/i })) {
@@ -144,6 +149,10 @@ describe("P2A consent and session-only records", () => {
     expect(await screen.findByRole("heading", { name: /Sessão encerrada/i })).toBeInTheDocument();
     expect(screen.getByText(/13 rodadas concluídas/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Exportar CSV/i })).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: /Retirar consentimento/i }));
+    expect(await screen.findByRole("heading", { name: "Consentimento retirado" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Exportar JSON/i }));
+    expect(vi.mocked(downloadRecords)).toHaveBeenLastCalledWith("json", expect.any(Array), {});
   }, 120_000);
 });
-

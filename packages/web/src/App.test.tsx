@@ -55,4 +55,3 @@ describe("solo prototype landing", () => {
     expect(screen.queryByRole("button", { name: /Exportar JSON/i })).toBeNull();
   });
 });
-

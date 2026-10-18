@@ -21,6 +21,7 @@ test("local study round reveals, exports, and clears only completed data", async
   const resolve = page.getByRole("button", { name: /Resolver dealer/i });
   if (await resolve.count()) await resolve.click();
   await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+  await expect(page.getByText(/Dealer revelou/)).toBeVisible();
   await expect(page.getByRole("button", { name: /Exportar JSON/i })).toBeEnabled();
 
   const [download] = await Promise.all([

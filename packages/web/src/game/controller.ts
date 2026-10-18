@@ -109,5 +109,3 @@ export class SoloRoundController {
 export function beginRound(prepared: PreparedRound): SoloRoundController {
   return SoloRoundController.start(prepared);
 }
-
-

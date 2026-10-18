@@ -102,6 +102,3 @@ describe("solo game table", () => {
     expect(screen.getByRole("button", { name: "Parar" })).toBeInTheDocument();
   });
 });
-
-
-
