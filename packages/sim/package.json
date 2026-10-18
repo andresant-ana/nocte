@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/lab.ts",
-    "./solver": "./src/solver.ts"
+    "./solver": "./src/solver.ts",
+    "./cofre-foco": "./src/cofre-foco-lab.ts"
   },
   "scripts": {
     "simulate": "tsx src/cli.ts",
@@ -13,7 +14,8 @@
     "enumerate": "tsx src/lab-cli.ts --mode enumerate",
     "depth": "tsx src/depth-cli.ts",
     "depth:report": "tsx src/depth-report.ts",
-    "playtest:pools": "tsx src/playtest-pools-cli.ts"
+    "playtest:pools": "tsx src/playtest-pools-cli.ts",
+    "cofre-foco": "tsx src/cofre-foco-cli.ts"
   },
   "dependencies": {
     "@nocte/engine": "workspace:*"

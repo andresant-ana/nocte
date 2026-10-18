@@ -27,3 +27,7 @@ Methods, commands, statistical assumptions, readable decision study and limitati
 Authoritative final evidence uses **v2**: `p1c-exact-{3to2,1to1}-v2.json`, representative alternatives `p1c-scenarios-{3to2,1to1}-v2.csv`, independent 500-session `p1c-pilot-{3to2,1to1}-v2.json`, and 10,000-session `p1c-sessions-{3to2,1to1}-v2.json`. `p1c-tables-v2.md` renders all strata, policies, learned rules and session comparisons. Full distributions remain in JSON; units and uncertainty are explicit.
 
 **All P1C v1 artifacts are exploratory/superseded:** sorted-card inference changed first-available policy tie breaks compared with P1A on original deals. Retained for provenance, never pooled with v2. V2 integrates every dealt permutation exactly and preserves original order in sessions; sample sizes/policies were not retuned. See [LAB-P1C](../docs/LAB-P1C.md) for the correction, frozen protocol, reproduction and limitations. Historical P1A/P1B evidence is unchanged.
+
+## P2B-E Cofre + Foco evidence (separate experimental profile)
+
+`results/p2b-e-*.json` are fixed-seed paired counterfactual reports from Issue #14. They compare baseline, diagnostic ablations, and N-046/N-047 with explicit resource policies, horizon and payout sensitivity. They do not change P1 results or canonize final gameplay. Method, the selected quantitative readout, reproduction and limitations: [LAB-P2B](../docs/LAB-P2B.md).

@@ -3,7 +3,7 @@ import type { Card } from "@nocte/engine";
 import { RANKS } from "./solver.js";
 
 export const STREAM_VERSION = "sha256-counter-rejection-v1";
-export type Lane = "initial" | "dealer" | "luz" | "sombra" | "choice";
+export type Lane = "initial" | "dealer" | "luz" | "sombra" | "cofre" | "choice";
 /** Lab-only domain-separated counter streams; never sent to a player decision policy. */
 export class BenchmarkRandom {
   private counter = 0;

@@ -1,7 +1,7 @@
 # NOCTE — canonical document map
 
 **Baseline:** 2026-10-18, v0.1 (initial recording of founder decisions and exploratory Duas Faces research).
-**Stage:** P1A engine/simulator, P1B solver/benchmark, and P1C depth audit integrated. P2A local solo prototype and human-validation protocol are under review; no human playtest results are claimed. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
+**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor and comparison laboratory; no human playtest results or final balance claims are made. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
 
 | Document | Authority / purpose |
 | --- | --- |
@@ -18,6 +18,7 @@
 | [LAB-P1B.md](LAB-P1B.md) | Model EV solver, fair counterfactual benchmark, reproduction and quantitative evidence |
 | [LAB-P1C.md](LAB-P1C.md) | Strategic-depth audit, compression risk, paired sessions and conditional next gate |
 | [PLAYTEST-P2A.md](PLAYTEST-P2A.md) | Local solo prototype protocol, consent, fixed scenario pools, data handling and blank report |
+| [LAB-P2B.md](LAB-P2B.md) | Isolated Cofre + Foco motor, paired comparison study, results and reproducibility |
 | [ROADMAP.md](ROADMAP.md) | Phases and go/no-go gates; no fabricated progress |
 | [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md) | Explicit unresolved decisions and experiments |
 | [RESEARCH-CONTEXT.md](RESEARCH-CONTEXT.md) | Balatro/blackjack motivation and limits of inference |

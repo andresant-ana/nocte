@@ -83,3 +83,7 @@ A aprovação expressa do fundador em conversa de produto é N-042: aprofundar D
 ## Aprovação do RFC Cofre + Foco — 2026-10-18
 
 O fundador aprovou **N-046/N-047 EXPERIMENTAL** para implementação em task Codex isolada; N-043 preserva o caráter CANDIDATE dos valores em **produto final**, N-042 segue RATIFIED somente como direção e N-045 permanece OPEN para adoção definitiva e resultados. Ações normais da P2A, motor DF-SYM e evidências P1A–P1C não foram alterados neste PR documental.
+
+## Implementação experimental P2B-E — 2026-10-18
+
+Issue #14 implementa `DF-CF-0.1-lab` em pacote isolado e adiciona laboratório de comparação pareada com controles e sensibilidades documentados em [LAB-P2B.md](LAB-P2B.md). Esta entrega não altera o motor DF-SYM-0.1, a interface P2A, nem promove N-046/N-047 a regras RATIFIED; N-043 continua CANDIDATE para produto final e N-045 continua OPEN. Resultados são evidência computacional do modelo infinito e não evidência humana, fairness multiplayer ou validação de produto. Nenhuma decisão existente foi alterada.
