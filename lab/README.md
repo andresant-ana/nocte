@@ -11,3 +11,5 @@ These JSON files are **snapshots generated during the 2026-10-18 Duas Faces expl
 **Source and reproducibility limitation:** the original Python exploratory script was created as a prior ChatGPT conversation artifact and has **not** been imported into this GitHub baseline. Therefore the JSON provides auditability of recorded figures, **not in-repo rerunnable proof**. The next @nocte/sim implementation must (a) port and independently check the model and (b) reproduce figures under explicitly identical assumptions before comparing a finite-deck rule engine. Avoid claims that passing a different simulation "verifies" this JSON.
 
 Details/limitations: [docs/VALIDATION.md](../docs/VALIDATION.md).
+
+The TypeScript engine and simulator introduced by NOCTE-P1A are new implementations under versioned experimental profiles. The simulator's heuristic is not an exact EV solver, and its output must not be presented as a reproduction of the historical snapshots above. The profile and open draw/natural/mirror choices are documented in [ENGINE-RFC-P1A.md](../docs/ENGINE-RFC-P1A.md).

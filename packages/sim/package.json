@@ -1,0 +1,8 @@
+{
+  "name": "@nocte/sim",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "simulate": "tsx src/cli.ts" },
+  "dependencies": { "@nocte/engine": "workspace:*" }
+}
