@@ -37,7 +37,7 @@ Applies to every coding task in this repository. Read this file, then [docs/INDE
 
 ## Current authorized implementation scope
 
-P1A's experimental engine and offline simulator were integrated through PR #4 (main `447fb187277516271184bf642f55d9bbb80163b6`). Issue #5 explicitly authorizes P1B's EV solver, offline strategic benchmark and supporting tests/evidence; see [LAB-P1B.md](docs/LAB-P1B.md). The exact rules for a finite shoe, final natural resolution, mirror draw allocation, match timeout and economy distribution remain open; see [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md). No UI, live infrastructure or economy is authorized by P1B.
+P1A's experimental engine and offline simulator were integrated through PR #4 (main `447fb187277516271184bf642f55d9bbb80163b6`). P1B was integrated through PR #6 (main `f9a91ab4e94932d5d34293b4a01199269f069007`). Issue #7 authorizes P1C's offline strategic-depth audit, supporting instruments, tests and evidence; see [LAB-P1C.md](docs/LAB-P1C.md). No rules or product gates are ratified by the audit. The exact rules for a finite shoe, final natural resolution, mirror draw allocation, match timeout and economy distribution remain open; see [OPEN-QUESTIONS.md](docs/OPEN-QUESTIONS.md). No UI, live infrastructure or economy is authorized by P1C.
 
 ## PR requirements
 

@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "exports": { ".": "./src/lab.ts" },
-  "scripts": { "simulate": "tsx src/cli.ts", "benchmark": "tsx src/lab-cli.ts", "enumerate": "tsx src/lab-cli.ts --mode enumerate" },
+  "scripts": { "simulate": "tsx src/cli.ts", "benchmark": "tsx src/lab-cli.ts", "enumerate": "tsx src/lab-cli.ts --mode enumerate", "depth": "tsx src/depth-cli.ts", "depth:report": "tsx src/depth-report.ts" },
   "dependencies": { "@nocte/engine": "workspace:*" }
 }

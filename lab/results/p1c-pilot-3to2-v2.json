@@ -1,0 +1,1265 @@
+{
+  "result": {
+    "schemaVersion": 1,
+    "sessionVersion": "p1c-dealt-order-prefix-lanes-v2",
+    "prngVersion": "sha256-counter-rejection-v1",
+    "solverVersion": "dp-infinite-s17-v1",
+    "scoringVersion": "df-sym-net-points-natural-priority-v1",
+    "rules": "DF-SYM-0.1-lab-infinite-3to2-peek-natural-first",
+    "seed": "nocte-p1c-pilot-v1",
+    "sessions": 500,
+    "lengths": [
+      5,
+      10,
+      20
+    ],
+    "finalists": [
+      "upcard-pocket",
+      "eleven-twenty"
+    ],
+    "policyFingerprint": "3a29d5cb1e15ea05ece218acbe4dbfefde41676590d0effed07978a97bc55cb3",
+    "units": "net match points per session; variance is squared match points",
+    "protocol": "identical optimal actions; original dealt order with first-available ties; common named lanes; nested prefixes; public-only composition",
+    "winObjective": "EV-optimal composition is not claimed optimal for session win probability; no score/risk-adaptive agent was run",
+    "comparisons": [
+      {
+        "key": "5:optimal-vs-p1a",
+        "win": {
+          "count": 167,
+          "n": 500,
+          "rate": 0.334,
+          "confidence95": [
+            0.2940631065718404,
+            0.37646826678041956
+          ]
+        },
+        "loss": {
+          "count": 99,
+          "n": 500,
+          "rate": 0.198,
+          "confidence95": [
+            0.16543056787682525,
+            0.23517470171584037
+          ]
+        },
+        "tie": {
+          "count": 234,
+          "n": 500,
+          "rate": 0.468,
+          "confidence95": [
+            0.4246732802775799,
+            0.511814695308398
+          ]
+        },
+        "decisiveWin": {
+          "count": 167,
+          "n": 266,
+          "rate": 0.6278195488721805,
+          "confidence95": [
+            0.5682950561297726,
+            0.6837046355411931
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 3.700000000000002,
+          "variance": 354.4188376753504,
+          "standardError": 0.841924982020786,
+          "confidence95": [
+            2.0498270352392614,
+            5.350172964760743
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 3.3741109837841643,
+          "variance": 16.0325815941994,
+          "standardError": 0.1790674822194102,
+          "confidence95": [
+            3.0231387186341205,
+            3.725083248934208
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0.3258890162158379,
+          "variance": 329.7714190550557,
+          "standardError": 0.8121224280304734,
+          "confidence95": [
+            -1.26587094272389,
+            1.9176489751555656
+          ]
+        }
+      },
+      {
+        "key": "5:optimal-vs-upcard-pocket",
+        "win": {
+          "count": 87,
+          "n": 500,
+          "rate": 0.174,
+          "confidence95": [
+            0.14328895399220098,
+            0.20968229728994797
+          ]
+        },
+        "loss": {
+          "count": 48,
+          "n": 500,
+          "rate": 0.096,
+          "confidence95": [
+            0.07317313790557156,
+            0.12498755386739835
+          ]
+        },
+        "tie": {
+          "count": 365,
+          "n": 500,
+          "rate": 0.73,
+          "confidence95": [
+            0.6894405695613621,
+            0.7670521059144222
+          ]
+        },
+        "decisiveWin": {
+          "count": 87,
+          "n": 135,
+          "rate": 0.6444444444444445,
+          "confidence95": [
+            0.560723808578356,
+            0.720171830768929
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 1.8400000000000025,
+          "variance": 114.04248496993988,
+          "standardError": 0.47758242214290064,
+          "confidence95": [
+            0.9039384525999172,
+            2.776061547400088
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 0.8022433038879404,
+          "variance": 2.2469220524566293,
+          "standardError": 0.06703614028949802,
+          "confidence95": [
+            0.6708524689205243,
+            0.9336341388553565
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 1.0377566961120601,
+          "variance": 108.34381767719758,
+          "standardError": 0.46549719156445524,
+          "confidence95": [
+            0.12538220064572791,
+            1.9501311915783923
+          ]
+        }
+      },
+      {
+        "key": "5:optimal-vs-eleven-twenty",
+        "win": {
+          "count": 115,
+          "n": 500,
+          "rate": 0.23,
+          "confidence95": [
+            0.19525432702175258,
+            0.2688629669849352
+          ]
+        },
+        "loss": {
+          "count": 69,
+          "n": 500,
+          "rate": 0.138,
+          "confidence95": [
+            0.11051755348949738,
+            0.17100267032687666
+          ]
+        },
+        "tie": {
+          "count": 316,
+          "n": 500,
+          "rate": 0.632,
+          "confidence95": [
+            0.5888709172413829,
+            0.6731161834664587
+          ]
+        },
+        "decisiveWin": {
+          "count": 115,
+          "n": 184,
+          "rate": 0.625,
+          "confidence95": [
+            0.5531629835685029,
+            0.6917241979716885
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 1.950000000000001,
+          "variance": 167.38226452905803,
+          "standardError": 0.5785883934699313,
+          "confidence95": [
+            0.8159667487989357,
+            3.0840332512010664
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 1.3972980331006428,
+          "variance": 4.516929797518971,
+          "standardError": 0.09504661800946913,
+          "confidence95": [
+            1.2110066618020834,
+            1.5835894043992023
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0.552701966899359,
+          "variance": 166.36992010269444,
+          "standardError": 0.5768360600772016,
+          "confidence95": [
+            -0.577896710851956,
+            1.6833006446506742
+          ]
+        }
+      },
+      {
+        "key": "5:upcard-pocket-vs-p1a",
+        "win": {
+          "count": 144,
+          "n": 500,
+          "rate": 0.288,
+          "confidence95": [
+            0.25004260722886124,
+            0.3291902310282418
+          ]
+        },
+        "loss": {
+          "count": 116,
+          "n": 500,
+          "rate": 0.232,
+          "confidence95": [
+            0.19712863776715053,
+            0.27095815776541365
+          ]
+        },
+        "tie": {
+          "count": 240,
+          "n": 500,
+          "rate": 0.48,
+          "confidence95": [
+            0.43652763662029404,
+            0.523777348120942
+          ]
+        },
+        "decisiveWin": {
+          "count": 144,
+          "n": 260,
+          "rate": 0.5538461538461539,
+          "confidence95": [
+            0.4930749634385242,
+            0.6130493171904593
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 1.86,
+          "variance": 334.6096192384767,
+          "standardError": 0.8180582121566615,
+          "confidence95": [
+            0.2566059041729436,
+            3.4633940958270566
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 2.5718676798962217,
+          "variance": 16.76709015552192,
+          "standardError": 0.18312340186618378,
+          "confidence95": [
+            2.2129458122385013,
+            2.930789547553942
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": -0.7118676798962214,
+          "variance": 313.5359669775702,
+          "standardError": 0.7918787369005057,
+          "confidence95": [
+            -2.263950004221212,
+            0.8402146444287697
+          ]
+        }
+      },
+      {
+        "key": "5:upcard-pocket-vs-eleven-twenty",
+        "win": {
+          "count": 97,
+          "n": 500,
+          "rate": 0.194,
+          "confidence95": [
+            0.16172591779703405,
+            0.2309403487438788
+          ]
+        },
+        "loss": {
+          "count": 88,
+          "n": 500,
+          "rate": 0.176,
+          "confidence95": [
+            0.14512588004549448,
+            0.21181487276253086
+          ]
+        },
+        "tie": {
+          "count": 315,
+          "n": 500,
+          "rate": 0.63,
+          "confidence95": [
+            0.5868391297107901,
+            0.671178469471175
+          ]
+        },
+        "decisiveWin": {
+          "count": 97,
+          "n": 185,
+          "rate": 0.5243243243243243,
+          "confidence95": [
+            0.45259781480851113,
+            0.5950611755834364
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 0.10999999999999983,
+          "variance": 182.80350701402813,
+          "standardError": 0.6046544583711065,
+          "confidence95": [
+            -1.075122738407369,
+            1.2951227384073687
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 0.5950547292127006,
+          "variance": 6.432490650254157,
+          "standardError": 0.11342390092263761,
+          "confidence95": [
+            0.37274388340433096,
+            0.8173655750210703
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": -0.4850547292127001,
+          "variance": 178.72352749667672,
+          "standardError": 0.5978687606769176,
+          "confidence95": [
+            -1.6568775001394587,
+            0.6867680417140585
+          ]
+        }
+      },
+      {
+        "key": "5:optimal-vs-optimal",
+        "win": {
+          "count": 0,
+          "n": 500,
+          "rate": 0,
+          "confidence95": [
+            0,
+            0.007624618530903363
+          ]
+        },
+        "loss": {
+          "count": 0,
+          "n": 500,
+          "rate": 0,
+          "confidence95": [
+            0,
+            0.007624618530903363
+          ]
+        },
+        "tie": {
+          "count": 500,
+          "n": 500,
+          "rate": 1,
+          "confidence95": [
+            0.9923753814690964,
+            0.9999999999999999
+          ]
+        },
+        "decisiveWin": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "confidence95": null
+        },
+        "margin": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "key": "10:optimal-vs-p1a",
+        "win": {
+          "count": 233,
+          "n": 500,
+          "rate": 0.466,
+          "confidence95": [
+            0.4226999925744605,
+            0.5098184814856409
+          ]
+        },
+        "loss": {
+          "count": 133,
+          "n": 500,
+          "rate": 0.266,
+          "confidence95": [
+            0.22915976106477493,
+            0.3064085604076879
+          ]
+        },
+        "tie": {
+          "count": 134,
+          "n": 500,
+          "rate": 0.268,
+          "confidence95": [
+            0.23105333049086763,
+            0.30848449250747156
+          ]
+        },
+        "decisiveWin": {
+          "count": 233,
+          "n": 366,
+          "rate": 0.6366120218579235,
+          "confidence95": [
+            0.586152751218639,
+            0.684233273501133
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 7,
+          "variance": 759.3186372745492,
+          "standardError": 1.2323300185214587,
+          "confidence95": [
+            4.584633163697941,
+            9.41536683630206
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 6.689461900188739,
+          "variance": 34.21098306126861,
+          "standardError": 0.2615759280257593,
+          "confidence95": [
+            6.176773081258251,
+            7.202150719119228
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0.3105380998112599,
+          "variance": 700.0069058603523,
+          "standardError": 1.1832217931227875,
+          "confidence95": [
+            -2.0085766147094035,
+            2.6296528143319233
+          ]
+        }
+      },
+      {
+        "key": "10:optimal-vs-upcard-pocket",
+        "win": {
+          "count": 140,
+          "n": 500,
+          "rate": 0.28,
+          "confidence95": [
+            0.24243538732541,
+            0.32091944482818746
+          ]
+        },
+        "loss": {
+          "count": 80,
+          "n": 500,
+          "rate": 0.16,
+          "confidence95": [
+            0.13047587742957925,
+            0.19470886317143507
+          ]
+        },
+        "tie": {
+          "count": 280,
+          "n": 500,
+          "rate": 0.56,
+          "confidence95": [
+            0.5161960663856535,
+            0.6028889793906382
+          ]
+        },
+        "decisiveWin": {
+          "count": 140,
+          "n": 220,
+          "rate": 0.6363636363636364,
+          "confidence95": [
+            0.5709608335998033,
+            0.6970858565596665
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 3.0000000000000027,
+          "variance": 252.30460921843695,
+          "standardError": 0.7103585140173051,
+          "confidence95": [
+            1.6076973125260847,
+            4.39230268747392
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 1.5984210054298802,
+          "variance": 4.489591563695575,
+          "standardError": 0.09475855173751419,
+          "confidence95": [
+            1.4126942440243524,
+            1.784147766835408
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 1.4015789945701183,
+          "variance": 243.5254195730652,
+          "standardError": 0.6978902772973201,
+          "confidence95": [
+            0.0337140510673708,
+            2.7694439380728655
+          ]
+        }
+      },
+      {
+        "key": "10:optimal-vs-eleven-twenty",
+        "win": {
+          "count": 182,
+          "n": 500,
+          "rate": 0.364,
+          "confidence95": [
+            0.323010706915662,
+            0.4070631893247437
+          ]
+        },
+        "loss": {
+          "count": 106,
+          "n": 500,
+          "rate": 0.212,
+          "confidence95": [
+            0.1784389298803022,
+            0.24995285039349813
+          ]
+        },
+        "tie": {
+          "count": 212,
+          "n": 500,
+          "rate": 0.424,
+          "confidence95": [
+            0.38142335182762455,
+            0.46773559018907274
+          ]
+        },
+        "decisiveWin": {
+          "count": 182,
+          "n": 288,
+          "rate": 0.6319444444444444,
+          "confidence95": [
+            0.5748480817987099,
+            0.6855671571528309
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 4.070000000000001,
+          "variance": 412.0091182364728,
+          "standardError": 0.9077545023148855,
+          "confidence95": [
+            2.2908011754628257,
+            5.849198824537177
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 2.8638581429963144,
+          "variance": 10.572244700410595,
+          "standardError": 0.1454114486580104,
+          "confidence95": [
+            2.578851703626614,
+            3.1488645823660146
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 1.2061418570036855,
+          "variance": 396.51111829529833,
+          "standardError": 0.890517959723776,
+          "confidence95": [
+            -0.5392733440549156,
+            2.9515570580622867
+          ]
+        }
+      },
+      {
+        "key": "10:upcard-pocket-vs-p1a",
+        "win": {
+          "count": 197,
+          "n": 500,
+          "rate": 0.394,
+          "confidence95": [
+            0.3521334205007971,
+            0.4374829986277544
+          ]
+        },
+        "loss": {
+          "count": 147,
+          "n": 500,
+          "rate": 0.294,
+          "confidence95": [
+            0.2557578175953935,
+            0.3353835252393387
+          ]
+        },
+        "tie": {
+          "count": 156,
+          "n": 500,
+          "rate": 0.312,
+          "confidence95": [
+            0.27295226189727373,
+            0.3539145946703459
+          ]
+        },
+        "decisiveWin": {
+          "count": 197,
+          "n": 344,
+          "rate": 0.5726744186046512,
+          "confidence95": [
+            0.51987813312767,
+            0.6238654559082591
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 4,
+          "variance": 722.6452905811624,
+          "standardError": 1.2022023877710128,
+          "confidence95": [
+            1.6436833199688148,
+            6.356316680031185
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 5.09104089475886,
+          "variance": 35.190630588991446,
+          "standardError": 0.26529466858190515,
+          "confidence95": [
+            4.571063344338326,
+            5.611018445179394
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": -1.09104089475886,
+          "variance": 659.9154785163549,
+          "standardError": 1.1488389604434164,
+          "confidence95": [
+            -3.342765257227956,
+            1.160683467710236
+          ]
+        }
+      },
+      {
+        "key": "10:upcard-pocket-vs-eleven-twenty",
+        "win": {
+          "count": 151,
+          "n": 500,
+          "rate": 0.302,
+          "confidence95": [
+            0.26339087332996447,
+            0.34362847560827325
+          ]
+        },
+        "loss": {
+          "count": 126,
+          "n": 500,
+          "rate": 0.252,
+          "confidence95": [
+            0.21593322346148225,
+            0.29184858732984587
+          ]
+        },
+        "tie": {
+          "count": 223,
+          "n": 500,
+          "rate": 0.446,
+          "confidence95": [
+            0.4030056150135332,
+            0.4898178437878044
+          ]
+        },
+        "decisiveWin": {
+          "count": 151,
+          "n": 277,
+          "rate": 0.5451263537906137,
+          "confidence95": [
+            0.48626607761091956,
+            0.602752073546174
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 1.0699999999999985,
+          "variance": 362.5301603206411,
+          "standardError": 0.8515047390597906,
+          "confidence95": [
+            -0.598949288557191,
+            2.7389492885571878
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 1.2654371375664348,
+          "variance": 13.790065095922381,
+          "standardError": 0.16607266539634016,
+          "confidence95": [
+            0.9399347133896081,
+            1.5909395617432616
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": -0.19543713756643466,
+          "variance": 345.0317755686996,
+          "standardError": 0.8307006387004883,
+          "confidence95": [
+            -1.8236103894193918,
+            1.4327361142865223
+          ]
+        }
+      },
+      {
+        "key": "10:optimal-vs-optimal",
+        "win": {
+          "count": 0,
+          "n": 500,
+          "rate": 0,
+          "confidence95": [
+            0,
+            0.007624618530903363
+          ]
+        },
+        "loss": {
+          "count": 0,
+          "n": 500,
+          "rate": 0,
+          "confidence95": [
+            0,
+            0.007624618530903363
+          ]
+        },
+        "tie": {
+          "count": 500,
+          "n": 500,
+          "rate": 1,
+          "confidence95": [
+            0.9923753814690964,
+            0.9999999999999999
+          ]
+        },
+        "decisiveWin": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "confidence95": null
+        },
+        "margin": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        }
+      },
+      {
+        "key": "20:optimal-vs-p1a",
+        "win": {
+          "count": 296,
+          "n": 500,
+          "rate": 0.592,
+          "confidence95": [
+            0.5483787038455701,
+            0.6342183663447436
+          ]
+        },
+        "loss": {
+          "count": 140,
+          "n": 500,
+          "rate": 0.28,
+          "confidence95": [
+            0.24243538732541,
+            0.32091944482818746
+          ]
+        },
+        "tie": {
+          "count": 64,
+          "n": 500,
+          "rate": 0.128,
+          "confidence95": [
+            0.10152638796079462,
+            0.1601463282261975
+          ]
+        },
+        "decisiveWin": {
+          "count": 296,
+          "n": 436,
+          "rate": 0.6788990825688074,
+          "confidence95": [
+            0.6336739706753917,
+            0.7209991661993379
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 13.689999999999992,
+          "variance": 1298.430761523046,
+          "standardError": 1.611478055403204,
+          "confidence95": [
+            10.531503011409713,
+            16.848496988590274
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 13.292519890061827,
+          "variance": 71.23525750442943,
+          "standardError": 0.3774526659183359,
+          "confidence95": [
+            12.55271266486189,
+            14.032327115261765
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0.3974801099381763,
+          "variance": 1189.0016712994263,
+          "standardError": 1.5420776058937022,
+          "confidence95": [
+            -2.6249919976134803,
+            3.4199522174898327
+          ]
+        }
+      },
+      {
+        "key": "20:optimal-vs-upcard-pocket",
+        "win": {
+          "count": 200,
+          "n": 500,
+          "rate": 0.4,
+          "confidence95": [
+            0.35797823817783564,
+            0.44354668552834503
+          ]
+        },
+        "loss": {
+          "count": 133,
+          "n": 500,
+          "rate": 0.266,
+          "confidence95": [
+            0.22915976106477493,
+            0.3064085604076879
+          ]
+        },
+        "tie": {
+          "count": 167,
+          "n": 500,
+          "rate": 0.334,
+          "confidence95": [
+            0.2940631065718404,
+            0.37646826678041956
+          ]
+        },
+        "decisiveWin": {
+          "count": 200,
+          "n": 333,
+          "rate": 0.6006006006006006,
+          "confidence95": [
+            0.5471361029290017,
+            0.6517704454308207
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 3.6299999999999923,
+          "variance": 462.7986973947894,
+          "standardError": 0.9620797237181432,
+          "confidence95": [
+            1.7443237415124317,
+            5.515676258487553
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 3.169338440945964,
+          "variance": 8.991419157949982,
+          "standardError": 0.13410010557751237,
+          "confidence95": [
+            2.90650223401404,
+            3.432174647877888
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0.4606615590540355,
+          "variance": 457.3566134268581,
+          "standardError": 0.9564064130136917,
+          "confidence95": [
+            -1.4138950104528,
+            2.335218128560871
+          ]
+        }
+      },
+      {
+        "key": "20:optimal-vs-eleven-twenty",
+        "win": {
+          "count": 253,
+          "n": 500,
+          "rate": 0.506,
+          "confidence95": [
+            0.46229784108368,
+            0.5496106634939493
+          ]
+        },
+        "loss": {
+          "count": 147,
+          "n": 500,
+          "rate": 0.294,
+          "confidence95": [
+            0.2557578175953935,
+            0.3353835252393387
+          ]
+        },
+        "tie": {
+          "count": 100,
+          "n": 500,
+          "rate": 0.2,
+          "confidence95": [
+            0.16728494139259462,
+            0.23728982972594745
+          ]
+        },
+        "decisiveWin": {
+          "count": 253,
+          "n": 400,
+          "rate": 0.6325,
+          "confidence95": [
+            0.5841997778817278,
+            0.6782793723593568
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 7.339999999999998,
+          "variance": 863.1507014028049,
+          "standardError": 1.3138878958288678,
+          "confidence95": [
+            4.764779724175417,
+            9.915220275824579
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 6.057978715026449,
+          "variance": 21.828350366623994,
+          "standardError": 0.2089418596960599,
+          "confidence95": [
+            5.648452670022172,
+            6.467504760030726
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 1.2820212849735526,
+          "variance": 834.2743711767065,
+          "standardError": 1.2917231678472803,
+          "confidence95": [
+            -1.2497561240071167,
+            3.813798693954222
+          ]
+        }
+      },
+      {
+        "key": "20:upcard-pocket-vs-p1a",
+        "win": {
+          "count": 276,
+          "n": 500,
+          "rate": 0.552,
+          "confidence95": [
+            0.5081789316318008,
+            0.5950281080409854
+          ]
+        },
+        "loss": {
+          "count": 146,
+          "n": 500,
+          "rate": 0.292,
+          "confidence95": [
+            0.25385182596325645,
+            0.33332001534559935
+          ]
+        },
+        "tie": {
+          "count": 78,
+          "n": 500,
+          "rate": 0.156,
+          "confidence95": [
+            0.12683030337229503,
+            0.19041543417696646
+          ]
+        },
+        "decisiveWin": {
+          "count": 276,
+          "n": 422,
+          "rate": 0.6540284360189573,
+          "confidence95": [
+            0.6074371038225368,
+            0.6978407271831704
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 10.059999999999992,
+          "variance": 1271.1386773547106,
+          "standardError": 1.5944520546913354,
+          "confidence95": [
+            6.934873972804974,
+            13.18512602719501
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 10.123181449115862,
+          "variance": 75.06529634307543,
+          "standardError": 0.38746689237424,
+          "confidence95": [
+            9.36374634006235,
+            10.882616558169373
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": -0.06318144911585942,
+          "variance": 1189.1777333198188,
+          "standardError": 1.5421917736259774,
+          "confidence95": [
+            -3.085877325422775,
+            2.9595144271910563
+          ]
+        }
+      },
+      {
+        "key": "20:upcard-pocket-vs-eleven-twenty",
+        "win": {
+          "count": 227,
+          "n": 500,
+          "rate": 0.454,
+          "confidence95": [
+            0.4108749466266584,
+            0.49782651827818475
+          ]
+        },
+        "loss": {
+          "count": 155,
+          "n": 500,
+          "rate": 0.31,
+          "confidence95": [
+            0.27103822626974466,
+            0.3518591287719986
+          ]
+        },
+        "tie": {
+          "count": 118,
+          "n": 500,
+          "rate": 0.236,
+          "confidence95": [
+            0.20088068978132578,
+            0.27514510880299115
+          ]
+        },
+        "decisiveWin": {
+          "count": 227,
+          "n": 382,
+          "rate": 0.5942408376963351,
+          "confidence95": [
+            0.5442968383107307,
+            0.6423082348591918
+          ]
+        },
+        "margin": {
+          "n": 500,
+          "mean": 3.709999999999998,
+          "variance": 700.8876753507012,
+          "standardError": 1.1839659415293171,
+          "confidence95": [
+            1.3894267546025367,
+            6.030573245397459
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 2.8886402740804824,
+          "variance": 24.116932055216843,
+          "standardError": 0.21962209385768475,
+          "confidence95": [
+            2.4581809701194204,
+            3.3190995780415444
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0.8213597259195193,
+          "variance": 683.9692460879279,
+          "standardError": 1.1695890270414886,
+          "confidence95": [
+            -1.4710347670817985,
+            3.113754218920837
+          ]
+        }
+      },
+      {
+        "key": "20:optimal-vs-optimal",
+        "win": {
+          "count": 0,
+          "n": 500,
+          "rate": 0,
+          "confidence95": [
+            0,
+            0.007624618530903363
+          ]
+        },
+        "loss": {
+          "count": 0,
+          "n": 500,
+          "rate": 0,
+          "confidence95": [
+            0,
+            0.007624618530903363
+          ]
+        },
+        "tie": {
+          "count": 500,
+          "n": 500,
+          "rate": 1,
+          "confidence95": [
+            0.9923753814690964,
+            0.9999999999999999
+          ]
+        },
+        "decisiveWin": {
+          "count": 0,
+          "n": 0,
+          "rate": null,
+          "confidence95": null
+        },
+        "margin": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "expectedMargin": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "luckResidual": {
+          "n": 500,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        }
+      }
+    ]
+  },
+  "execution": {
+    "elapsedMs": 11366.3147,
+    "node": "v24.21.0",
+    "timingNote": "result is deterministic; execution timing/environment are metadata"
+  }
+}

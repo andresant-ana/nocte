@@ -83,3 +83,7 @@ Interpretation: even one mastered decision layer can overpower random compositio
 - Keep underlying results and model parameters in repo; label unrun new metrics as PLANNED.
 
 See [lab/README.md](../lab/README.md) for raw output records. The source Python lab from the earlier exported artifact must be imported/ported separately before claims of *in-repo full reproducibility*; these preserved numeric outputs alone do not constitute the runnable model.
+
+## P1C strategic depth
+
+[LAB-P1C](LAB-P1C.md) audits exact decision gaps, order-averaged regret, explainable policies and paired 5/10/20-round sessions using the existing experimental model. It documents adverse compression evidence and the superseded sorted-order experiment. This does not validate human mastery, fun, live mirroring or competitive diversity.

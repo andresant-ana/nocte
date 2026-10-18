@@ -61,3 +61,7 @@ Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-042 onward and update
 ## P1B evidence addendum — 2026-10-18
 
 N-033/N-034/N-035 retain their **EXPERIMENTAL** statuses. [LAB-P1B](LAB-P1B.md) records independent aggregate numerical reproduction of the 7,150-class symmetric model, distinguishes indexed versus distinct random baselines, and adds a controlled offline benchmark. It does not rerun the conditional 40k or old 30k match-length studies. N-019/N-020 remain EXPERIMENTAL; N-024 and O-01/O-02/O-03 remain OPEN. No product rule is ratified or changed by this evidence update.
+
+## P1C evidence addendum — 2026-10-18
+
+[LAB-P1C](LAB-P1C.md) adds an exact weighted depth/compression audit and controlled 5/10/20-round sessions. N-033/N-034/N-035 and N-019/N-020 remain **EXPERIMENTAL**; N-036, N-024 and O-01/O-02/O-03 remain **OPEN**. Simple competent policies retain most model EV, so competitive depth is not established. The conditional solo-learning recommendation is evidence for a future decision, not authorization of UI, ASYM or a status change. Exploratory v1 artifacts are preserved and explicitly superseded by dealt-order v2. No canonical rule changes.
