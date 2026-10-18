@@ -61,16 +61,39 @@ describe("solo game table", () => {
     await user.click(screen.getByRole("button", { name: "Dobrar" }));
     expect(onUpdate.mock.calls.at(-1)?.[0].hands.luz.status).toBe("doubled");
     await user.click(screen.getByRole("button", { name: "Parar" }));
-    expect(onUpdate.mock.calls.at(-1)?.[0].phase).toBe("dealer");
+    const dealerPhase = onUpdate.mock.calls.at(-1)?.[0];
+    expect(dealerPhase.phase).toBe("dealer");
+    expect(dealerPhase).not.toHaveProperty("dealerHole");
+    expect(dealerPhase).not.toHaveProperty("dealerDraws");
+    expect(screen.getByLabelText("Cartas visíveis do dealer").children).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: /Resolver dealer/i }));
-    expect(onUpdate.mock.calls.at(-1)?.[0].phase).toBe("complete");
+    const complete = onUpdate.mock.calls.at(-1)?.[0];
+    expect(complete.phase).toBe("complete");
+    expect(complete.dealerDraws).toEqual([card("5")]);
     expect(screen.getByText(/Rodada concluída/i)).toBeInTheDocument();
-    expect(screen.getByText(/Dealer.*10/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cartas do dealer: 6 \+ 10 \+ 5\. Total final: 21\./i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Cartas visíveis do dealer").children).toHaveLength(3);
     expect(screen.getByText(/Derrota/i)).toBeInTheDocument();
     expect(screen.getByText(/Pontuação da rodada: −10/i)).toBeInTheDocument();
     expect(screen.getByLabelText("Placar da Noite")).toHaveTextContent("0");
     await user.click(screen.getByRole("button", { name: "Próxima rodada" }));
     expect(onNextRound).toHaveBeenCalledOnce();
+  });
+
+  it("offers a keyboard-accessible, non-strategic quick rules guide in free play", async () => {
+    const user = userEvent.setup();
+    const { render: renderTable } = setup();
+    renderTable();
+    const guide = screen.getByText("Guia rápido · regras experimentais");
+    expect(guide).toBeInTheDocument();
+    guide.focus();
+    await user.keyboard("{Enter}");
+    expect(screen.getByRole("region", { name: "Guia rápido" })).toBeInTheDocument();
+    expect(screen.getByText(/quatro cartas iniciais.*Luz e Sombra/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ás vale 1 ou 11/i)).toBeInTheDocument();
+    expect(screen.getByText(/O dealer compra até atingir 17/i)).toBeInTheDocument();
+    expect(screen.getByText(/Empate.*devolve/i)).toBeInTheDocument();
+    expect(screen.queryByText(/estratégia ótima|valor esperado|arrependimento/i)).not.toBeInTheDocument();
   });
 
   it("supports keyboard selection and reveals a dealer natural only after composition settles", async () => {

@@ -75,6 +75,7 @@ describe("P2A consent and session-only records", () => {
     const onDecline = vi.fn();
     render(<StudyFlow profile={DF_SYM_01_3_TO_2} onDecline={onDecline} onExit={vi.fn()} />);
     expect(screen.getByRole("heading", { name: /estudo local/i })).toBeInTheDocument();
+    expect(screen.queryByText("Guia rápido · regras experimentais")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Confirmar composição/i })).toBeNull();
     await user.click(screen.getByRole("button", { name: /Declinar e jogar livre/i }));
     expect(onDecline).toHaveBeenCalledOnce();
@@ -89,6 +90,7 @@ describe("P2A consent and session-only records", () => {
     render(<StudyFlow profile={DF_SYM_01_3_TO_2} onDecline={vi.fn()} onExit={vi.fn()} />);
     await user.click(screen.getByRole("button", { name: /Concordo e iniciar/i }));
     expect(await screen.findByText(/Familiarização · 1 de 3/i)).toBeInTheDocument();
+    expect(screen.queryByText("Guia rápido · regras experimentais")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Registros consentidos")).toHaveTextContent("0");
     expect(screen.getByRole("button", { name: /Exportar JSON/i })).toBeDisabled();
     expect(screen.queryByText(/seed:|regret:|EV ótimo:/i)).not.toBeInTheDocument();

@@ -269,6 +269,7 @@ export function StudyFlow({ profile, onDecline, onExit }: StudyFlowProps) {
             session={active.controller}
             round={active.view}
             onRoundChange={onRoundChange}
+            showRulesGuide={false}
             roundNumber={active.ordinal + 1}
             profileLabel={profile.naturalPayout}
             nightScore={totalScore}

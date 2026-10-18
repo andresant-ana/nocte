@@ -55,6 +55,9 @@ button.secondary-action { color: #eee8d8; background: transparent; }
 .hand-result { color: #f0d897 !important; font-weight: 700 !important; }
 .action-row { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1rem 0; }
 .round-summary { margin-top: 1rem; padding: 1rem; border-top: 1px solid #77633a; }
+.quick-rules { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid #77633a; }
+.quick-rules summary { cursor: pointer; font-weight: 700; }
+.quick-rules ul { margin-bottom: 0; padding-left: 1.25rem; }
 .recoverable-error { margin: 1rem 0; padding: .75rem 1rem; color: #ffe0d7; background: #542821; font: .95rem/1.5 system-ui, sans-serif; }
 .study-notice { color: #c8bfa9; font: .9rem/1.5 system-ui, sans-serif; }
 .study-briefing ul { max-width: 42rem; margin: 0 auto; padding-left: 1.5rem; text-align: left; color: #ddd4c0; font: .95rem/1.65 system-ui, sans-serif; }

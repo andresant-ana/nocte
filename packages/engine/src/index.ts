@@ -77,6 +77,8 @@ export type PublicRound = Readonly<{
   originalCards: readonly Card[];
   dealerUp: Card;
   dealerHole?: Card;
+  /** Dealer draws are visible only in the detached terminal projection. */
+  dealerDraws?: readonly Card[];
   hands?: Record<HandName, HandState>;
   currentHand?: HandName;
   legalActions: readonly Action[];
@@ -179,7 +181,7 @@ export function publicRound(round: InternalRound): PublicRound {
   const base: PublicRound = {
     rulesId: round.rules.id, gameVersion: round.rules.gameVersion, phase: round.phase,
     originalCards: round.originalCards, dealerUp: round.dealerUp,
-    ...(round.phase === "complete" ? { dealerHole: round.dealerHole } : {}),
+    ...(round.phase === "complete" ? { dealerHole: round.dealerHole, dealerDraws: round.dealerDraws } : {}),
     legalActions: legalActions(round), naturalPeek: round.phase === "compose" ? null : round.naturalPeek,
     ...(round.hands ? { hands: round.hands } : {}),
     ...(round.currentHand ? { currentHand: round.currentHand } : {}),

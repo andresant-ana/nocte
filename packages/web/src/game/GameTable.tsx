@@ -10,6 +10,7 @@ type GameTableProps = {
   profileLabel: string;
   nightScore: number;
   roundScore?: number;
+  showRulesGuide?: boolean;
   showNewNightButton?: boolean;
   nextDisabled?: boolean;
   onNextRound: () => void;
@@ -48,6 +49,7 @@ export function GameTable({
   profileLabel,
   nightScore,
   roundScore,
+  showRulesGuide = true,
   showNewNightButton = true,
   nextDisabled = false,
   onNextRound,
@@ -91,6 +93,9 @@ export function GameTable({
 
   const options = view.phase === "compose" ? partitions(view.originalCards) : [];
   const completeScore = roundScore ?? (view.settlement ? view.settlement.luz.score + view.settlement.sombra.score : null);
+  const dealerCards = view.phase === "complete" && view.dealerHole
+    ? [view.dealerUp, view.dealerHole, ...(view.dealerDraws ?? [])]
+    : [view.dealerUp];
 
   return (
     <section className="game-table" aria-labelledby="table-title">
@@ -109,12 +114,27 @@ export function GameTable({
       <p className="phase-status" role="status" aria-live="polite">{phaseLabel(view)}</p>
       {error && <p className="recoverable-error" role="alert">{error}</p>}
 
+      {showRulesGuide && (
+        <details className="quick-rules">
+          <summary>Guia rápido · regras experimentais</summary>
+          <section aria-label="Guia rápido">
+            <ul>
+              <li>Distribua as quatro cartas iniciais em duas mãos de duas: Luz e Sombra. Cada mão enfrenta o mesmo dealer.</li>
+              <li>Em cada mão, tente chegar perto de 21 sem passar. Ás vale 1 ou 11, conforme o total da mão.</li>
+              <li>Na sua vez, Comprar recebe uma carta; Parar mantém a mão; Dobrar aumenta a exposição e recebe exatamente uma carta antes de encerrar a mão.</li>
+              <li>O dealer compra até atingir 17 e para em qualquer 17, inclusive 17 suave.</li>
+              <li>Compare cada mão com o dealer: passar de 21 perde; um empate devolve a exposição daquela mão. Naturais e pagamentos seguem o perfil experimental indicado na mesa.</li>
+            </ul>
+          </section>
+        </details>
+      )}
+
       <section className="dealer-area" aria-labelledby="dealer-title">
         <h3 id="dealer-title">Dealer</h3>
-        <Cards cards={[view.dealerUp, ...(view.phase === "complete" && view.dealerHole ? [view.dealerHole] : [])]} label="Cartas visíveis do dealer" />
+        <Cards cards={dealerCards} label="Cartas visíveis do dealer" />
         {view.phase !== "complete" && <p className="muted">Uma carta permanece fechada até o fim da rodada.</p>}
         {view.phase === "complete" && view.dealerHole && (
-          <p>Dealer revelou {view.dealerHole.rank}. Total final: {view.settlement?.luz.dealerTotal}.</p>
+          <p>Cartas do dealer: {dealerCards.map((card) => card.rank).join(" + ")}. Total final: {handValue(dealerCards).total}.</p>
         )}
       </section>
 
