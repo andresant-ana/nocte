@@ -1,0 +1,23 @@
+{
+  "5": {
+    "opt_win_rate": 0.6985,
+    "random_win_rate": 0.188,
+    "tie_rate": 0.1135,
+    "mean_margin": 20.771,
+    "stdev_margin": 30.24
+  },
+  "10": {
+    "opt_win_rate": 0.8225,
+    "random_win_rate": 0.139,
+    "tie_rate": 0.0385,
+    "mean_margin": 41.706,
+    "stdev_margin": 42.889
+  },
+  "20": {
+    "opt_win_rate": 0.9137,
+    "random_win_rate": 0.0733,
+    "tie_rate": 0.013,
+    "mean_margin": 83.329,
+    "stdev_margin": 60.581
+  }
+}

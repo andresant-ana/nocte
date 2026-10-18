@@ -1,0 +1,37 @@
+[
+  {
+    "natural_payout": 1.5,
+    "count_equivalence_classes": 7150,
+    "total_weight_check": 0.9999999999999497,
+    "optimized_ev_per_2_unit_stakes": 0.3792359196425889,
+    "random_ev_per_2_unit_stakes": -0.02173484549081334,
+    "mean_gap_2_unit_stakes": 0.4009707651334022,
+    "optimal_player_edge_on_20_staked": 0.18961795982129445,
+    "fraction_gap_best_worst_gt_0_2": 0.7929425009359395,
+    "illustrative_large_gap_without_constructed_natural": {
+      "cards": [
+        5,
+        6,
+        10,
+        10
+      ],
+      "dealer_up": 7,
+      "gap": 2.020656824543817,
+      "values": [
+        1.2361161754014658,
+        -0.7845406491423512,
+        -0.7845406491423512
+      ]
+    }
+  },
+  {
+    "natural_payout": 1,
+    "count_equivalence_classes": 7150,
+    "total_weight_check": 0.9999999999999497,
+    "optimized_ev_per_2_unit_stakes": 0.2906751780720476,
+    "random_ev_per_2_unit_stakes": -0.06683130569879144,
+    "mean_gap_2_unit_stakes": 0.3575064837708391,
+    "optimal_player_edge_on_20_staked": 0.1453375890360238,
+    "fraction_gap_best_worst_gt_0_2": 0.7555811717430913
+  }
+]

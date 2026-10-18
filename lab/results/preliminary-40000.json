@@ -1,0 +1,13 @@
+{
+  "assumptions": "infinite deck, 4-card hands, peek no natural dealer, S17, blackjack 3:2, equal stakes",
+  "n": 40000,
+  "seed": 20261018,
+  "mean_ev_optimal_partition_units_for_two_equal_stakes": 0.476184,
+  "mean_ev_fixed_partition_units_for_two_equal_stakes": 0.058814,
+  "mean_ev_balanced_partition_units_for_two_equal_stakes": -0.139676,
+  "mean_ev_random_partition_units_for_two_equal_stakes": 0.059563,
+  "mean_gain_best_over_random_in_stake_units": 0.416621,
+  "mean_gain_best_over_fixed_in_stake_units": 0.41737,
+  "fraction_best_worst_gap_greater_than_0_2": 0.7977,
+  "fraction_all_partitions_nearly_equal_0_02": 0.1203
+}
