@@ -1,7 +1,7 @@
 # NOCTE — canonical document map
 
 **Baseline:** 2026-10-18, v0.1 (initial recording of founder decisions and exploratory Duas Faces research).
-**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor; P2B-F adds a conditional round solver and approximate intertemporal strategy lab. P2C-A adds a separate browser solo table for the experimental mode and a manual exploratory protocol. Neither has human playtest results or final balance claims. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
+**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor; P2B-F adds a conditional round solver and approximate intertemporal strategy lab. P2C-A adds a separate browser solo table; P2C-C improves simultaneous access to its experimental abilities. The manual exploratory protocol has no human playtest results. P4-D records the approved A0→A1 research sequence, while A0 financial parameters remain OPEN and unimplemented. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
 
 | Document | Authority / purpose |
 | --- | --- |
@@ -14,6 +14,7 @@
 | [COMPETITION-ECONOMY.md](COMPETITION-ECONOMY.md) | Ranked mirroring, virtual economies, Subsolo, statistics and anti-abuse |
 | [ECONOMY-REWARDS-DIRECTION.md](ECONOMY-REWARDS-DIRECTION.md) | N-048 product direction: fictional bankroll plus skill; candidate cosmetics, reward and future-store constraints |
 | [ECONOMY-RFC-P4.md](ECONOMY-RFC-P4.md) | Candidate comparison of session bank, persistent credit balance, duels, stake timing, rankings and cosmetic currencies (Issue #23) |
+| [BANKROLL-A0-CONTRACT.md](BANKROLL-A0-CONTRACT.md) | Candidate session bankroll contract, reserve/settlement math, insolvency choices and acceptance criteria (Issue #26; N-053 remains OPEN) |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |
