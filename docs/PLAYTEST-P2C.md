@@ -4,6 +4,10 @@
 **Status:** roteiro manual prospectivo; nenhuma sessão humana ou resultado é relatado aqui.
 **Escopo:** comparar compreensão e experiência do Duas Faces básico com a variante solo experimental `DF-CF-0.1-lab`.
 
+### Revisão de UX P2C-C
+
+Na janela de Foco, Leitura, Manobra e conservação aparecem juntas. A seleção direta de Manobra mostra alvos e prévia sem registrar uma decisão do motor. Confirmar Manobra enquanto Leitura está pendente pula essa decisão dentro da mesma transição que aplica a troca e cobra 1 Foco; cancelar a confirmação conserva o saldo e mantém Leitura disponível. Depois de uma Manobra confirmada, Leitura não pode ser iniciada. Observe se a pessoa compreende essa ordem e a diferença entre cancelar a prévia e confirmar a ação. Esta nota descreve a interface experimental e não altera N-046/N-047 nem ratifica regras.
+
 ## Status das regras e limites
 
 O modo Cofre + Foco e seus valores seguem **EXPERIMENTAL** (N-046/N-047). N-042 ratifica somente a direção; N-043 permanece CANDIDATE para produto final e N-045 permanece OPEN. O estudo P2A (`P2A-study-v1`) continua exclusivo do modo básico e não é um estudo comparativo. Este roteiro não registra decisões dentro do app, não coleta analytics e não afirma equilíbrio, diversão, retenção ou vantagem competitiva.

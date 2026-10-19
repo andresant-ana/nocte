@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { handValue, partitions, type Action, type Card, type HandName, type Partition } from "@nocte/engine";
 import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
 
 type CofreSession = Pick<CofreFocoSessionAdapter,
   "current" | "focusOptions" | "legalActions" | "compose" | "skipRead" | "readDealerHole" |
-  "skipManeuver" | "maneuver" | "continueAfterAbilities" | "act" | "resolveDealer" | "abandonNight">;
+  "skipManeuver" | "maneuverDirect" | "continueAfterAbilities" | "act" | "resolveDealer" | "abandonNight">;
 
 type Props = {
   session: CofreSession;
@@ -46,6 +46,7 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
+  const [maneuverChooserOpen, setManeuverChooserOpen] = useState(false);
   const [confirmation, setConfirmation] = useState<"read" | "maneuver" | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
   const busy = useRef(false);
@@ -57,10 +58,32 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
     else if (returnFocus.current?.isConnected) returnFocus.current.focus();
     else focusWindowTitle.current?.focus();
   }, [confirmation]);
+  useEffect(() => {
+    if (!confirmation) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setConfirmation(null);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [confirmation]);
 
   const requestConfirmation = (kind: "read" | "maneuver", trigger: HTMLElement) => {
     returnFocus.current = trigger;
     setConfirmation(kind);
+  };
+  const trapConfirmationFocus = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.key !== "Tab") return;
+    const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>("button:not(:disabled)");
+    const first = buttons.item(0);
+    const last = buttons.item(buttons.length - 1);
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   };
 
   const update = (operation: () => PublicCofreFocoNight): boolean => {
@@ -84,16 +107,12 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
   const confirmRead = () => { if (update(() => session.readDealerHole())) setConfirmation(null); };
   const confirmManeuver = () => { if (update(() => {
     if (!selectedSwap) throw new Error("Selecione uma carta elegível para Manobra.");
-    return session.maneuver(selectedSwap.hand, selectedSwap.cardIndex);
+    return session.maneuverDirect(selectedSwap.hand, selectedSwap.cardIndex);
   })) setConfirmation(null); };
   const continueWithoutMoreAbilities = () => update(() => {
     let next = session.current;
     if (next.round && !next.round.readDecisionMade) next = session.skipRead();
     if (next.round && !next.round.maneuverDecisionMade) next = session.skipManeuver();
-    return session.continueAfterAbilities();
-  });
-  const skipRemainingManeuver = () => update(() => {
-    session.skipManeuver();
     return session.continueAfterAbilities();
   });
   const abandon = () => {
@@ -219,47 +238,63 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
       {night.status === "active" && round.phase === "focusWindow" && (
         <section className="focus-window" aria-labelledby="focus-window-title">
           <h3 ref={focusWindowTitle} id="focus-window-title" tabIndex={-1}>Janela de Foco</h3>
-          <p>Você pode conservar o saldo ou confirmar ações opcionais antes das mãos. Nenhuma dica estratégica é exibida.</p>
-          {round.readDecisionMade && round.readUsed && <p role="status">Leitura usada nesta rodada · 2 Focos gastos.</p>}
-          {!round.readDecisionMade && (
-            <div className="ability-panel">
-              <h4>Leitura · custo 2 Focos</h4>
+          <p>Leitura e Manobra estão disponíveis nesta janela. Você pode escolher uma, usar ambas na ordem permitida ou conservar o Foco.</p>
+          <div className="focus-choices">
+            <section className="ability-panel" aria-labelledby="read-choice-title">
+              <h4 id="read-choice-title">Leitura · custo {rules.readCost} Focos</h4>
               <p>Revela somente a carta fechada atual do dealer, em privado.</p>
-              {focusOptions.canRead
-                ? <button type="button" onClick={(event) => requestConfirmation("read", event.currentTarget)}>Escolher Leitura</button>
-                : <p className="muted">Leitura indisponível neste estado ou saldo.</p>}
-              <button type="button" className="secondary-action" onClick={() => update(() => session.skipRead())}>Pular Leitura</button>
-            </div>
-          )}
-          {round.readDecisionMade && !round.maneuverDecisionMade && (
-            <div className="ability-panel">
-              <h4>Manobra · custo 1 Foco</h4>
-              <p>Selecione uma carta de uma mão ativa de duas cartas. A carta escolhida vai para o Cofre; a carta do Cofre entra na mão.</p>
-              {focusOptions.maneuverTargets.length > 0 ? <div className="maneuver-targets" role="group" aria-label="Cartas elegíveis para Manobra">
-                {focusOptions.maneuverTargets.map(target => {
-                  const hand = round.hands![target.hand];
-                  const handLabel = target.hand === "luz" ? "Luz" : "Sombra";
-                  const rank = hand.cards[target.cardIndex]!.rank;
-                  return <button type="button" className={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex ? "target-selected" : "secondary-action"}
-                    key={`${target.hand}-${target.cardIndex}`} onClick={() => setSelectedSwap(target)}>
-                    {handLabel} · carta {target.cardIndex + 1} ({rank})
-                  </button>;
-                })}
-              </div> : <p className="muted">Manobra indisponível: nenhuma mão elegível ou Foco insuficiente.</p>}
-              {selectedSwap && focusOptions.maneuverTargets.some(target => target.hand === selectedSwap.hand && target.cardIndex === selectedSwap.cardIndex) && (
-                <div className="swap-preview" aria-live="polite">
-                  <p>Prévia · {selectedSwap.hand === "luz" ? "Luz" : "Sombra"}: {round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank} → {round.cofre?.rank}; Cofre receberá {round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}.</p>
-                  {round.cofre?.rank === "10" && round.hands![selectedSwap.hand].cards[1 - selectedSwap.cardIndex]?.rank === "A" && <p>Esta troca forma Ás + 10: 21 comum, sem bônus de natural e com parada automática.</p>}
-                  <button type="button" onClick={(event) => requestConfirmation("maneuver", event.currentTarget)}>Pré-visualizar Manobra · gastar 1 Foco</button>
-                </div>
-              )}
-              <button type="button" className="secondary-action" onClick={skipRemainingManeuver}>Continuar sem Manobra</button>
-            </div>
-          )}
-          {!round.readDecisionMade && !round.maneuverDecisionMade && (
-            <button type="button" className="secondary-action conserve-action" onClick={continueWithoutMoreAbilities}>Conservar Foco e continuar</button>
-          )}
-          {round.readDecisionMade && round.maneuverDecisionMade && <button type="button" onClick={() => update(() => session.continueAfterAbilities())}>Continuar às mãos</button>}
+              {round.readUsed
+                ? <p className="ability-status" role="status">Leitura já usada nesta rodada · {rules.readCost} Focos gastos.</p>
+                : !round.readDecisionMade && focusOptions.canRead
+                  ? <button type="button" onClick={(event) => requestConfirmation("read", event.currentTarget)}>Escolher Leitura · {rules.readCost} Focos</button>
+                  : round.readDecisionMade
+                    ? <p className="ability-status" role="status">Leitura não foi usada e não pode ser iniciada depois de decidir pela Manobra ou pela conservação.</p>
+                    : <p className="ability-status" role="status">Leitura indisponível: saldo insuficiente ou nenhuma decisão de mão pendente.</p>}
+            </section>
+
+            <section className="ability-panel" aria-labelledby="maneuver-choice-title">
+              <h4 id="maneuver-choice-title">Manobra · custo {rules.maneuverCost} Foco</h4>
+              <p>Troca uma carta de mão elegível pelo Cofre. A carta retirada passa ao Cofre.</p>
+              {round.maneuverUsed || round.maneuverDecisionMade
+                ? <p className="ability-status" role="status">Manobra já decidida nesta rodada.</p>
+                : <>
+                    <button type="button" disabled={focusOptions.maneuverTargets.length === 0}
+                      onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(true); }}>
+                      Escolher Manobra · {rules.maneuverCost} Foco
+                    </button>
+                    {focusOptions.maneuverTargets.length === 0 && <p className="ability-status" role="status">
+                      {focusOptions.canDecideManeuver && night.focusRemaining < rules.maneuverCost
+                        ? "Foco insuficiente para Manobra. Você pode continuar sem gastar."
+                        : "Manobra indisponível: nenhuma mão ativa elegível nesta janela."}
+                    </p>}
+                    {maneuverChooserOpen && focusOptions.maneuverTargets.length > 0 && <div className="maneuver-picker">
+                      <div className="maneuver-targets" role="group" aria-label="Cartas elegíveis para Manobra">
+                        {focusOptions.maneuverTargets.map(target => {
+                          const hand = round.hands![target.hand];
+                          const handLabel = target.hand === "luz" ? "Luz" : "Sombra";
+                          const rank = hand.cards[target.cardIndex]!.rank;
+                          return <button type="button" className={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex ? "target-selected" : "secondary-action"}
+                            key={`${target.hand}-${target.cardIndex}`} aria-pressed={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex}
+                            onClick={() => setSelectedSwap(target)}>
+                            {handLabel} · carta {target.cardIndex + 1} ({rank})
+                          </button>;
+                        })}
+                      </div>
+                      {selectedSwap && focusOptions.maneuverTargets.some(target => target.hand === selectedSwap.hand && target.cardIndex === selectedSwap.cardIndex) && (
+                        <div className="swap-preview" aria-live="polite">
+                          <p>Prévia · {selectedSwap.hand === "luz" ? "Luz" : "Sombra"}: {round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank} → {round.cofre?.rank}; Cofre receberá {round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}.</p>
+                          {round.cofre?.rank === "10" && round.hands![selectedSwap.hand].cards[1 - selectedSwap.cardIndex]?.rank === "A" && <p>Esta troca forma Ás + 10: 21 comum, sem bônus de natural e com parada automática.</p>}
+                          <button type="button" onClick={(event) => requestConfirmation("maneuver", event.currentTarget)}>Pré-visualizar Manobra · gastar {rules.maneuverCost} Foco</button>
+                        </div>
+                      )}
+                      <button type="button" className="secondary-action" onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(false); }}>Cancelar escolha</button>
+                    </div>}
+                  </>}
+            </section>
+          </div>
+          <button type="button" className="secondary-action conserve-action" onClick={continueWithoutMoreAbilities}>
+            {round.readDecisionMade && round.maneuverDecisionMade ? "Continuar às mãos" : "Conservar Foco e continuar"}
+          </button>
         </section>
       )}
 
@@ -294,12 +329,15 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
 
       {confirmation && (
         <div className="confirmation-backdrop">
-          <section className="ability-confirmation" role="dialog" aria-modal="true" aria-labelledby="ability-confirmation-title">
+          <section className="ability-confirmation" role="dialog" aria-modal="true" aria-labelledby="ability-confirmation-title" onKeyDown={trapConfirmationFocus}>
             <h3 id="ability-confirmation-title">Confirmar {confirmation === "read" ? "Leitura" : "Manobra"}</h3>
-            {confirmation === "read" ? <p>Revelar a hole card privada do dealer por 2 Focos? A informação não inclui compras futuras.</p> : <p>Aplicar a troca prévia e gastar 1 Foco? A carta retirada ficará no Cofre.</p>}
+            {confirmation === "read" ? <p>Revelar a carta fechada atual do dealer por {rules.readCost} Focos? A informação não inclui compras futuras.</p> : <>
+              <p>Confirmar a troca abaixo e gastar {rules.maneuverCost} Foco?{!round.readDecisionMade && " A Leitura pendente será pulada na mesma transição."}</p>
+              {selectedSwap && round.hands && <p>Antes: {selectedSwap.hand === "luz" ? "Luz" : "Sombra"} · carta {selectedSwap.cardIndex + 1} {round.hands[selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}; Cofre {round.cofre?.rank}. Depois: mão {round.cofre?.rank}; Cofre {round.hands[selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}.</p>}
+            </>}
             <div className="landing-actions">
               <button ref={confirmButton} type="button" onClick={confirmation === "read" ? confirmRead : confirmManeuver}>Confirmar gasto</button>
-              <button type="button" className="secondary-action" onClick={() => setConfirmation(null)}>Cancelar</button>
+              <button type="button" className="secondary-action" onClick={() => setConfirmation(null)}>{confirmation === "maneuver" ? "Cancelar · manter Foco" : "Cancelar"}</button>
             </div>
           </section>
         </div>

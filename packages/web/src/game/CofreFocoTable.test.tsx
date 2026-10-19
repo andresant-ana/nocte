@@ -52,35 +52,61 @@ describe("Cofre + Foco solo table", () => {
     expect(screen.getByLabelText("Cartas visíveis do dealer").querySelectorAll("[aria-label^='Carta']")).toHaveLength(2);
     expect(screen.queryByLabelText(/Carta lida/)).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Escolher Leitura" }));
+    await user.click(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" }));
     expect(screen.getByRole("dialog", { name: "Confirmar Leitura" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Confirmar gasto" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Cancelar" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Confirmar gasto" })).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "Confirmar Leitura" })).not.toBeInTheDocument();
+    expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" }));
     await user.click(screen.getByRole("button", { name: "Cancelar" }));
     expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
     expect(screen.queryByLabelText(/Carta lida/)).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Escolher Leitura" }));
+    await user.click(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" }));
     await user.click(screen.getByRole("button", { name: "Confirmar gasto" }));
     expect(screen.getByText("1 de 3 restantes")).toBeInTheDocument();
     expect(screen.getByLabelText("Cartas visíveis do dealer").querySelectorAll("[aria-label^='Compra do dealer']")).toHaveLength(0);
     expect(screen.getByText(/Leitura privada usada: a hole é 10/i)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Continuar sem Manobra" }));
+    await user.click(screen.getByRole("button", { name: "Conservar Foco e continuar" }));
     expect(screen.getByRole("button", { name: "Comprar" })).toBeInTheDocument();
   });
 
-  it("previews and confirms a legal Manobra, treats swapped Ace+10 as ordinary 21, and keeps the hand terminal", async () => {
+  it("shows Read and Manobra together, cancels Manobra without mutation, then allows Read and a legal swap", async () => {
     const user = userEvent.setup();
     const { render: renderTable } = setupRound();
     renderTable();
     await user.click(screen.getByRole("button", { name: "Confirmar composição" }));
-    await user.click(screen.getByRole("button", { name: "Pular Leitura" }));
+    expect(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Escolher Manobra · 1 Foco" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Conservar Foco e continuar" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Escolher Manobra · 1 Foco" }));
     await user.click(screen.getByRole("button", { name: "Luz · carta 2 (6)" }));
     expect(screen.getByText(/Luz: 6 → 10; Cofre receberá 6/i)).toBeInTheDocument();
     expect(screen.getByText(/21 comum.*para automaticamente/i)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: /Pré-visualizar Manobra/i }));
     expect(screen.getByRole("dialog", { name: "Confirmar Manobra" })).toBeInTheDocument();
-    expect(screen.getByText(/A carta retirada ficará no Cofre/i)).toBeInTheDocument();
+    expect(screen.getByText(/Leitura pendente será pulada na mesma transição/i)).toBeInTheDocument();
+    expect(screen.getByText(/Antes: Luz · carta 2 6; Cofre 10. Depois: mão 10; Cofre 6/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Cancelar · manter Foco" }));
+    expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" })).toBeInTheDocument();
+    expect(screen.getByRole("list", { name: "Carta do Cofre" })).toHaveTextContent("10");
+
+    await user.click(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" }));
     await user.click(screen.getByRole("button", { name: "Confirmar gasto" }));
-    expect(screen.getByText("2 de 3 restantes")).toBeInTheDocument();
+    expect(screen.getByText("1 de 3 restantes")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Escolher Manobra · 1 Foco" }));
+    await user.click(screen.getByRole("button", { name: "Luz · carta 2 (6)" }));
+    await user.click(screen.getByRole("button", { name: /Pré-visualizar Manobra/i }));
+    await user.click(screen.getByRole("button", { name: "Confirmar gasto" }));
+    expect(screen.getByText("0 de 3 restantes")).toBeInTheDocument();
     expect(screen.getByRole("list", { name: "Carta do Cofre" })).toHaveTextContent("6");
     expect(screen.getByText(/21 comum por Manobra/i)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Continuar às mãos" }));

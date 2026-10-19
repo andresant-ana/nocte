@@ -32,13 +32,47 @@ describe("Cofre + Foco browser session boundary", () => {
     expect(focus.round?.phase).toBe("focusWindow");
     expect(focus.round).not.toHaveProperty("dealerHole");
     expect(session.focusOptions.canRead).toBe(true);
-    expect(session.focusOptions.maneuverTargets).toHaveLength(0);
+    expect(session.focusOptions.canDecideManeuver).toBe(true);
+    expect(session.focusOptions.maneuverTargets).toHaveLength(4);
     const targets = session.skipRead();
     expect(session.focusOptions.maneuverTargets).toEqual([
       { hand: "luz", cardIndex: 0 }, { hand: "luz", cardIndex: 1 },
       { hand: "sombra", cardIndex: 0 }, { hand: "sombra", cardIndex: 1 },
     ]);
     expect(targets.round).not.toHaveProperty("dealerHole");
+  });
+
+  it("previews direct Manobra without mutating and applies its pending Read skip atomically", () => {
+    const session = CofreFocoSessionAdapter.start(prepared("direct-maneuver", 0,
+      [card("8"), card("7"), card("9"), card("9")], [card("6"), card("10")], card("4")), CF_LAB_01_3_TO_2, 2);
+    session.compose({ luz: [0, 1], sombra: [2, 3] });
+    const before = session.current;
+    expect(session.focusOptions.canRead).toBe(true);
+    expect(session.focusOptions.maneuverTargets).toHaveLength(4);
+    expect(() => session.maneuverDirect("luz", 2)).toThrow();
+    expect(session.current).toEqual(before);
+
+    const moved = session.maneuverDirect("luz", 1);
+    expect(moved.focusRemaining).toBe(2);
+    expect(moved.focusSpent).toEqual({ read: 0, maneuver: 1 });
+    expect(moved.round?.readDecisionMade).toBe(true);
+    expect(moved.round?.readUsed).toBe(false);
+    expect(moved.round?.maneuverDecisionMade).toBe(true);
+    expect(moved.round?.hands?.luz.cards).toEqual([card("8"), card("4")]);
+    expect(moved.round?.cofre).toEqual(card("7"));
+  });
+
+  it("allows Read followed by direct Manobra within the three-Focus budget", () => {
+    const session = CofreFocoSessionAdapter.start(prepared("read-then-maneuver", 0,
+      [card("8"), card("7"), card("9"), card("9")], [card("6"), card("10")], card("4")), CF_LAB_01_3_TO_2, 2);
+    session.compose({ luz: [0, 1], sombra: [2, 3] });
+    const read = session.readDealerHole();
+    expect(read.focusRemaining).toBe(1);
+    const moved = session.maneuverDirect("luz", 0);
+    expect(moved.focusRemaining).toBe(0);
+    expect(moved.focusSpent).toEqual({ read: 2, maneuver: 1 });
+    expect(moved.round?.readUsed).toBe(true);
+    expect(moved.round?.hands?.luz.cards[0]).toEqual(card("4"));
   });
 
   it("reveals only the read hole, carries Focus into a second round, and reveals all dealer cards only at settlement", () => {

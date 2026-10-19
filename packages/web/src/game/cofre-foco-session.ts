@@ -39,7 +39,17 @@ export class CofreFocoSessionAdapter {
   }
 
   get focusOptions() {
-    return legalCofreFocoFocusOptions(this.#night);
+    const current = legalCofreFocoFocusOptions(this.#night);
+    if (!current.canDecideRead || current.canDecideManeuver) return current;
+
+    // Preview the engine's legal targets after a possible Read skip without
+    // changing the session. This lets the UI show both choices at once.
+    const afterReadSkip = legalCofreFocoFocusOptions(skipRead(this.#night));
+    return {
+      ...current,
+      canDecideManeuver: afterReadSkip.canDecideManeuver,
+      maneuverTargets: afterReadSkip.maneuverTargets,
+    };
   }
 
   get legalActions(): readonly Action[] {
@@ -68,6 +78,14 @@ export class CofreFocoSessionAdapter {
 
   maneuver(hand: HandName, cardIndex: number): PublicCofreFocoNight {
     this.#night = maneuver(this.#night, hand, cardIndex);
+    return this.current;
+  }
+
+  /** Apply a direct Manobra as one transaction, optionally skipping pending Read first. */
+  maneuverDirect(hand: HandName, cardIndex: number): PublicCofreFocoNight {
+    const afterReadDecision = this.#night.round?.readDecisionMade ? this.#night : skipRead(this.#night);
+    const next = maneuver(afterReadDecision, hand, cardIndex);
+    this.#night = next;
     return this.current;
   }
 
