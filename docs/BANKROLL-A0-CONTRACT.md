@@ -1,9 +1,9 @@
 # NOCTE-P4-A0-S — contrato candidato da banca por Noite
 
-**Versão:** `BANKROLL-LAB-A0-contract-v0.1`  
-**Data:** 2026-10-19  
-**Status:** proposta para decisão expressa do fundador; **nenhum parâmetro abaixo está RATIFIED nem autorizado para código**.  
-**Issue:** [#26](https://github.com/andresant-ana/nocte/issues/26)  
+**Versão:** `BANKROLL-LAB-A0-contract-v0.1`<br>
+**Data:** 2026-10-19<br>
+**Status:** proposta para decisão expressa do fundador; **nenhum parâmetro abaixo está RATIFIED nem autorizado para código**.<br>
+**Issue:** [#26](https://github.com/andresant-ana/nocte/issues/26)<br>
 **Decisões preservadas:** N-009, N-012, N-021, N-038, N-048, N-050, N-052 e N-053.
 
 ## 1. Pergunta e limites
