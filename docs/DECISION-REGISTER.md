@@ -87,3 +87,7 @@ O fundador aprovou **N-046/N-047 EXPERIMENTAL** para implementação em task Cod
 ## Implementação experimental P2B-E — 2026-10-18
 
 Issue #14 implementa `DF-CF-0.1-lab` em pacote isolado e adiciona laboratório de comparação pareada com controles e sensibilidades documentados em [LAB-P2B.md](LAB-P2B.md). Esta entrega não altera o motor DF-SYM-0.1, a interface P2A, nem promove N-046/N-047 a regras RATIFIED; N-043 continua CANDIDATE para produto final e N-045 continua OPEN. Resultados são evidência computacional do modelo infinito e não evidência humana, fairness multiplayer ou validação de produto. Nenhuma decisão existente foi alterada.
+
+## Evidência de solver P2B-F — 2026-10-18
+
+Issue #16 acrescenta solver condicional exato por estado e comparação do orçamento intertemporal por programação dinâmica sample-average, com treino/avaliação separados e comparação pareada a `conserve/eager/horizon` P2B-E. Em quatro células de 1.000 Noites, a política intertemporal apresentou EV estimado superior ao baseline sob a distribuição infinita com reposição; Leitura foi selecionada raramente e Manobra foi a fonte dominante de ganho. Ver [LAB-P2B-F](LAB-P2B-F.md) e artefatos JSON. Isto é evidência experimental e não muda status: N-042 continua RATIFIED apenas como direção; N-043 CANDIDATE; N-045 OPEN; N-046/N-047 EXPERIMENTAL. Nenhuma regra, interface, economia ou baseline foi ratificado ou alterado.

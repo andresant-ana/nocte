@@ -1,0 +1,1567 @@
+{
+  "schemaVersion": 1,
+  "labVersion": "conditional-focus-sample-average-dp-v1",
+  "solverVersion": "conditional-round-exact-focus-dp-approx-v1",
+  "prngVersion": "sha256-counter-rejection-v1",
+  "seed": "nocte-p2b-f-20261018",
+  "trainingSeed": "NOCTE-P2B-F:train:nocte-p2b-f-20261018",
+  "evaluationSeed": "cofre-foco-named-lanes-v1:nocte-p2b-f-20261018",
+  "trainingScenariosPerStage": 512,
+  "evaluationNights": 1000,
+  "horizon": 20,
+  "payout": "3:2",
+  "rulesId": "DF-CF-0.1-lab-infinite-3to2",
+  "initialFocus": 3,
+  "unit": "net match points",
+  "training": {
+    "method": "backward sample-average Bellman recursion over finite Focus states; exact within-round decisions; independent rank-replacement training scenarios by rounds-remaining stage",
+    "valueByRoundsAndFocus": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0.34846088218553656,
+        0.7092564870513921,
+        0.7642508632820578,
+        0.8598837140646319
+      ],
+      [
+        0.7002321562019617,
+        1.2006033881480465,
+        1.4193476501000581,
+        1.5228002404912089
+      ],
+      [
+        1.1169470268876966,
+        1.7064343314360513,
+        2.044062373275131,
+        2.217836709525711
+      ],
+      [
+        1.550584732074496,
+        2.2079303733706204,
+        2.6321878127053693,
+        2.884870457592407
+      ],
+      [
+        1.9105078075427215,
+        2.6198900121236672,
+        3.108293455882075,
+        3.4326387329031856
+      ],
+      [
+        2.312452574445457,
+        3.060997132779637,
+        3.6057849414455054,
+        3.991408026046812
+      ],
+      [
+        2.5957221599994487,
+        3.3796237624079364,
+        3.968350733971502,
+        4.409886259400338
+      ],
+      [
+        2.9779585981530867,
+        3.7968857266215306,
+        4.429083520148757,
+        4.9189348583489165
+      ],
+      [
+        3.420797039057124,
+        4.269927353628557,
+        4.938889532929448,
+        5.471478113589496
+      ],
+      [
+        3.752802028437006,
+        4.62755574168569,
+        5.325768330764156,
+        5.893273382874049
+      ],
+      [
+        4.1138894887207,
+        5.010425784222277,
+        5.736067227205157,
+        6.333186137150231
+      ],
+      [
+        4.483641920618946,
+        5.392544644258208,
+        6.137934570543691,
+        6.76060826823163
+      ],
+      [
+        4.863892229482393,
+        5.787737696226861,
+        6.552858529291692,
+        7.199419063926368
+      ],
+      [
+        5.330769603242729,
+        6.265537556328069,
+        7.046387863176904,
+        7.7129355681847604
+      ],
+      [
+        5.716181436311183,
+        6.6670837259473315,
+        7.466294834683484,
+        8.154088144168067
+      ],
+      [
+        6.097684207861114,
+        7.064269965596973,
+        7.879607591363411,
+        8.585202163437733
+      ],
+      [
+        6.474848591499661,
+        7.454502115338293,
+        8.286366296786497,
+        9.01018148220535
+      ],
+      [
+        6.846746836067506,
+        7.835215733820455,
+        8.681937048680478,
+        9.422302412212893
+      ],
+      [
+        7.242596025298886,
+        8.240026948190133,
+        9.097424249291063,
+        9.850689916084585
+      ],
+      [
+        7.5522955621090695,
+        8.55988822857437,
+        9.429118360198382,
+        10.195524956870095
+      ]
+    ],
+    "stageSamplingUncertaintyByRoundsAndFocus": [
+      [
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 0.34846088218553656,
+          "variance": 0.4688042973610822,
+          "standardError": 0.030259434781293646,
+          "confidence95": [
+            0.289152390014201,
+            0.4077693743568721
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.7092564870513921,
+          "variance": 0.4559322554577272,
+          "standardError": 0.02984112408138932,
+          "confidence95": [
+            0.650767883851869,
+            0.7677450902509152
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.7642508632820578,
+          "variance": 0.41695462882398,
+          "standardError": 0.0285370725447064,
+          "confidence95": [
+            0.7083182010944333,
+            0.8201835254696823
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.8598837140646319,
+          "variance": 0.37165585096075415,
+          "standardError": 0.02694235204854474,
+          "confidence95": [
+            0.8070767040494843,
+            0.9126907240797796
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 0.7002321562019617,
+          "variance": 0.4640572303626594,
+          "standardError": 0.03010584292213173,
+          "confidence95": [
+            0.6412247040745834,
+            0.7592396083293399
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.2006033881480465,
+          "variance": 0.4606389569471548,
+          "standardError": 0.02999475725501728,
+          "confidence95": [
+            1.1418136639282126,
+            1.2593931123678803
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.4193476501000581,
+          "variance": 0.47205688178612715,
+          "standardError": 0.03036422396898247,
+          "confidence95": [
+            1.3598337711208526,
+            1.4788615290792637
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.5228002404912089,
+          "variance": 0.4297743234964218,
+          "standardError": 0.02897245201184996,
+          "confidence95": [
+            1.466014234547983,
+            1.5795862464344348
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.1169470268876966,
+          "variance": 0.47076090922443925,
+          "standardError": 0.030322514751072064,
+          "confidence95": [
+            1.0575148979755955,
+            1.1763791557997978
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.7064343314360513,
+          "variance": 0.46087981482528767,
+          "standardError": 0.030002598026348318,
+          "confidence95": [
+            1.6476292393044085,
+            1.765239423567694
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.044062373275131,
+          "variance": 0.4595632223732019,
+          "standardError": 0.029959713261272378,
+          "confidence95": [
+            1.9853413352830371,
+            2.102783411267225
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.217836709525711,
+          "variance": 0.45674829293865815,
+          "standardError": 0.029867817289614865,
+          "confidence95": [
+            2.159295787638066,
+            2.2763776314133564
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.550584732074496,
+          "variance": 0.5832852361135954,
+          "standardError": 0.03375246623262315,
+          "confidence95": [
+            1.4844298982585546,
+            1.6167395658904375
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.2079303733706204,
+          "variance": 0.5645026843441532,
+          "standardError": 0.03320458259577545,
+          "confidence95": [
+            2.1428493914829003,
+            2.2730113552583404
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.6321878127053693,
+          "variance": 0.5576493958679191,
+          "standardError": 0.03300240864398429,
+          "confidence95": [
+            2.56750309176316,
+            2.6968725336475785
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.884870457592407,
+          "variance": 0.555351076602891,
+          "standardError": 0.03293432968028986,
+          "confidence95": [
+            2.820319171419039,
+            2.949421743765775
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.9105078075427215,
+          "variance": 0.486316144167457,
+          "standardError": 0.030819413022915677,
+          "confidence95": [
+            1.8501017580178067,
+            1.9709138570676363
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.6198900121236672,
+          "variance": 0.4702363239295819,
+          "standardError": 0.030305615324143557,
+          "confidence95": [
+            2.5604910060883457,
+            2.679289018158989
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.108293455882075,
+          "variance": 0.47714874589264494,
+          "standardError": 0.030527547302748908,
+          "confidence95": [
+            3.048459463168687,
+            3.1681274485954627
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.4326387329031856,
+          "variance": 0.48575438767606705,
+          "standardError": 0.030801607724757134,
+          "confidence95": [
+            3.3722675817626615,
+            3.4930098840437096
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 2.312452574445457,
+          "variance": 0.5099296264530636,
+          "standardError": 0.03155877535117831,
+          "confidence95": [
+            2.2505973747571475,
+            2.3743077741337664
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.060997132779637,
+          "variance": 0.49796348433172555,
+          "standardError": 0.031186293949993504,
+          "confidence95": [
+            2.99987199663765,
+            3.122122268921624
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.6057849414455054,
+          "variance": 0.48965949409423787,
+          "standardError": 0.03092517096804492,
+          "confidence95": [
+            3.5451716063481373,
+            3.6663982765428735
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.991408026046812,
+          "variance": 0.4875498724870353,
+          "standardError": 0.03085848092018207,
+          "confidence95": [
+            3.930925403443255,
+            4.051890648650369
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 2.5957221599994487,
+          "variance": 0.4707402405674771,
+          "standardError": 0.03032184909200548,
+          "confidence95": [
+            2.536291335779118,
+            2.655152984219779
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.3796237624079364,
+          "variance": 0.4625987476870542,
+          "standardError": 0.03005849595499212,
+          "confidence95": [
+            3.3207091103361517,
+            3.438538414479721
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.968350733971502,
+          "variance": 0.4714856336141648,
+          "standardError": 0.0303458461432972,
+          "confidence95": [
+            3.9088728755306392,
+            4.027828592412364
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.409886259400338,
+          "variance": 0.483837349628456,
+          "standardError": 0.030740768101872113,
+          "confidence95": [
+            4.349634353920669,
+            4.470138164880007
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 2.9779585981530867,
+          "variance": 0.5351733456205929,
+          "standardError": 0.03233048778885374,
+          "confidence95": [
+            2.9145908420869335,
+            3.04132635421924
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.7968857266215306,
+          "variance": 0.5137954463960157,
+          "standardError": 0.031678174367255105,
+          "confidence95": [
+            3.7347965048617104,
+            3.8589749483813507
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.429083520148757,
+          "variance": 0.505913713925205,
+          "standardError": 0.031434260330253774,
+          "confidence95": [
+            4.36747236990146,
+            4.490694670396055
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.9189348583489165,
+          "variance": 0.4993610956227079,
+          "standardError": 0.031230027856025064,
+          "confidence95": [
+            4.857724003751107,
+            4.980145712946726
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 3.420797039057124,
+          "variance": 0.5666245257187652,
+          "standardError": 0.033266928424404665,
+          "confidence95": [
+            3.3555938593452908,
+            3.4860002187689574
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.269927353628557,
+          "variance": 0.5356455546938185,
+          "standardError": 0.03234474801279744,
+          "confidence95": [
+            4.206531647523474,
+            4.333323059733639
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.938889532929448,
+          "variance": 0.521801855129338,
+          "standardError": 0.031924038721619925,
+          "confidence95": [
+            4.876318417035073,
+            5.001460648823823
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.471478113589496,
+          "variance": 0.5172403293649611,
+          "standardError": 0.03178419447289706,
+          "confidence95": [
+            5.409181092422618,
+            5.533775134756374
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 3.752802028437006,
+          "variance": 0.4555015523181976,
+          "standardError": 0.029827025821752323,
+          "confidence95": [
+            3.6943410578263713,
+            3.8112629990476408
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.62755574168569,
+          "variance": 0.44219011636540423,
+          "standardError": 0.02938796643230321,
+          "confidence95": [
+            4.569955327478375,
+            4.685156155893004
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.325768330764156,
+          "variance": 0.4414890321913087,
+          "standardError": 0.029364660154659543,
+          "confidence95": [
+            5.268213596861023,
+            5.383323064667288
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.893273382874049,
+          "variance": 0.44415559351477013,
+          "standardError": 0.029453206847192978,
+          "confidence95": [
+            5.835545097453551,
+            5.951001668294547
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 4.1138894887207,
+          "variance": 0.4741614343853608,
+          "standardError": 0.030431834508190723,
+          "confidence95": [
+            4.054243093084646,
+            4.173535884356753
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.010425784222277,
+          "variance": 0.4646633467088976,
+          "standardError": 0.030125497490345543,
+          "confidence95": [
+            4.9513798091412,
+            5.0694717593033545
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.736067227205157,
+          "variance": 0.4604694152156588,
+          "standardError": 0.029989236845793254,
+          "confidence95": [
+            5.677288322987402,
+            5.794846131422912
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 6.333186137150231,
+          "variance": 0.4617144474824927,
+          "standardError": 0.030029752417215224,
+          "confidence95": [
+            6.27432782241249,
+            6.392044451887973
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 4.483641920618946,
+          "variance": 0.5214740466765847,
+          "standardError": 0.03191400942243398,
+          "confidence95": [
+            4.421090462150976,
+            4.546193379086916
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.392544644258208,
+          "variance": 0.5200292874940332,
+          "standardError": 0.03186976940827755,
+          "confidence95": [
+            5.330079896217984,
+            5.4550093922984315
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 6.137934570543691,
+          "variance": 0.5175950468683012,
+          "standardError": 0.03179509122356233,
+          "confidence95": [
+            6.0756161917455085,
+            6.200252949341873
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 6.76060826823163,
+          "variance": 0.5153911138719238,
+          "standardError": 0.031727326853693505,
+          "confidence95": [
+            6.698422707598391,
+            6.822793828864869
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 4.863892229482393,
+          "variance": 0.4514058307925221,
+          "standardError": 0.029692625570445007,
+          "confidence95": [
+            4.805694683364321,
+            4.922089775600465
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.787737696226861,
+          "variance": 0.4389631946630621,
+          "standardError": 0.029280539434516795,
+          "confidence95": [
+            5.730347838935208,
+            5.845127553518514
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 6.552858529291692,
+          "variance": 0.43340624010950207,
+          "standardError": 0.02909461398117994,
+          "confidence95": [
+            6.495833085888579,
+            6.609883972694805
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.199419063926368,
+          "variance": 0.43238589896534135,
+          "standardError": 0.02906034598755979,
+          "confidence95": [
+            7.1424607857907505,
+            7.2563773420619855
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 5.330769603242729,
+          "variance": 0.5244370404851617,
+          "standardError": 0.03200454803145299,
+          "confidence95": [
+            5.268040689101081,
+            5.393498517384376
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 6.265537556328069,
+          "variance": 0.5189127416506033,
+          "standardError": 0.031835537509775684,
+          "confidence95": [
+            6.203139902808909,
+            6.3279352098472295
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.046387863176904,
+          "variance": 0.5142380134151694,
+          "standardError": 0.03169181471534097,
+          "confidence95": [
+            6.984271906334836,
+            7.1085038200189725
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.7129355681847604,
+          "variance": 0.5103482475060555,
+          "standardError": 0.03157172660641582,
+          "confidence95": [
+            7.651054984036185,
+            7.774816152333336
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 5.716181436311183,
+          "variance": 0.47866424707605465,
+          "standardError": 0.030575989069373033,
+          "confidence95": [
+            5.656252497735212,
+            5.776110374887154
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 6.6670837259473315,
+          "variance": 0.47465017887792643,
+          "standardError": 0.03044751435866235,
+          "confidence95": [
+            6.607406597804353,
+            6.72676085409031
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.466294834683484,
+          "variance": 0.4716786107054823,
+          "standardError": 0.03035205572171587,
+          "confidence95": [
+            7.40680480546892,
+            7.525784863898047
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 8.154088144168067,
+          "variance": 0.473074031336552,
+          "standardError": 0.03039691953889741,
+          "confidence95": [
+            8.09451018187183,
+            8.213666106464306
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 6.097684207861114,
+          "variance": 0.4417376338352709,
+          "standardError": 0.029372926583582263,
+          "confidence95": [
+            6.040113271757293,
+            6.1552551439649354
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.064269965596973,
+          "variance": 0.4319744727832609,
+          "standardError": 0.02904651686785881,
+          "confidence95": [
+            7.00733879253597,
+            7.121201138657977
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.879607591363411,
+          "variance": 0.42832157550293254,
+          "standardError": 0.028923443383424546,
+          "confidence95": [
+            7.822917642331898,
+            7.936297540394923
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 8.585202163437733,
+          "variance": 0.4275995206416663,
+          "standardError": 0.02889905385567587,
+          "confidence95": [
+            8.528560017880608,
+            8.641844308994859
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 6.474848591499661,
+          "variance": 0.5308083820871878,
+          "standardError": 0.03219837140701434,
+          "confidence95": [
+            6.411739783541913,
+            6.53795739945741
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.454502115338293,
+          "variance": 0.5253697904486209,
+          "standardError": 0.03203299661239895,
+          "confidence95": [
+            7.391717441977991,
+            7.517286788698596
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 8.286366296786497,
+          "variance": 0.5204528324964458,
+          "standardError": 0.03188274515266245,
+          "confidence95": [
+            8.223876116287279,
+            8.348856477285715
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 9.01018148220535,
+          "variance": 0.5203110884358675,
+          "standardError": 0.03187840326304477,
+          "confidence95": [
+            8.947699811809782,
+            9.072663152600919
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 6.846746836067506,
+          "variance": 0.48735374956174077,
+          "standardError": 0.03085227369437745,
+          "confidence95": [
+            6.786276379626527,
+            6.907217292508486
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 7.835215733820455,
+          "variance": 0.4838418887951805,
+          "standardError": 0.03074091230027318,
+          "confidence95": [
+            7.77496354571192,
+            7.89546792192899
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 8.681937048680478,
+          "variance": 0.47577157007717474,
+          "standardError": 0.030483460233493537,
+          "confidence95": [
+            8.62218946662283,
+            8.741684630738126
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 9.422302412212893,
+          "variance": 0.47026855368487536,
+          "standardError": 0.030306653871976237,
+          "confidence95": [
+            9.36290137062382,
+            9.481703453801966
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 7.242596025298886,
+          "variance": 0.5144504585894114,
+          "standardError": 0.03169836039817271,
+          "confidence95": [
+            7.180467238918468,
+            7.304724811679304
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 8.240026948190133,
+          "variance": 0.5071505205402178,
+          "standardError": 0.031472660523541904,
+          "confidence95": [
+            8.178340533563992,
+            8.301713362816274
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 9.097424249291063,
+          "variance": 0.5006880700115061,
+          "standardError": 0.03127149479543987,
+          "confidence95": [
+            9.036132119492,
+            9.158716379090125
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 9.850689916084585,
+          "variance": 0.4983532100728078,
+          "standardError": 0.03119849537114655,
+          "confidence95": [
+            9.789540865157138,
+            9.911838967012033
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 7.5522955621090695,
+          "variance": 0.500720368989088,
+          "standardError": 0.03127250342844033,
+          "confidence95": [
+            7.491001455389326,
+            7.613589668828813
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 8.55988822857437,
+          "variance": 0.49737719147531034,
+          "standardError": 0.03116792946443853,
+          "confidence95": [
+            8.49879908682407,
+            8.620977370324669
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 9.429118360198382,
+          "variance": 0.4922775737519222,
+          "standardError": 0.031007735103264527,
+          "confidence95": [
+            9.368343199395984,
+            9.48989352100078
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 10.195524956870095,
+          "variance": 0.48977350320556623,
+          "standardError": 0.030928770965694248,
+          "confidence95": [
+            10.134904565777335,
+            10.256145347962855
+          ]
+        }
+      ]
+    ]
+  },
+  "policies": {
+    "baseline": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 76.38499999999989,
+        "variance": 6962.469244244233,
+        "standardError": 2.638649132462335,
+        "confidence95": [
+          71.21324770037371,
+          81.55675229962607
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 76.42973061023335,
+        "variance": 934.4500959230355,
+        "standardError": 0.9666695898408284,
+        "confidence95": [
+          74.53505821414532,
+          78.32440300632138
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "focusSpent": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "focusExpired": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "readUses": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "maneuverUses": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      }
+    },
+    "conserve": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 76.38499999999989,
+        "variance": 6962.469244244233,
+        "standardError": 2.638649132462335,
+        "confidence95": [
+          71.21324770037371,
+          81.55675229962607
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 76.42973061023335,
+        "variance": 934.4500959230354,
+        "standardError": 0.9666695898408284,
+        "confidence95": [
+          74.53505821414532,
+          78.32440300632138
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 3.295141937087456e-16,
+        "variance": 1.1505789701511813e-28,
+        "standardError": 3.3920185290637507e-16,
+        "confidence95": [
+          -3.353214379877495e-16,
+          9.943498254052407e-16
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 3,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          3,
+          3
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      }
+    },
+    "immediate": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 83.94500000000004,
+        "variance": 7099.6115865865695,
+        "standardError": 2.6645096334197347,
+        "confidence95": [
+          78.72256111849735,
+          89.16743888150272
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 83.74054617590403,
+        "variance": 950.01652524723,
+        "standardError": 0.9746879117169917,
+        "confidence95": [
+          81.83015786893873,
+          85.65093448286933
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 7.560000000000006,
+        "variance": 242.48888888888877,
+        "standardError": 0.4924316083365169,
+        "confidence95": [
+          6.594834047660433,
+          8.525165952339579
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 7.3108155656707074,
+        "variance": 19.450968936732718,
+        "standardError": 0.13946673057303924,
+        "confidence95": [
+          7.037460773747551,
+          7.584170357593864
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 3,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          3,
+          3
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0.9530000000000003,
+        "variance": 0.044835835835835856,
+        "standardError": 0.006695956678163013,
+        "confidence95": [
+          0.9398759249108007,
+          0.9661240750891998
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 1.0939999999999994,
+        "variance": 0.17934334334334343,
+        "standardError": 0.013391913356326026,
+        "confidence95": [
+          1.0677518498216003,
+          1.1202481501783985
+        ]
+      }
+    },
+    "intertemporal": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 101.41000000000003,
+        "variance": 6842.754654654663,
+        "standardError": 2.615865947378547,
+        "confidence95": [
+          96.28290274313807,
+          106.53709725686198
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 102.85341005524879,
+        "variance": 918.80817062811,
+        "standardError": 0.9585448193110795,
+        "confidence95": [
+          100.97466220939907,
+          104.7321579010985
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 25.024999999999995,
+        "variance": 490.6650400400395,
+        "standardError": 0.7004748675291923,
+        "confidence95": [
+          23.65206925964278,
+          26.39793074035721
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 26.42367944501528,
+        "variance": 31.049939215299375,
+        "standardError": 0.1762099293890653,
+        "confidence95": [
+          26.078307983412714,
+          26.76905090661785
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 2.936000000000001,
+        "variance": 0.061965965965965944,
+        "standardError": 0.007871846414022948,
+        "confidence95": [
+          2.920571181028516,
+          2.9514288189714857
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 0.06399999999999999,
+        "variance": 0.06196596596596598,
+        "standardError": 0.00787184641402295,
+        "confidence95": [
+          0.04857118102851501,
+          0.07942881897148497
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0.008000000000000005,
+        "variance": 0.007943943943943928,
+        "standardError": 0.002818500300504495,
+        "confidence95": [
+          0.002475739411011196,
+          0.013524260588988816
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 2.9199999999999977,
+        "variance": 0.09169169169169164,
+        "standardError": 0.009575577877689244,
+        "confidence95": [
+          2.901231867359727,
+          2.9387681326402686
+        ]
+      }
+    }
+  },
+  "intertemporalOpportunityDiagnostics": {
+    "readEligibleStates": 10113,
+    "readPositiveEstimatedValueStates": 8,
+    "readSelectedStates": 8,
+    "readEstimatedMarginalValueInExposureUnits": {
+      "n": 10113,
+      "mean": -1.3330460086432676,
+      "variance": 0.07244460215940329,
+      "standardError": 0.0026764738975776406,
+      "confidence95": [
+        -1.3382918974825198,
+        -1.3278001198040155
+      ]
+    },
+    "maneuverEligibleStates": 15399,
+    "maneuverPositiveEstimatedValueStates": 3071,
+    "maneuverSelectedStates": 3071,
+    "maneuverEstimatedMarginalValueInExposureUnits": {
+      "n": 15399,
+      "mean": -0.377534063228261,
+      "variance": 0.18999390485002512,
+      "standardError": 0.003512558572028604,
+      "confidence95": [
+        -0.3844186780294371,
+        -0.3706494484270849
+      ]
+    }
+  },
+  "perfectHoleInformationUpperBound": {
+    "expectedPointsPerNight": {
+      "n": 1000,
+      "mean": 161.6448977174552,
+      "variance": 870.0396632588623,
+      "standardError": 0.932759166805056,
+      "confidence95": [
+        159.8166897505173,
+        163.4731056843931
+      ]
+    },
+    "pairedGapOverIntertemporalCurrentRoundEV": {
+      "n": 1000,
+      "mean": 58.79148766220654,
+      "variance": 146.23401128438417,
+      "standardError": 0.38240555864734,
+      "confidence95": [
+        58.041972767257754,
+        59.54100255715533
+      ]
+    },
+    "provenance": "exact-one-round-hole-information-upper-bound-not-player-policy"
+  },
+  "inheritedP2BEPolicies": {
+    "conserve": {
+      "realizedPointsPerNight": 76.38499999999989,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "policyDefinition": "EV-optimal composition and P1B action choices; never reads or maneuvers; baseline resource control"
+    },
+    "eager": {
+      "realizedPointsPerNight": 74.21500000000003,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": -2.17,
+        "variance": 233.02412412412392,
+        "standardError": 0.48272572349536536,
+        "confidence95": [
+          -3.116142418050916,
+          -1.2238575819490838
+        ]
+      },
+      "policyDefinition": "EV-optimal composition; reads whenever affordable and maneuvers whenever a public total-distance heuristic strictly improves; uses a transparent hole-aware basic heuristic only after Read"
+    },
+    "horizon": {
+      "realizedPointsPerNight": 74.97500000000008,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": -1.4100000000000001,
+        "variance": 167.8797797797797,
+        "standardError": 0.40973135074067707,
+        "confidence95": [
+          -2.2130734474517273,
+          -0.6069265525482731
+        ]
+      },
+      "policyDefinition": "EV-optimal composition; delays Read to the final round, and maneuvers only in the final round when public total-distance improves; approximate horizon rule, not a dynamic-programming oracle"
+    }
+  },
+  "requiredCases": {
+    "cofreChangesComposition": {
+      "scenarioIndex": 33,
+      "visibleCards": [
+        "2",
+        "3",
+        "3",
+        "10"
+      ],
+      "dealerUp": "3",
+      "cofre": "10",
+      "baselinePartition": {
+        "luz": [
+          0,
+          3
+        ],
+        "sombra": [
+          1,
+          2
+        ]
+      },
+      "experimentalPartition": {
+        "luz": [
+          0,
+          1
+        ],
+        "sombra": [
+          2,
+          3
+        ]
+      },
+      "openingPartitionChanged": true,
+      "chosenAbility": "maneuver",
+      "illustrativeSwap": {
+        "hand": "sombra",
+        "cardIndex": 0
+      },
+      "baselineEvExposureUnits": -0.34098197780669487,
+      "experimentalEvExposureUnits": 0.5549618669899914,
+      "explanation": "The open fifth card changes the EV-optimal final hand composition through Manobra; the JSON states explicitly whether the original two-hand partition also changes."
+    },
+    "positiveReadValue": {
+      "scenarioIndex": 199,
+      "visibleCards": [
+        "4",
+        "10",
+        "10",
+        "9"
+      ],
+      "dealerUp": "10",
+      "cofre": "3",
+      "roundsRemaining": 1,
+      "focus": 3,
+      "selectedAbility": "read+maneuver",
+      "estimatedReadMarginalValueExposureUnits": 0.1935411799749618,
+      "note": "The hole is not recorded; the positive marginal is estimated from the fitted continuation table."
+    },
+    "savingFocusBeatsSpendingNow": {
+      "scenarioIndex": 2,
+      "visibleCards": [
+        "9",
+        "7",
+        "7",
+        "2"
+      ],
+      "dealerUp": "3",
+      "cofre": "4",
+      "roundsRemaining": 18,
+      "focus": 1,
+      "immediateGreedyAction": "maneuver",
+      "immediateGreedyEvExposureUnits": 1.035590506244434,
+      "fittedValueOfSpendingNow": 7.510439097744095,
+      "fittedValueOfConserving": 7.720047139224797,
+      "dynamicAction": "conserve",
+      "dynamicImmediateEvExposureUnits": 0.2655450238865035,
+      "dynamicTotalValueExposureUnits": 7.720047139224797,
+      "continuationValueExposureUnits": 7.454502115338293,
+      "note": "Immediate EV spends now; the fitted horizon policy conserves due to estimated continuation value."
+    },
+    "searchScenarios": 20000
+  },
+  "pairedComparisons": {
+    "intertemporal-minus-immediate-realized": {
+      "n": 1000,
+      "mean": 17.465000000000014,
+      "variance": 640.4392142142137,
+      "standardError": 0.8002744618030827,
+      "confidence95": [
+        15.896462054865973,
+        19.033537945134057
+      ]
+    },
+    "intertemporal-minus-conserve-realized": {
+      "n": 1000,
+      "mean": 25.024999999999995,
+      "variance": 490.6650400400395,
+      "standardError": 0.7004748675291923,
+      "confidence95": [
+        23.65206925964278,
+        26.39793074035721
+      ]
+    },
+    "intertemporal-minus-immediate-expected": {
+      "n": 1000,
+      "mean": 19.112863879344548,
+      "variance": 42.24435227117162,
+      "standardError": 0.205534309231261,
+      "confidence95": [
+        18.710016633251275,
+        19.51571112543782
+      ]
+    },
+    "intertemporal-minus-conserve-expected": {
+      "n": 1000,
+      "mean": 26.42367944501528,
+      "variance": 31.04993921529937,
+      "standardError": 0.17620992938906527,
+      "confidence95": [
+        26.078307983412714,
+        26.76905090661785
+      ]
+    }
+  },
+  "optionValueProperty": "With exact Bellman values, conserving Focus is a feasible action from every state; therefore the optimal expected value with optional abilities is at least the no-ability value. A finite-sample fitted value table is approximate and does not guarantee samplewise or out-of-sample policy dominance.",
+  "limitations": [
+    "Conditional player/dealer recursion and each observed-state action evaluation are exact under infinite-rank sampling with replacement, S17, natural peek, and the configured experimental costs/payout.",
+    "The finite-horizon Bellman expectation over future public deals is estimated by sample averages; it is not an exact global optimum. Training and evaluation use disjoint seed domains, but finite-sample value error remains.",
+    "The simulator reports realized score separately from exact conditional expected score of the selected policy. Realized paired outcomes are noisy and do not establish human skill, balance or fun.",
+    "No regret against a perfect-information oracle is computed; that oracle is not a feasible player policy. No human playtest, multiplayer mirror, finite shoe or deployment is included.",
+    "Intervals are 95% normal intervals over paired Night means; no multiplicity adjustment is applied. Raise nights and training scenarios for tighter uncertainty."
+  ],
+  "execution": {
+    "elapsedMs": 77542,
+    "node": "v24.21.0"
+  }
+}

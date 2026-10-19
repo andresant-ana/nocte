@@ -14,6 +14,7 @@
     "depth": "pnpm --filter @nocte/sim depth",
     "depth:report": "pnpm --filter @nocte/sim depth:report",
     "cofre-foco": "pnpm --filter @nocte/sim cofre-foco",
+    "cofre-foco-conditional": "pnpm --filter @nocte/sim cofre-foco-conditional",
     "dev": "pnpm --filter @nocte/web dev",
     "build": "pnpm --filter @nocte/web build"
   },

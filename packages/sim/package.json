@@ -6,7 +6,9 @@
   "exports": {
     ".": "./src/lab.ts",
     "./solver": "./src/solver.ts",
-    "./cofre-foco": "./src/cofre-foco-lab.ts"
+    "./cofre-foco": "./src/cofre-foco-lab.ts",
+    "./conditional": "./src/conditional-solver.ts",
+    "./conditional-lab": "./src/conditional-lab.ts"
   },
   "scripts": {
     "simulate": "tsx src/cli.ts",
@@ -15,7 +17,8 @@
     "depth": "tsx src/depth-cli.ts",
     "depth:report": "tsx src/depth-report.ts",
     "playtest:pools": "tsx src/playtest-pools-cli.ts",
-    "cofre-foco": "tsx src/cofre-foco-cli.ts"
+    "cofre-foco": "tsx src/cofre-foco-cli.ts",
+    "cofre-foco-conditional": "tsx src/conditional-lab-cli.ts"
   },
   "dependencies": {
     "@nocte/engine": "workspace:*"
