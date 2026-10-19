@@ -13,6 +13,7 @@
 | [CF-RFC-P2B.md](CF-RFC-P2B.md) | Founder-approved **EXPERIMENTAL** first Cofre + Foco rule profile (N-046/N-047), not ratified permanent rules |
 | [COMPETITION-ECONOMY.md](COMPETITION-ECONOMY.md) | Ranked mirroring, virtual economies, Subsolo, statistics and anti-abuse |
 | [ECONOMY-REWARDS-DIRECTION.md](ECONOMY-REWARDS-DIRECTION.md) | N-048 product direction: fictional bankroll plus skill; candidate cosmetics, reward and future-store constraints |
+| [ECONOMY-RFC-P4.md](ECONOMY-RFC-P4.md) | Candidate comparison of session bank, persistent credit balance, duels, stake timing, rankings and cosmetic currencies (Issue #23) |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |
