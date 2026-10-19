@@ -69,7 +69,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-054 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-055 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 
