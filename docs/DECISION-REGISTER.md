@@ -91,3 +91,7 @@ Issue #14 implementa `DF-CF-0.1-lab` em pacote isolado e adiciona laboratório d
 ## Evidência de solver P2B-F — 2026-10-18
 
 Issue #16 acrescenta solver condicional exato por estado e comparação do orçamento intertemporal por programação dinâmica sample-average, com treino/avaliação separados e comparação pareada a `conserve/eager/horizon` P2B-E. Em quatro células de 1.000 Noites, a política intertemporal apresentou EV estimado superior ao baseline sob a distribuição infinita com reposição; Leitura foi selecionada raramente e Manobra foi a fonte dominante de ganho. Ver [LAB-P2B-F](LAB-P2B-F.md) e artefatos JSON. Isto é evidência experimental e não muda status: N-042 continua RATIFIED apenas como direção; N-043 CANDIDATE; N-045 OPEN; N-046/N-047 EXPERIMENTAL. Nenhuma regra, interface, economia ou baseline foi ratificado ou alterado.
+
+## Interface solo P2C-A — 2026-10-19
+
+Issue #18 expõe `DF-CF-0.1-lab` como modo solo separado no navegador, reaproveitando o motor experimental e adicionando protocolo exploratório manual [PLAYTEST-P2C](PLAYTEST-P2C.md). A interface não altera o motor DF-SYM-0.1 nem o estudo P2A. Este registro documenta implementação, não uma decisão de design: N-042 permanece RATIFIED somente como direção, N-043 CANDIDATE, N-045 OPEN, e N-046/N-047 EXPERIMENTAL. Não há resultados humanos.

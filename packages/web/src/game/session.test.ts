@@ -2,7 +2,7 @@
 import { DF_SYM_01_3_TO_2, partitions, type Card, type CardSource, type RuleProfile } from "@nocte/engine";
 import { BenchmarkRandom } from "../../../sim/src/streams.js";
 import { describe, expect, it } from "vitest";
-import { prepareRound, type PreparedRound } from "./random";
+import { prepareCofreFocoRound, prepareRound, type PreparedRound } from "./random";
 import { SoloSession } from "./session";
 
 const card = (rank: Card["rank"]): Card => ({ rank });
@@ -38,6 +38,21 @@ describe("browser random stream and solo session", () => {
     const hand = composed.currentHand!;
     const handReference = new BenchmarkRandom(seed, scenarioIndex, hand);
     expect(session.act("hit").hands?.[hand].cards.at(-1)).toEqual(handReference.card());
+  });
+
+  it("keeps the six-card P2A initial sequence aligned and isolates the Cofre/dealer-draw lanes", async () => {
+    const seed = "p2c-lane-parity";
+    const scenarioIndex = 8;
+    const p2a = await prepareRound(seed, scenarioIndex, DF_SYM_01_3_TO_2);
+    const p2c = await prepareCofreFocoRound(seed, scenarioIndex);
+    const p2aInitial = Array.from({ length: 6 }, () => p2a.initial());
+    const p2cInitial = Array.from({ length: 4 }, () => p2c.draws.initial());
+    const p2cDealer = [p2c.draws.dealer(), p2c.draws.dealer()];
+    expect([...p2cInitial, ...p2cDealer]).toEqual(p2aInitial);
+    expect(p2c.draws.cofre()).toEqual(new BenchmarkRandom(seed, scenarioIndex, "cofre").card());
+    const firstDealerDraw = p2c.draws.dealer();
+    expect(firstDealerDraw).toEqual(new BenchmarkRandom(seed, scenarioIndex, "dealer").card());
+    expect(firstDealerDraw).toEqual(p2a.draws.dealer());
   });
 
   it("preserves a dealer natural through composition and reveals it only at the terminal round", () => {

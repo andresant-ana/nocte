@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("local study round reveals, exports, and clears only completed data", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Iniciar estudo" }).click();
+  await page.getByRole("button", { name: "Iniciar estudo P2A" }).click();
   await expect(page.getByRole("heading", { name: "Estudo local" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Exportar JSON/i })).toHaveCount(0);
 
@@ -45,4 +45,57 @@ test("local study round reveals, exports, and clears only completed data", async
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: /Apagar todos os dados/i }).click();
   await expect(page.getByLabel("Registros consentidos")).toContainText("0");
+});
+
+test("Cofre + Foco solo confirms private Read, preserves Focus into round two, and fits a phone viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("cofre-foco");
+  await page.getByRole("combobox", { name: "Duração da Noite experimental" }).selectOption("10");
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  await expect(page.getByRole("heading", { name: /Duas Faces · Cofre \+ Foco/i })).toBeVisible();
+  await expect(page.getByRole("list", { name: "Carta do Cofre" })).toBeVisible();
+  await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  let focusWindowFound = false;
+  for (let attempt = 0; attempt < 5 && !focusWindowFound; attempt += 1) {
+    if (await page.getByRole("button", { name: "Confirmar composição" }).count()) {
+      await page.getByRole("button", { name: "Confirmar composição" }).click();
+    }
+    if (await page.getByRole("heading", { name: "Janela de Foco" }).count()) {
+      focusWindowFound = true;
+      break;
+    }
+    const naturalEnd = page.getByRole("region", { name: "Resultado da rodada" });
+    if (await naturalEnd.count()) {
+      await page.getByRole("button", { name: "Próxima rodada" }).click();
+      await page.getByRole("button", { name: "Confirmar composição" }).waitFor();
+    } else if (await page.getByRole("button", { name: "Resolver dealer" }).count()) {
+      await page.getByRole("button", { name: "Resolver dealer" }).click();
+      await page.getByRole("button", { name: "Próxima rodada" }).click();
+      await page.getByRole("button", { name: "Confirmar composição" }).waitFor();
+    }
+  }
+  expect(focusWindowFound).toBe(true);
+  await expect(page.getByRole("list", { name: "Cartas visíveis do dealer" }).getByLabel(/Carta do dealer fechada/)).toBeVisible();
+  await page.getByRole("button", { name: "Escolher Leitura" }).click();
+  await expect(page.getByRole("dialog", { name: "Confirmar Leitura" })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar gasto" }).click();
+  await expect(page.getByText("1 de 3 restantes")).toBeVisible();
+  await expect(page.getByRole("list", { name: "Cartas visíveis do dealer" }).getByLabel(/Compra do dealer/)).toHaveCount(0);
+  await page.getByRole("button", { name: "Continuar sem Manobra" }).click();
+
+  for (let action = 0; action < 5; action += 1) {
+    const stand = page.getByRole("button", { name: "Parar" });
+    if (await stand.count()) await stand.click();
+  }
+  const resolve = page.getByRole("button", { name: "Resolver dealer" });
+  if (await resolve.count()) await resolve.click();
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Próxima rodada" })).toBeEnabled();
+  await page.getByRole("button", { name: "Próxima rodada" }).click();
+  await expect(page.getByText(/NOITE · RODADA 2 DE 10/i)).toBeVisible();
+  await expect(page.getByText("1 de 3 restantes")).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toHaveCount(0);
 });
