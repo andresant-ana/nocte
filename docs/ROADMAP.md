@@ -82,3 +82,9 @@ P1C's conditional recommendation has a local prototype and study protocol in P2A
 O fundador aprovou a configuração **N-046/N-047 EXPERIMENTAL** para teste solo separado, como variante `DF-CF-0.1-lab`. A primeira tarefa Codex deve implementar **motor determinístico versionado e simulador** com Manobra/Leitura, 3/1/2, 10 rodadas principal (5/20 sensibilidades) e controles B-M/baseline; preservar P2A intacta. Após revisão da engenharia e análise, uma segunda task poderá integrar a variante a uma interface jogável para testes humanos consentidos. Sem promessa de melhora, regras finais, multiplayer ou pagamentos.
 
 **NOCTE-P2B-F implementation note (2026-10-18):** [LAB-P2B-F](LAB-P2B-F.md) adds exact within-round conditional valuation and an approximate sample-average finite-horizon Focus policy. Its simulated EV supports moving to a separately selectable solo experimental variant for human comprehension/repetition testing after review; it does not satisfy human validation or authorize changes to P2A, online play, N-045, or rule status.
+
+## Direção econômica futura e UX experimental — 2026-10-19
+
+**N-048 RATIFIED como direção:** o jogador deve buscar tanto banca virtual fictícia quanto melhoria de habilidade. A métrica competitiva não pode ser apenas saldo/stake. **N-049 CANDIDATE / N-050 OPEN:** desafios e possíveis cosméticos de loja futura; conversão de fichas para moeda de loja e monetização real dependem de RFC separado, controles anti-farm e revisão de compliance. N-009 e N-038 continuam valendo no MVP; nenhuma economia adicional foi implementada nem autorizada. Veja [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md).
+
+**Próximo sprint de interface:** NOCTE-P2C-C, Issue #21, **N-051 EXPERIMENTAL** — acessar Leitura/Manobra diretamente abaixo das mãos, sem tornar obrigatória a rejeição explícita da Leitura; confirmação de Manobra sem gasto/skip ao cancelar. Retomar playtest antes de abrir qualquer implementação de fichas e loja.

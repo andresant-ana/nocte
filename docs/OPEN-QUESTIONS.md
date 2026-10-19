@@ -31,6 +31,9 @@ P1A implementation alternatives and the versioned lab defaults are recorded in [
 | O-19 | Pré-experimento Cofre + Foco | Leitura é compatível com natural/peek do dealer e informações simétricas no competitivo? Quais consequências de manipulação de Ás+10 e Cofre para payout? N-020/N-024/N-045 |
 | O-20 | Gate de profundidade | Comparar baseline P2A sem recursos, Cofre isolado, Foco/ações e variante combinada. Com que métricas de diversidade, regret, escolhas/rodada, aprendizado humano, risco de dominant strategy e número de rodadas? N-036/N-042/N-045 |
 | O-21 | Gate de experiência | Como sinalizar reserva, custos e Foco restante sem sobrecarregar iniciantes, e sem associar Foco a créditos ou compras reais? N-004/N-009/N-042/N-045 |
+| O-22 | Fase futura — banca | Banca de sessão ou persistente, gestão de exposição, criação/retirada de fichas solo, recuperação e rating independente? N-009/N-012/N-021/N-048 |
+| O-23 | Fase futura — recompensas | Uma moeda de loja via desafios, fichas e dinheiro real ou moedas conquistável/premium segregadas? Há conversão permitida? Proteger contra farming, inflação e riscos legais antes de implementar. N-009/N-038/N-049/N-050 |
+| O-24 | P2C UX | Validar botões Leitura/Manobra simultâneos, skip transacional e cancelamento sem perder decisão ou Foco, sem mudar lógica de janela pós-peek. N-051 / Issue #21 |
 
 ## Standard resolution record
 
