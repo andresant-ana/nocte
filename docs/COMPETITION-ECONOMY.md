@@ -81,3 +81,9 @@ Show total rounds, wins/losses/pushes, hands, 21s/naturals, net table result vs 
 Disallow client-ledger writes, duplicated settlement, forged scores, seed exposure, room/collusion exploitation, fake disconnected contestants, mass guest reward farming, same-account repeated claim, self-challenges, time manipulation, and leaderboard manipulation through unequal session lengths. Periodically test inflation/deflation with simulated cohorts.
 
 This is an entertainment product with blackjack-inspired fictitious stake simulation. Any wider release needs independent jurisdiction/classification/privacy review; **do not label it real-money gambling** or claim worldwide legal clearance.
+
+## Atualização de direção 2026-10-19 — banco fictício e recompensas
+
+**N-048 RATIFIED como objetivo, não como mecânica pronta:** dar significado à banca fictícia, mas preservar rating de habilidade independente de saldo, exposição e volume. O jogo básico e o laboratório CF permanecem com pontuação experimental fixa, sem moeda persistente. Não inferir que o solo poderá gerar fichas persistentes ilimitadas.
+
+**N-049 CANDIDATE / N-050 OPEN:** cosméticos futuros e recompensas ganhas por desafios; duas carteiras segregadas de moeda conquistável e eventual compra de cosméticos são uma alternativa à proposta do fundador de conversão direta de fichas para moeda de loja comprável. Esta última envolve potencial de farming e risco regulatório e segue sem autorização. N-009 e N-038 continuam impondo ausência de conversões/monetização no MVP. [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md).

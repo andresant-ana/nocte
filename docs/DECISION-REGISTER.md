@@ -51,6 +51,10 @@
 | N-045 | OPEN | Balanceamento e **regras finais** de Cofre/Foco, fairness multiplayer, diversidade estratégica e evidência humana; não encerrados pela aprovação de um primeiro teste. | [OPEN-QUESTIONS](OPEN-QUESTIONS.md), [COFRE-FOCO](COFRE-FOCO.md) |
 | N-046 | EXPERIMENTAL | Fundador autorizou como **primeira configuração de teste solo** a opção B pós-peek; Cofre como 5ª carta aberta; 3 Foco/Noite sem renovação; Manobra 1 e Leitura 2 (solo privada), até uma vez cada por rodada, ordem Leitura→Manobra; 10 rodadas principal, 5/20 sensibilidades, controles B-M/baseline. **Não ratifica regras finais.** | [CF-RFC-P2B](CF-RFC-P2B.md) |
 | N-047 | EXPERIMENTAL | No perfil N-046: natural elegível fixado na composição pré-peek; Ás+10 criado por Manobra é 21 comum auto-stand, sem bônus/precedência natural; se dealer tem natural ou todas as mãos já estão terminais, não abrir janela Foco; alvo Manobra sempre mão ativa. | [CF-RFC-P2B](CF-RFC-P2B.md) |
+| N-048 | RATIFIED (direção) | O NOCTE deve dar ao jogador **duas motivações complementares**: aumentar sua banca de fichas estritamente fictícias e melhorar sua habilidade; classificação competitiva independente de saldo, stake e volume. Cosméticos podem recompensar dedicação no futuro, sem pay-to-win. **Não ratifica conversão ou venda.** | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md) |
+| N-049 | CANDIDATE | Futuramente estudar uma loja de cosméticos (verso de carta, mesa, perfil, títulos, efeitos), recompensas por desafios/marcos e eventual compra opcional de cosméticos. Modelo de moeda única com três fontes foi sugerido; alternativa de moedas conquistável/premium segregadas será comparada. Sem lançamento/implementação autorizado. | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [VISION](VISION.md) |
+| N-050 | OPEN | É aceitável permitir trocar fichas de jogo por moeda de loja que também pode ser comprada por dinheiro real? Conflito com proibição N-009 no MVP; exigir revisão de emissão ilimitada solo, farming, colusão, segurança, compliance e alternativas de marcos com teto antes de decidir. | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [OPEN-QUESTIONS](OPEN-QUESTIONS.md) |
+| N-051 | EXPERIMENTAL (UX) | Aprovação para **testar botões Leitura e Manobra diretamente acessíveis**, sem a etapa visível de recusar Leitura; qualquer clique em Manobra só deve pular Leitura ao confirmar operação atômica, sem reescrever regras do motor. Tarefa P2C-C #21 separada. | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [PLAYTEST-P2C](PLAYTEST-P2C.md) |
 
 ## Decisions not to infer
 
@@ -62,7 +66,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-048 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-052 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 
@@ -95,3 +99,7 @@ Issue #16 acrescenta solver condicional exato por estado e comparação do orça
 ## Interface solo P2C-A — 2026-10-19
 
 Issue #18 expõe `DF-CF-0.1-lab` como modo solo separado no navegador, reaproveitando o motor experimental e adicionando protocolo exploratório manual [PLAYTEST-P2C](PLAYTEST-P2C.md). A interface não altera o motor DF-SYM-0.1 nem o estudo P2A. Este registro documenta implementação, não uma decisão de design: N-042 permanece RATIFIED somente como direção, N-043 CANDIDATE, N-045 OPEN, e N-046/N-047 EXPERIMENTAL. Não há resultados humanos.
+
+## Direção de banca e mérito; UX experimental — 2026-10-19
+
+O fundador aprovou combinar **crescimento de banca fictícia com melhoria real de habilidade** (N-048 RATIFIED somente como direção). Também propôs loja com cosméticos e moeda obtida por desafios, fichas e dinheiro real: detalhes econômicos seguem N-049 CANDIDATE e N-050 OPEN, preservando N-009/N-038 para MVP. O feedback de Cofre+Foco foi informal n=1, favorável à mecânica e crítico ao clique obrigatório em “Pular Leitura”; a melhoria visual simultânea é N-051 EXPERIMENTAL, autorizada somente para teste de UX na Issue #21. Nenhuma banca, conversão ou compra foi autorizada para código.

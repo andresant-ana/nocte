@@ -40,3 +40,7 @@ Avoid compulsive engagement techniques (manipulative near-miss feedback, pressur
 The founder chose **Duas Faces** from proposed directions. This commits to testing its viability, not permanently ratifying every knob and payout. Initial personal prototype feedback described the game as enjoyable **but still monotonous/close to blackjack**; this is useful qualitative direction, **not** a completed formal P2A human study.
 
 **New founder decision N-042 (2026-10-18):** proceed with **Cofre + Foco as the next depth direction**: reserve card and limited shared choices across a Noite, intending inter-hand/round opportunity cost rather than only score cosmetics. Exact 5-card dealing, 3 Foco/Noite, Manobra/Leitura costs/eligibility and information timing are **candidates**, not finalized mechanics; [COFRE-FOCO.md](COFRE-FOCO.md) is the authority for the boundary. Contracts, Protocolos, achievements/economy and other complexity remain deferred until individual validation. No claim of live implementation.
+
+## Direção de progressão ratificada — 2026-10-19
+
+**N-048 RATIFIED (direção):** crescimento de banca inteiramente fictícia e crescimento de habilidade são objetivos complementares. Classificação não é saldo ou volume de partidas. Cosméticos que representem realizações fazem parte do estudo futuro, não da implementação P2C. **N-049 CANDIDATE, N-050 OPEN:** loja e fontes da moeda dependem de análise separada, sem contradizer N-009/N-038 no MVP. Ver [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md).
