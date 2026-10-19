@@ -1,9 +1,9 @@
 # NOCTE — RFC P4: banca fictícia, habilidade e recompensas
 
 **RFC:** `NOCTE-P4-D-v0.1` • **Data:** 2026-10-19  
-**Origem:** Issue #23 • **Status:** **CANDIDATE / análise de produto**, aguarda revisão e escolha do fundador.  
+**Origem:** Issue #23 • **Status:** **direção A0 → A1 aprovada pelo fundador** (N-052 RATIFIED somente como sequência de experimentos); especificação econômica A0 e escolha posterior A1 ainda OPEN (N-053).  
 **Autoridade vigente:** N-009, N-012, N-014–N-017, N-021, N-026–N-027, N-031, N-038, N-040, N-044, N-048–N-051.  
-**Código:** nenhum. **Nenhuma banca, compra, loja, stake livre, conta ou regra de multiplayer está aprovada para implementação por este RFC.**
+**Código:** nenhum. **O fundador aprovou preparar A0 como próximo experimento, não aprovou valores de saldo, falência ou alterações nas regras.** Nenhuma banca funcional, compra, loja, stake livre, conta ou regra de multiplayer está aprovada para implementação sem o contrato específico de A0.
 
 ## 1. Decisão a ser tomada
 
@@ -35,7 +35,7 @@ A primeira pergunta não é preço de skin. É **qual contrato de banca produz d
 
 | Opção | Contrato possível | Vantagens | Riscos / esforço | Estado |
 | --- | --- | --- | --- | --- |
-| **A — banca reiniciada por Noite** | saldo inicial fictício `B₀`; ganhos/perdas da Noite afetam `bankroll_session`; ao começar outra Noite, reseta | zero economia persistente, permite testar UX e sensação de perda/risco com baixo custo | stakes dinâmicos podem transformar pontuação em volatilidade; pouco senso de progressão intersessão | **RECOMENDADO COMO PRIMEIRO LAB**, CANDIDATE |
+| **A — banca reiniciada por Noite** | saldo inicial fictício `B₀`; ganhos/perdas da Noite afetam `bankroll_session`; ao começar outra Noite, reseta | zero economia persistente, permite testar UX e sensação de perda/risco com baixo custo | stakes dinâmicos podem transformar pontuação em volatilidade; pouco senso de progressão intersessão | **APROVADO COMO PRIMEIRO EXPERIMENTO**, desenho executável OPEN |
 | **B — banca persistente** | ledger de créditos, origem verificável, gasto, recuperação e limites | progressão e identidade duradouras | positivo EV no solo, bots, contas múltiplas, inflação, proteção de saldo, custo server e fraude | DEFERRED até simulação/antifarm |
 | **C — pote redistribuído em duelo** | 1v1 mirror com entrada fictícia fixa; stake de ambos escrowed; vencedor leva pote, empate reembolsa | stake social sem emissão líquida por partida e igualdade nominal de recursos | collusion/self-matching, alt accounts, kick/disconnect, sincronização de cenário, acesso de quem zerou | CANDIDATE depois do gate multiplayer |
 
@@ -58,7 +58,7 @@ As opções B e C **não** são ativadas ao escolher A. A simples integração d
 - Evitar que “mais fichas = mais rank”: score skill padronizado por stake ou match com stakes idênticos, e medir o impacto da restrição de double em jogadores com saldos diferentes.
 - Não revelar dealer hole nem qualquer carta/seed antes de escolher stake. Testar seleção antes das cartas versus após composição **somente como contrafactual no laboratório** para medir vantagem da informação, não liberar late betting na UI por inércia.
 
-**Hipóteses concorrentes:** começar com A0 é a recomendação mais segura; se não agregar decisões, A1 é justificável para um estudo UX/risco em modo solo isolado, não uma alteração do ranking. **O fundador ainda não aprovou A0/A1, números ou tecnologia.**
+**Hipóteses concorrentes:** começar com A0 é a recomendação mais segura; se não agregar decisões, A1 é justificável para um estudo UX/risco em modo solo isolado, não uma alteração do ranking. **O fundador aprovou a sequência A0→A1, mas NÃO os números/tecnologia/regras econômicas concretas.** Iniciar pelo contrato A0; A1 depende de resultado e autorização própria.
 
 ## 5. Banca persistente: restrições de estabilidade
 
@@ -114,21 +114,25 @@ Manter `P2C-observation-v1` separado. O fundador relatou qualitativamente gostar
 
 Modelo econômico testado (inflação/fraude), identidade e servidor auditáveis, regras de benefício claras, privacidade e conformidade jurídica/plataformas, custo de operação, migração versionada e nova autorização explícita. **Sem pagamentos, sem aposta monetária, sem cambialidade entre saldo jogável e ativos de valor real.**
 
-## 9. Próximas decisões do fundador — ainda abertas
+## 9. Próximas decisões de contrato — ainda abertas
 
-1. Primeira avaliação de banca: **A0** (saldo fictício visível/reset a cada Noite) ou **A1** (escolha limitada pré-cartas), ou adiar ambos até playtests adicionais?
+1. **Sequência resolvida (N-052):** começar por A0 e avaliar A1 depois. **Ainda OPEN (N-053):** saldo inicial, reserva, exposição, double, insuficiência e comportamento ao zerar.
 2. Em um protótipo A0, o jogador fica sem fichas e encerra a Noite, ou segue a mesma rodada em prática não pontuável? Como comunicar essa consequência sem frustração?
 3. Como medir habilidade independente de stake: rating por partidas espelhadas, score normalizado por oportunidade ou ambas as medidas?
 4. Para cosméticos, priorizar **desbloqueio direto de desafio (R1)** versus **pontos cosméticos limitados (R2)**? O usuário sugeriu R3; nenhuma variante está aprovada.
 5. Quais observações humanas reais justificariam investir na persistência B e em C multiplayer?
 
-**Recomendação técnica de produto:** após o playtest P2C, estudar **A0 → A1 apenas se necessário**; não conectar fichas a loja e não codificar B/C/R2/R3 sem nova decisão específica. Essa recomendação é **CANDIDATE**, não mudança de N-009, N-021, N-038, N-045 ou N-050.
+**Decisão do fundador (N-052 RATIFIED como sequência):** preparar o contrato para A0 e depois avaliar A1 somente se necessário e autorizado. Não vincular fichas à loja, não codificar A1/B/C/R2/R3 por esta decisão. N-053 OPEN e N-009/N-021/N-038/N-045/N-050 preservadas.
 
 ## 10. Rastreabilidade
 
 - [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md): objetivos fundadores e restrições.
 - [COMPETITION-ECONOMY](COMPETITION-ECONOMY.md): modalidades, ranking, antiabuso, Subsolo.
-- [DECISION-REGISTER](DECISION-REGISTER.md): N-009, N-012, N-021, N-026–027, N-038, N-048–N-051 e eventual N-052 CANDIDATE.
+- [DECISION-REGISTER](DECISION-REGISTER.md): N-009, N-012, N-021, N-026–027, N-038, N-048–N-052 e N-053 OPEN.
 - [OPEN-QUESTIONS](OPEN-QUESTIONS.md): O-01/O-02/O-10/O-11/O-16/O-22/O-23 preservadas.
 - [PLAYTEST-P2C](PLAYTEST-P2C.md): roteiro de experiência sem resultados inventados.
 - [LAB-P2B-F](LAB-P2B-F.md): valor simulado de Cofre/Foco, não política monetária.
+
+## 11. Adendo da aprovação — 2026-10-19
+
+**O fundador aprovou a sequência A0→A1**, que deixa de ser mera recomendação (N-052 RATIFIED apenas como plano experimental). O próximo gate é **descrever e validar o contrato operacional de A0** (N-053 OPEN): qual `B₀`, quando debitar/estornar exposições, como exigir cobertura de duas mãos e potenciais doubles, e o que ocorre com 0 fichas sem impedir prática gratuita. A0 não implementa persistência, apostas variáveis, loja nem score/rating por riqueza. **Não transformar saldo fictício em simple offset de `match_points` e chamá-lo banca com risco real se ele puder ficar negativo ou não controlar exposições.** Uma projeção puramente informativa é permitida somente quando rotulada honestamente como demonstração visual, distinta da banca funcional a ser desenhada. A1 ainda é apenas próximo estágio de comparação, não contrato de código.
