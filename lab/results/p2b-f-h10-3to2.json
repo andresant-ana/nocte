@@ -1,0 +1,1087 @@
+{
+  "schemaVersion": 1,
+  "labVersion": "conditional-focus-sample-average-dp-v1",
+  "solverVersion": "conditional-round-exact-focus-dp-approx-v1",
+  "prngVersion": "sha256-counter-rejection-v1",
+  "seed": "nocte-p2b-f-20261018",
+  "trainingSeed": "NOCTE-P2B-F:train:nocte-p2b-f-20261018",
+  "evaluationSeed": "cofre-foco-named-lanes-v1:nocte-p2b-f-20261018",
+  "trainingScenariosPerStage": 512,
+  "evaluationNights": 1000,
+  "horizon": 10,
+  "payout": "3:2",
+  "rulesId": "DF-CF-0.1-lab-infinite-3to2",
+  "initialFocus": 3,
+  "unit": "net match points",
+  "training": {
+    "method": "backward sample-average Bellman recursion over finite Focus states; exact within-round decisions; independent rank-replacement training scenarios by rounds-remaining stage",
+    "valueByRoundsAndFocus": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0.34846088218553656,
+        0.7092564870513921,
+        0.7642508632820578,
+        0.8598837140646319
+      ],
+      [
+        0.7002321562019617,
+        1.2006033881480465,
+        1.4193476501000581,
+        1.5228002404912089
+      ],
+      [
+        1.1169470268876966,
+        1.7064343314360513,
+        2.044062373275131,
+        2.217836709525711
+      ],
+      [
+        1.550584732074496,
+        2.2079303733706204,
+        2.6321878127053693,
+        2.884870457592407
+      ],
+      [
+        1.9105078075427215,
+        2.6198900121236672,
+        3.108293455882075,
+        3.4326387329031856
+      ],
+      [
+        2.312452574445457,
+        3.060997132779637,
+        3.6057849414455054,
+        3.991408026046812
+      ],
+      [
+        2.5957221599994487,
+        3.3796237624079364,
+        3.968350733971502,
+        4.409886259400338
+      ],
+      [
+        2.9779585981530867,
+        3.7968857266215306,
+        4.429083520148757,
+        4.9189348583489165
+      ],
+      [
+        3.420797039057124,
+        4.269927353628557,
+        4.938889532929448,
+        5.471478113589496
+      ],
+      [
+        3.752802028437006,
+        4.62755574168569,
+        5.325768330764156,
+        5.893273382874049
+      ]
+    ],
+    "stageSamplingUncertaintyByRoundsAndFocus": [
+      [
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 0.34846088218553656,
+          "variance": 0.4688042973610822,
+          "standardError": 0.030259434781293646,
+          "confidence95": [
+            0.289152390014201,
+            0.4077693743568721
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.7092564870513921,
+          "variance": 0.4559322554577272,
+          "standardError": 0.02984112408138932,
+          "confidence95": [
+            0.650767883851869,
+            0.7677450902509152
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.7642508632820578,
+          "variance": 0.41695462882398,
+          "standardError": 0.0285370725447064,
+          "confidence95": [
+            0.7083182010944333,
+            0.8201835254696823
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.8598837140646319,
+          "variance": 0.37165585096075415,
+          "standardError": 0.02694235204854474,
+          "confidence95": [
+            0.8070767040494843,
+            0.9126907240797796
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 0.7002321562019617,
+          "variance": 0.4640572303626594,
+          "standardError": 0.03010584292213173,
+          "confidence95": [
+            0.6412247040745834,
+            0.7592396083293399
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.2006033881480465,
+          "variance": 0.4606389569471548,
+          "standardError": 0.02999475725501728,
+          "confidence95": [
+            1.1418136639282126,
+            1.2593931123678803
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.4193476501000581,
+          "variance": 0.47205688178612715,
+          "standardError": 0.03036422396898247,
+          "confidence95": [
+            1.3598337711208526,
+            1.4788615290792637
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.5228002404912089,
+          "variance": 0.4297743234964218,
+          "standardError": 0.02897245201184996,
+          "confidence95": [
+            1.466014234547983,
+            1.5795862464344348
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.1169470268876966,
+          "variance": 0.47076090922443925,
+          "standardError": 0.030322514751072064,
+          "confidence95": [
+            1.0575148979755955,
+            1.1763791557997978
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.7064343314360513,
+          "variance": 0.46087981482528767,
+          "standardError": 0.030002598026348318,
+          "confidence95": [
+            1.6476292393044085,
+            1.765239423567694
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.044062373275131,
+          "variance": 0.4595632223732019,
+          "standardError": 0.029959713261272378,
+          "confidence95": [
+            1.9853413352830371,
+            2.102783411267225
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.217836709525711,
+          "variance": 0.45674829293865815,
+          "standardError": 0.029867817289614865,
+          "confidence95": [
+            2.159295787638066,
+            2.2763776314133564
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.550584732074496,
+          "variance": 0.5832852361135954,
+          "standardError": 0.03375246623262315,
+          "confidence95": [
+            1.4844298982585546,
+            1.6167395658904375
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.2079303733706204,
+          "variance": 0.5645026843441532,
+          "standardError": 0.03320458259577545,
+          "confidence95": [
+            2.1428493914829003,
+            2.2730113552583404
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.6321878127053693,
+          "variance": 0.5576493958679191,
+          "standardError": 0.03300240864398429,
+          "confidence95": [
+            2.56750309176316,
+            2.6968725336475785
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.884870457592407,
+          "variance": 0.555351076602891,
+          "standardError": 0.03293432968028986,
+          "confidence95": [
+            2.820319171419039,
+            2.949421743765775
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.9105078075427215,
+          "variance": 0.486316144167457,
+          "standardError": 0.030819413022915677,
+          "confidence95": [
+            1.8501017580178067,
+            1.9709138570676363
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.6198900121236672,
+          "variance": 0.4702363239295819,
+          "standardError": 0.030305615324143557,
+          "confidence95": [
+            2.5604910060883457,
+            2.679289018158989
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.108293455882075,
+          "variance": 0.47714874589264494,
+          "standardError": 0.030527547302748908,
+          "confidence95": [
+            3.048459463168687,
+            3.1681274485954627
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.4326387329031856,
+          "variance": 0.48575438767606705,
+          "standardError": 0.030801607724757134,
+          "confidence95": [
+            3.3722675817626615,
+            3.4930098840437096
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 2.312452574445457,
+          "variance": 0.5099296264530636,
+          "standardError": 0.03155877535117831,
+          "confidence95": [
+            2.2505973747571475,
+            2.3743077741337664
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.060997132779637,
+          "variance": 0.49796348433172555,
+          "standardError": 0.031186293949993504,
+          "confidence95": [
+            2.99987199663765,
+            3.122122268921624
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.6057849414455054,
+          "variance": 0.48965949409423787,
+          "standardError": 0.03092517096804492,
+          "confidence95": [
+            3.5451716063481373,
+            3.6663982765428735
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.991408026046812,
+          "variance": 0.4875498724870353,
+          "standardError": 0.03085848092018207,
+          "confidence95": [
+            3.930925403443255,
+            4.051890648650369
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 2.5957221599994487,
+          "variance": 0.4707402405674771,
+          "standardError": 0.03032184909200548,
+          "confidence95": [
+            2.536291335779118,
+            2.655152984219779
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.3796237624079364,
+          "variance": 0.4625987476870542,
+          "standardError": 0.03005849595499212,
+          "confidence95": [
+            3.3207091103361517,
+            3.438538414479721
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.968350733971502,
+          "variance": 0.4714856336141648,
+          "standardError": 0.0303458461432972,
+          "confidence95": [
+            3.9088728755306392,
+            4.027828592412364
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.409886259400338,
+          "variance": 0.483837349628456,
+          "standardError": 0.030740768101872113,
+          "confidence95": [
+            4.349634353920669,
+            4.470138164880007
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 2.9779585981530867,
+          "variance": 0.5351733456205929,
+          "standardError": 0.03233048778885374,
+          "confidence95": [
+            2.9145908420869335,
+            3.04132635421924
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.7968857266215306,
+          "variance": 0.5137954463960157,
+          "standardError": 0.031678174367255105,
+          "confidence95": [
+            3.7347965048617104,
+            3.8589749483813507
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.429083520148757,
+          "variance": 0.505913713925205,
+          "standardError": 0.031434260330253774,
+          "confidence95": [
+            4.36747236990146,
+            4.490694670396055
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.9189348583489165,
+          "variance": 0.4993610956227079,
+          "standardError": 0.031230027856025064,
+          "confidence95": [
+            4.857724003751107,
+            4.980145712946726
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 3.420797039057124,
+          "variance": 0.5666245257187652,
+          "standardError": 0.033266928424404665,
+          "confidence95": [
+            3.3555938593452908,
+            3.4860002187689574
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.269927353628557,
+          "variance": 0.5356455546938185,
+          "standardError": 0.03234474801279744,
+          "confidence95": [
+            4.206531647523474,
+            4.333323059733639
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.938889532929448,
+          "variance": 0.521801855129338,
+          "standardError": 0.031924038721619925,
+          "confidence95": [
+            4.876318417035073,
+            5.001460648823823
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.471478113589496,
+          "variance": 0.5172403293649611,
+          "standardError": 0.03178419447289706,
+          "confidence95": [
+            5.409181092422618,
+            5.533775134756374
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 3.752802028437006,
+          "variance": 0.4555015523181976,
+          "standardError": 0.029827025821752323,
+          "confidence95": [
+            3.6943410578263713,
+            3.8112629990476408
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 4.62755574168569,
+          "variance": 0.44219011636540423,
+          "standardError": 0.02938796643230321,
+          "confidence95": [
+            4.569955327478375,
+            4.685156155893004
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.325768330764156,
+          "variance": 0.4414890321913087,
+          "standardError": 0.029364660154659543,
+          "confidence95": [
+            5.268213596861023,
+            5.383323064667288
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 5.893273382874049,
+          "variance": 0.44415559351477013,
+          "standardError": 0.029453206847192978,
+          "confidence95": [
+            5.835545097453551,
+            5.951001668294547
+          ]
+        }
+      ]
+    ]
+  },
+  "policies": {
+    "baseline": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 39.81999999999995,
+        "variance": 3592.410010010005,
+        "standardError": 1.895365402768027,
+        "confidence95": [
+          36.10508381057462,
+          43.53491618942528
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 37.98020081826708,
+        "variance": 480.4951632915179,
+        "standardError": 0.6931775842390735,
+        "confidence95": [
+          36.621572753158496,
+          39.33882888337566
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "focusSpent": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "focusExpired": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "readUses": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "maneuverUses": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      }
+    },
+    "conserve": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 39.81999999999995,
+        "variance": 3592.410010010005,
+        "standardError": 1.895365402768027,
+        "confidence95": [
+          36.10508381057462,
+          43.53491618942528
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 37.98020081826708,
+        "variance": 480.4951632915178,
+        "standardError": 0.6931775842390735,
+        "confidence95": [
+          36.621572753158496,
+          39.33882888337566
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 3.019806626980421e-16,
+        "variance": 3.5734372460789276e-29,
+        "standardError": 1.8903537357010533e-16,
+        "confidence95": [
+          -6.852866949936431e-17,
+          6.724899948954485e-16
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 3,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          3,
+          3
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      }
+    },
+    "immediate": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 47.34999999999994,
+        "variance": 3691.7192192192247,
+        "standardError": 1.9213847140068603,
+        "confidence95": [
+          43.58408596054649,
+          51.115914039453386
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 45.37077160508309,
+        "variance": 496.6481392587046,
+        "standardError": 0.7047326721947157,
+        "confidence95": [
+          43.98949556758145,
+          46.752047642584735
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 7.529999999999991,
+        "variance": 246.84594594594637,
+        "standardError": 0.49683593463632075,
+        "confidence95": [
+          6.556201568112803,
+          8.50379843188718
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 7.390570786816032,
+        "variance": 22.13298825532143,
+        "standardError": 0.1487715976096292,
+        "confidence95": [
+          7.098978455501159,
+          7.682163118130905
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 3,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          3,
+          3
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0.946999999999999,
+        "variance": 0.05024124124124122,
+        "standardError": 0.007088105617246488,
+        "confidence95": [
+          0.9331073129901959,
+          0.960892687009802
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 1.106000000000002,
+        "variance": 0.20096496496496488,
+        "standardError": 0.014176211234492976,
+        "confidence95": [
+          1.078214625980396,
+          1.1337853740196082
+        ]
+      }
+    },
+    "intertemporal": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 59.66500000000003,
+        "variance": 3658.521296296296,
+        "standardError": 1.9127261425244064,
+        "confidence95": [
+          55.91605676065219,
+          63.413943239347866
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 59.17665311033127,
+        "variance": 487.9269060134729,
+        "standardError": 0.6985176490350641,
+        "confidence95": [
+          57.80755851822255,
+          60.545747702439996
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 19.844999999999988,
+        "variance": 522.1230980980986,
+        "standardError": 0.7225808592109941,
+        "confidence95": [
+          18.42874151594644,
+          21.261258484053535
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 21.196452292064286,
+        "variance": 33.69552239831678,
+        "standardError": 0.18356340157644926,
+        "confidence95": [
+          20.836668024974447,
+          21.556236559154126
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 2.869999999999996,
+        "variance": 0.12122122122122127,
+        "standardError": 0.011010050918193851,
+        "confidence95": [
+          2.848420300200336,
+          2.891579699799656
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 0.12999999999999992,
+        "variance": 0.12122122122122116,
+        "standardError": 0.011010050918193846,
+        "confidence95": [
+          0.10842030020033999,
+          0.15157969979965985
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0.029999999999999995,
+        "variance": 0.029129129129129152,
+        "standardError": 0.005397140829099158,
+        "confidence95": [
+          0.019421603974965646,
+          0.040578396025034345
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 2.8100000000000023,
+        "variance": 0.22612612612612631,
+        "standardError": 0.015037490685820101,
+        "confidence95": [
+          2.7805265182557948,
+          2.8394734817442098
+        ]
+      }
+    }
+  },
+  "intertemporalOpportunityDiagnostics": {
+    "readEligibleStates": 5674,
+    "readPositiveEstimatedValueStates": 31,
+    "readSelectedStates": 31,
+    "readEstimatedMarginalValueInExposureUnits": {
+      "n": 5674,
+      "mean": -0.9640072476137272,
+      "variance": 0.08998803774900237,
+      "standardError": 0.003982426096647999,
+      "confidence95": [
+        -0.9718128027631573,
+        -0.9562016924642972
+      ]
+    },
+    "maneuverEligibleStates": 8266,
+    "maneuverPositiveEstimatedValueStates": 2950,
+    "maneuverSelectedStates": 2950,
+    "maneuverEstimatedMarginalValueInExposureUnits": {
+      "n": 8266,
+      "mean": -0.1490278478930204,
+      "variance": 0.18937520609441902,
+      "standardError": 0.004786453661285723,
+      "confidence95": [
+        -0.15840929706914042,
+        -0.13964639871690038
+      ]
+    }
+  },
+  "perfectHoleInformationUpperBound": {
+    "expectedPointsPerNight": {
+      "n": 1000,
+      "mean": 82.48048003065794,
+      "variance": 399.1172932990748,
+      "standardError": 0.6317573056950547,
+      "confidence95": [
+        81.24223571149564,
+        83.71872434982025
+      ]
+    },
+    "pairedGapOverIntertemporalCurrentRoundEV": {
+      "n": 1000,
+      "mean": 23.30382692032652,
+      "variance": 40.84727168486351,
+      "standardError": 0.20210707974948208,
+      "confidence95": [
+        22.907697044017535,
+        23.699956796635508
+      ]
+    },
+    "provenance": "exact-one-round-hole-information-upper-bound-not-player-policy"
+  },
+  "inheritedP2BEPolicies": {
+    "conserve": {
+      "realizedPointsPerNight": 39.81999999999995,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "policyDefinition": "EV-optimal composition and P1B action choices; never reads or maneuvers; baseline resource control"
+    },
+    "eager": {
+      "realizedPointsPerNight": 37.55,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": -2.2700000000000014,
+        "variance": 230.7778778778781,
+        "standardError": 0.48039346152698426,
+        "confidence95": [
+          -3.2115711845928905,
+          -1.3284288154071122
+        ]
+      },
+      "policyDefinition": "EV-optimal composition; reads whenever affordable and maneuvers whenever a public total-distance heuristic strictly improves; uses a transparent hole-aware basic heuristic only after Read"
+    },
+    "horizon": {
+      "realizedPointsPerNight": 38.46999999999997,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": -1.3499999999999994,
+        "variance": 168.44594594594594,
+        "standardError": 0.4104216684654283,
+        "confidence95": [
+          -2.154426470192239,
+          -0.54557352980776
+        ]
+      },
+      "policyDefinition": "EV-optimal composition; delays Read to the final round, and maneuvers only in the final round when public total-distance improves; approximate horizon rule, not a dynamic-programming oracle"
+    }
+  },
+  "requiredCases": {
+    "cofreChangesComposition": {
+      "scenarioIndex": 6,
+      "visibleCards": [
+        "5",
+        "2",
+        "3",
+        "10"
+      ],
+      "dealerUp": "5",
+      "cofre": "6",
+      "baselinePartition": {
+        "luz": [
+          0,
+          2
+        ],
+        "sombra": [
+          1,
+          3
+        ]
+      },
+      "experimentalPartition": {
+        "luz": [
+          0,
+          3
+        ],
+        "sombra": [
+          1,
+          2
+        ]
+      },
+      "openingPartitionChanged": true,
+      "chosenAbility": "maneuver",
+      "illustrativeSwap": {
+        "hand": "luz",
+        "cardIndex": 1
+      },
+      "baselineEvExposureUnits": -0.09638802485244162,
+      "experimentalEvExposureUnits": 0.5907200475171681,
+      "explanation": "The open fifth card changes the EV-optimal final hand composition through Manobra; the JSON states explicitly whether the original two-hand partition also changes."
+    },
+    "positiveReadValue": {
+      "scenarioIndex": 199,
+      "visibleCards": [
+        "4",
+        "10",
+        "10",
+        "9"
+      ],
+      "dealerUp": "10",
+      "cofre": "3",
+      "roundsRemaining": 1,
+      "focus": 3,
+      "selectedAbility": "read+maneuver",
+      "estimatedReadMarginalValueExposureUnits": 0.1935411799749618,
+      "note": "The hole is not recorded; the positive marginal is estimated from the fitted continuation table."
+    },
+    "savingFocusBeatsSpendingNow": {
+      "scenarioIndex": 2,
+      "visibleCards": [
+        "9",
+        "7",
+        "7",
+        "2"
+      ],
+      "dealerUp": "3",
+      "cofre": "4",
+      "roundsRemaining": 8,
+      "focus": 1,
+      "immediateGreedyAction": "maneuver",
+      "immediateGreedyEvExposureUnits": 1.035590506244434,
+      "fittedValueOfSpendingNow": 3.6313126662438826,
+      "fittedValueOfConserving": 3.6451687862944397,
+      "dynamicAction": "conserve",
+      "dynamicImmediateEvExposureUnits": 0.2655450238865035,
+      "dynamicTotalValueExposureUnits": 3.6451687862944397,
+      "continuationValueExposureUnits": 3.3796237624079364,
+      "note": "Immediate EV spends now; the fitted horizon policy conserves due to estimated continuation value."
+    },
+    "searchScenarios": 10000
+  },
+  "pairedComparisons": {
+    "intertemporal-minus-immediate-realized": {
+      "n": 1000,
+      "mean": 12.314999999999996,
+      "variance": 603.0688438438442,
+      "standardError": 0.7765750728962681,
+      "confidence95": [
+        10.79291285712331,
+        13.837087142876682
+      ]
+    },
+    "intertemporal-minus-conserve-realized": {
+      "n": 1000,
+      "mean": 19.844999999999988,
+      "variance": 522.1230980980986,
+      "standardError": 0.7225808592109941,
+      "confidence95": [
+        18.42874151594644,
+        21.261258484053535
+      ]
+    },
+    "intertemporal-minus-immediate-expected": {
+      "n": 1000,
+      "mean": 13.805881505248268,
+      "variance": 39.330526989810245,
+      "standardError": 0.19831925521696134,
+      "confidence95": [
+        13.417175765023023,
+        14.194587245473512
+      ]
+    },
+    "intertemporal-minus-conserve-expected": {
+      "n": 1000,
+      "mean": 21.196452292064286,
+      "variance": 33.695522398316804,
+      "standardError": 0.18356340157644932,
+      "confidence95": [
+        20.836668024974447,
+        21.556236559154126
+      ]
+    }
+  },
+  "optionValueProperty": "With exact Bellman values, conserving Focus is a feasible action from every state; therefore the optimal expected value with optional abilities is at least the no-ability value. A finite-sample fitted value table is approximate and does not guarantee samplewise or out-of-sample policy dominance.",
+  "limitations": [
+    "Conditional player/dealer recursion and each observed-state action evaluation are exact under infinite-rank sampling with replacement, S17, natural peek, and the configured experimental costs/payout.",
+    "The finite-horizon Bellman expectation over future public deals is estimated by sample averages; it is not an exact global optimum. Training and evaluation use disjoint seed domains, but finite-sample value error remains.",
+    "The simulator reports realized score separately from exact conditional expected score of the selected policy. Realized paired outcomes are noisy and do not establish human skill, balance or fun.",
+    "No regret against a perfect-information oracle is computed; that oracle is not a feasible player policy. No human playtest, multiplayer mirror, finite shoe or deployment is included.",
+    "Intervals are 95% normal intervals over paired Night means; no multiplicity adjustment is applied. Raise nights and training scenarios for tighter uncertainty."
+  ],
+  "execution": {
+    "elapsedMs": 40073,
+    "node": "v24.21.0"
+  }
+}

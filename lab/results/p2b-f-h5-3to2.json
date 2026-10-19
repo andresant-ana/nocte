@@ -1,0 +1,847 @@
+{
+  "schemaVersion": 1,
+  "labVersion": "conditional-focus-sample-average-dp-v1",
+  "solverVersion": "conditional-round-exact-focus-dp-approx-v1",
+  "prngVersion": "sha256-counter-rejection-v1",
+  "seed": "nocte-p2b-f-20261018",
+  "trainingSeed": "NOCTE-P2B-F:train:nocte-p2b-f-20261018",
+  "evaluationSeed": "cofre-foco-named-lanes-v1:nocte-p2b-f-20261018",
+  "trainingScenariosPerStage": 512,
+  "evaluationNights": 1000,
+  "horizon": 5,
+  "payout": "3:2",
+  "rulesId": "DF-CF-0.1-lab-infinite-3to2",
+  "initialFocus": 3,
+  "unit": "net match points",
+  "training": {
+    "method": "backward sample-average Bellman recursion over finite Focus states; exact within-round decisions; independent rank-replacement training scenarios by rounds-remaining stage",
+    "valueByRoundsAndFocus": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0.34846088218553656,
+        0.7092564870513921,
+        0.7642508632820578,
+        0.8598837140646319
+      ],
+      [
+        0.7002321562019617,
+        1.2006033881480465,
+        1.4193476501000581,
+        1.5228002404912089
+      ],
+      [
+        1.1169470268876966,
+        1.7064343314360513,
+        2.044062373275131,
+        2.217836709525711
+      ],
+      [
+        1.550584732074496,
+        2.2079303733706204,
+        2.6321878127053693,
+        2.884870457592407
+      ],
+      [
+        1.9105078075427215,
+        2.6198900121236672,
+        3.108293455882075,
+        3.4326387329031856
+      ]
+    ],
+    "stageSamplingUncertaintyByRoundsAndFocus": [
+      [
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        },
+        {
+          "n": 0,
+          "mean": 0,
+          "variance": null,
+          "standardError": null,
+          "confidence95": null
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 0.34846088218553656,
+          "variance": 0.4688042973610822,
+          "standardError": 0.030259434781293646,
+          "confidence95": [
+            0.289152390014201,
+            0.4077693743568721
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.7092564870513921,
+          "variance": 0.4559322554577272,
+          "standardError": 0.02984112408138932,
+          "confidence95": [
+            0.650767883851869,
+            0.7677450902509152
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.7642508632820578,
+          "variance": 0.41695462882398,
+          "standardError": 0.0285370725447064,
+          "confidence95": [
+            0.7083182010944333,
+            0.8201835254696823
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 0.8598837140646319,
+          "variance": 0.37165585096075415,
+          "standardError": 0.02694235204854474,
+          "confidence95": [
+            0.8070767040494843,
+            0.9126907240797796
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 0.7002321562019617,
+          "variance": 0.4640572303626594,
+          "standardError": 0.03010584292213173,
+          "confidence95": [
+            0.6412247040745834,
+            0.7592396083293399
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.2006033881480465,
+          "variance": 0.4606389569471548,
+          "standardError": 0.02999475725501728,
+          "confidence95": [
+            1.1418136639282126,
+            1.2593931123678803
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.4193476501000581,
+          "variance": 0.47205688178612715,
+          "standardError": 0.03036422396898247,
+          "confidence95": [
+            1.3598337711208526,
+            1.4788615290792637
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.5228002404912089,
+          "variance": 0.4297743234964218,
+          "standardError": 0.02897245201184996,
+          "confidence95": [
+            1.466014234547983,
+            1.5795862464344348
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.1169470268876966,
+          "variance": 0.47076090922443925,
+          "standardError": 0.030322514751072064,
+          "confidence95": [
+            1.0575148979755955,
+            1.1763791557997978
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 1.7064343314360513,
+          "variance": 0.46087981482528767,
+          "standardError": 0.030002598026348318,
+          "confidence95": [
+            1.6476292393044085,
+            1.765239423567694
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.044062373275131,
+          "variance": 0.4595632223732019,
+          "standardError": 0.029959713261272378,
+          "confidence95": [
+            1.9853413352830371,
+            2.102783411267225
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.217836709525711,
+          "variance": 0.45674829293865815,
+          "standardError": 0.029867817289614865,
+          "confidence95": [
+            2.159295787638066,
+            2.2763776314133564
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.550584732074496,
+          "variance": 0.5832852361135954,
+          "standardError": 0.03375246623262315,
+          "confidence95": [
+            1.4844298982585546,
+            1.6167395658904375
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.2079303733706204,
+          "variance": 0.5645026843441532,
+          "standardError": 0.03320458259577545,
+          "confidence95": [
+            2.1428493914829003,
+            2.2730113552583404
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.6321878127053693,
+          "variance": 0.5576493958679191,
+          "standardError": 0.03300240864398429,
+          "confidence95": [
+            2.56750309176316,
+            2.6968725336475785
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.884870457592407,
+          "variance": 0.555351076602891,
+          "standardError": 0.03293432968028986,
+          "confidence95": [
+            2.820319171419039,
+            2.949421743765775
+          ]
+        }
+      ],
+      [
+        {
+          "n": 512,
+          "mean": 1.9105078075427215,
+          "variance": 0.486316144167457,
+          "standardError": 0.030819413022915677,
+          "confidence95": [
+            1.8501017580178067,
+            1.9709138570676363
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 2.6198900121236672,
+          "variance": 0.4702363239295819,
+          "standardError": 0.030305615324143557,
+          "confidence95": [
+            2.5604910060883457,
+            2.679289018158989
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.108293455882075,
+          "variance": 0.47714874589264494,
+          "standardError": 0.030527547302748908,
+          "confidence95": [
+            3.048459463168687,
+            3.1681274485954627
+          ]
+        },
+        {
+          "n": 512,
+          "mean": 3.4326387329031856,
+          "variance": 0.48575438767606705,
+          "standardError": 0.030801607724757134,
+          "confidence95": [
+            3.3722675817626615,
+            3.4930098840437096
+          ]
+        }
+      ]
+    ]
+  },
+  "policies": {
+    "baseline": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 20.625000000000032,
+        "variance": 1758.8932682682673,
+        "standardError": 1.3262327353327799,
+        "confidence95": [
+          18.025583838747785,
+          23.22441616125228
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 19.169667136323987,
+        "variance": 232.74316997909781,
+        "standardError": 0.48243462767415213,
+        "confidence95": [
+          18.22409526608265,
+          20.115239006565325
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "focusSpent": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "focusExpired": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "readUses": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      },
+      "maneuverUses": {
+        "n": 0,
+        "mean": 0,
+        "variance": null,
+        "standardError": null,
+        "confidence95": null
+      }
+    },
+    "conserve": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 20.625000000000032,
+        "variance": 1758.8932682682673,
+        "standardError": 1.3262327353327799,
+        "confidence95": [
+          18.025583838747785,
+          23.22441616125228
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 19.169667136323984,
+        "variance": 232.74316997909781,
+        "standardError": 0.48243462767415213,
+        "confidence95": [
+          18.224095266082646,
+          20.11523900656532
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 2.6673108166619365e-16,
+        "variance": 1.2143927860139979e-29,
+        "standardError": 1.1019949119728266e-16,
+        "confidence95": [
+          5.074007891951965e-17,
+          4.827220844128677e-16
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 3,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          3,
+          3
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      }
+    },
+    "immediate": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 27.974999999999994,
+        "variance": 1832.0564314314315,
+        "standardError": 1.3535347913634994,
+        "confidence95": [
+          25.322071808927536,
+          30.627928191072453
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 26.626526119448336,
+        "variance": 244.53287739335548,
+        "standardError": 0.49450265660899684,
+        "confidence95": [
+          25.6573009124947,
+          27.59575132640197
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 7.35,
+        "variance": 261.5390390390387,
+        "standardError": 0.51140887657435,
+        "confidence95": [
+          6.347638601914274,
+          8.352361398085726
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 7.4568589831243575,
+        "variance": 21.915240456163843,
+        "standardError": 0.1480379696434798,
+        "confidence95": [
+          7.166704562623137,
+          7.747013403625578
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 2.9970000000000003,
+        "variance": 0.0029939939939939973,
+        "standardError": 0.001730316154346944,
+        "confidence95": [
+          2.9936085803374803,
+          3.0003914196625203
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 0.0030000000000000014,
+        "variance": 0.0029939939939939942,
+        "standardError": 0.0017303161543469432,
+        "confidence95": [
+          -0.0003914196625200072,
+          0.00639141966252001
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0.9440000000000003,
+        "variance": 0.05291691691691682,
+        "standardError": 0.00727440148169709,
+        "confidence95": [
+          0.929742173095874,
+          0.9582578269041265
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 1.1090000000000013,
+        "variance": 0.21133033033033014,
+        "standardError": 0.014537205038463554,
+        "confidence95": [
+          1.0805070781246127,
+          1.13749292187539
+        ]
+      }
+    },
+    "intertemporal": {
+      "realizedPointsPerNight": {
+        "n": 1000,
+        "mean": 35.240000000000016,
+        "variance": 1960.6530530530526,
+        "standardError": 1.4002332138087044,
+        "confidence95": [
+          32.49554290093496,
+          37.984457099065075
+        ]
+      },
+      "exactConditionalExpectedPointsPerNight": {
+        "n": 1000,
+        "mean": 34.3472491721252,
+        "variance": 245.30086880443406,
+        "standardError": 0.49527857696899635,
+        "confidence95": [
+          33.37650316126597,
+          35.31799518298443
+        ]
+      },
+      "pairedRealizedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 14.615000000000014,
+        "variance": 460.9877627627625,
+        "standardError": 0.6789607961898555,
+        "confidence95": [
+          13.284236839467898,
+          15.945763160532131
+        ]
+      },
+      "pairedExpectedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 15.177582035801171,
+        "variance": 39.19531796548173,
+        "standardError": 0.19797807445644514,
+        "confidence95": [
+          14.789545009866538,
+          15.565619061735804
+        ]
+      },
+      "focusSpent": {
+        "n": 1000,
+        "mean": 2.7020000000000013,
+        "variance": 0.2394354354354356,
+        "standardError": 0.01547370141354148,
+        "confidence95": [
+          2.67167154522946,
+          2.7323284547705424
+        ]
+      },
+      "focusExpired": {
+        "n": 1000,
+        "mean": 0.29799999999999993,
+        "variance": 0.2394354354354358,
+        "standardError": 0.015473701413541487,
+        "confidence95": [
+          0.26767154522945863,
+          0.32832845477054123
+        ]
+      },
+      "readUses": {
+        "n": 1000,
+        "mean": 0.14100000000000004,
+        "variance": 0.12124024024024029,
+        "standardError": 0.011010914595992481,
+        "confidence95": [
+          0.11941860739185478,
+          0.1625813926081453
+        ]
+      },
+      "maneuverUses": {
+        "n": 1000,
+        "mean": 2.420000000000005,
+        "variance": 0.6202202202202202,
+        "standardError": 0.024904220931806324,
+        "confidence95": [
+          2.3711877269736643,
+          2.4688122730263453
+        ]
+      }
+    }
+  },
+  "intertemporalOpportunityDiagnostics": {
+    "readEligibleStates": 3468,
+    "readPositiveEstimatedValueStates": 150,
+    "readSelectedStates": 150,
+    "readEstimatedMarginalValueInExposureUnits": {
+      "n": 3468,
+      "mean": -0.5727572376634791,
+      "variance": 0.11180718149127475,
+      "standardError": 0.005677998917777885,
+      "confidence95": [
+        -0.5838861155423237,
+        -0.5616283597846344
+      ]
+    },
+    "maneuverEligibleStates": 4626,
+    "maneuverPositiveEstimatedValueStates": 2543,
+    "maneuverSelectedStates": 2543,
+    "maneuverEstimatedMarginalValueInExposureUnits": {
+      "n": 4626,
+      "mean": 0.10876111014407604,
+      "variance": 0.1701156082326886,
+      "standardError": 0.006064140667815957,
+      "confidence95": [
+        0.09687539443515676,
+        0.12064682585299531
+      ]
+    }
+  },
+  "perfectHoleInformationUpperBound": {
+    "expectedPointsPerNight": {
+      "n": 1000,
+      "mean": 43.01297491421537,
+      "variance": 199.25341671276755,
+      "standardError": 0.4463781095806195,
+      "confidence95": [
+        42.13807381943735,
+        43.88787600899339
+      ]
+    },
+    "pairedGapOverIntertemporalCurrentRoundEV": {
+      "n": 1000,
+      "mean": 8.665725742090208,
+      "variance": 11.17491086975415,
+      "standardError": 0.10571145098689239,
+      "confidence95": [
+        8.458531298155899,
+        8.872920186024517
+      ]
+    },
+    "provenance": "exact-one-round-hole-information-upper-bound-not-player-policy"
+  },
+  "inheritedP2BEPolicies": {
+    "conserve": {
+      "realizedPointsPerNight": 20.625000000000032,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": 0,
+        "variance": 0,
+        "standardError": 0,
+        "confidence95": [
+          0,
+          0
+        ]
+      },
+      "policyDefinition": "EV-optimal composition and P1B action choices; never reads or maneuvers; baseline resource control"
+    },
+    "eager": {
+      "realizedPointsPerNight": 18.374999999999986,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": -2.2499999999999982,
+        "variance": 238.8763763763763,
+        "standardError": 0.48874980959216374,
+        "confidence95": [
+          -3.207949626800639,
+          -1.2920503731993573
+        ]
+      },
+      "policyDefinition": "EV-optimal composition; reads whenever affordable and maneuvers whenever a public total-distance heuristic strictly improves; uses a transparent hole-aware basic heuristic only after Read"
+    },
+    "horizon": {
+      "realizedPointsPerNight": 19.755,
+      "pairedDifferenceVsBaseline": {
+        "n": 1000,
+        "mean": -0.8700000000000002,
+        "variance": 159.90300300300288,
+        "standardError": 0.39987873537236623,
+        "confidence95": [
+          -1.653762321329838,
+          -0.08623767867016241
+        ]
+      },
+      "policyDefinition": "EV-optimal composition; delays Read to the final round, and maneuvers only in the final round when public total-distance improves; approximate horizon rule, not a dynamic-programming oracle"
+    }
+  },
+  "requiredCases": {
+    "cofreChangesComposition": {
+      "scenarioIndex": 6,
+      "visibleCards": [
+        "5",
+        "2",
+        "3",
+        "10"
+      ],
+      "dealerUp": "5",
+      "cofre": "6",
+      "baselinePartition": {
+        "luz": [
+          0,
+          2
+        ],
+        "sombra": [
+          1,
+          3
+        ]
+      },
+      "experimentalPartition": {
+        "luz": [
+          0,
+          3
+        ],
+        "sombra": [
+          1,
+          2
+        ]
+      },
+      "openingPartitionChanged": true,
+      "chosenAbility": "maneuver",
+      "illustrativeSwap": {
+        "hand": "luz",
+        "cardIndex": 1
+      },
+      "baselineEvExposureUnits": -0.09638802485244162,
+      "experimentalEvExposureUnits": 0.5907200475171681,
+      "explanation": "The open fifth card changes the EV-optimal final hand composition through Manobra; the JSON states explicitly whether the original two-hand partition also changes."
+    },
+    "positiveReadValue": {
+      "scenarioIndex": 14,
+      "visibleCards": [
+        "6",
+        "2",
+        "4",
+        "3"
+      ],
+      "dealerUp": "2",
+      "cofre": "2",
+      "roundsRemaining": 1,
+      "focus": 2,
+      "selectedAbility": "read",
+      "estimatedReadMarginalValueExposureUnits": 0.03500608808231753,
+      "note": "The hole is not recorded; the positive marginal is estimated from the fitted continuation table."
+    },
+    "savingFocusBeatsSpendingNow": {
+      "scenarioIndex": 5,
+      "visibleCards": [
+        "10",
+        "10",
+        "8",
+        "7"
+      ],
+      "dealerUp": "10",
+      "cofre": "6",
+      "roundsRemaining": 5,
+      "focus": 3,
+      "immediateGreedyAction": "read+maneuver",
+      "immediateGreedyEvExposureUnits": 0.1350221220858004,
+      "fittedValueOfSpendingNow": 2.3570255861066043,
+      "fittedValueOfConserving": 2.7772789439463246,
+      "dynamicAction": "conserve",
+      "dynamicImmediateEvExposureUnits": -0.10759151364608233,
+      "dynamicTotalValueExposureUnits": 2.7772789439463246,
+      "continuationValueExposureUnits": 2.884870457592407,
+      "note": "Immediate EV spends now; the fitted horizon policy conserves due to estimated continuation value."
+    },
+    "searchScenarios": 5000
+  },
+  "pairedComparisons": {
+    "intertemporal-minus-immediate-realized": {
+      "n": 1000,
+      "mean": 7.265000000000009,
+      "variance": 423.46824324324285,
+      "standardError": 0.6507443762670891,
+      "confidence95": [
+        5.989541022516514,
+        8.540458977483503
+      ]
+    },
+    "intertemporal-minus-conserve-realized": {
+      "n": 1000,
+      "mean": 14.615000000000014,
+      "variance": 460.9877627627625,
+      "standardError": 0.6789607961898555,
+      "confidence95": [
+        13.284236839467898,
+        15.945763160532131
+      ]
+    },
+    "intertemporal-minus-immediate-expected": {
+      "n": 1000,
+      "mean": 7.720723052676826,
+      "variance": 34.18701860201319,
+      "standardError": 0.18489731907740897,
+      "confidence95": [
+        7.358324307285105,
+        8.083121798068548
+      ]
+    },
+    "intertemporal-minus-conserve-expected": {
+      "n": 1000,
+      "mean": 15.177582035801175,
+      "variance": 39.195317965481735,
+      "standardError": 0.19797807445644514,
+      "confidence95": [
+        14.789545009866542,
+        15.565619061735807
+      ]
+    }
+  },
+  "optionValueProperty": "With exact Bellman values, conserving Focus is a feasible action from every state; therefore the optimal expected value with optional abilities is at least the no-ability value. A finite-sample fitted value table is approximate and does not guarantee samplewise or out-of-sample policy dominance.",
+  "limitations": [
+    "Conditional player/dealer recursion and each observed-state action evaluation are exact under infinite-rank sampling with replacement, S17, natural peek, and the configured experimental costs/payout.",
+    "The finite-horizon Bellman expectation over future public deals is estimated by sample averages; it is not an exact global optimum. Training and evaluation use disjoint seed domains, but finite-sample value error remains.",
+    "The simulator reports realized score separately from exact conditional expected score of the selected policy. Realized paired outcomes are noisy and do not establish human skill, balance or fun.",
+    "No regret against a perfect-information oracle is computed; that oracle is not a feasible player policy. No human playtest, multiplayer mirror, finite shoe or deployment is included.",
+    "Intervals are 95% normal intervals over paired Night means; no multiplicity adjustment is applied. Raise nights and training scenarios for tighter uncertainty."
+  ],
+  "execution": {
+    "elapsedMs": 21647,
+    "node": "v24.21.0"
+  }
+}

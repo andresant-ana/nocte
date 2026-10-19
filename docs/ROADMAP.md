@@ -78,3 +78,5 @@ P1C's conditional recommendation has a local prototype and study protocol in P2A
 ## Experimento Cofre + Foco — gate pós-RFC (2026-10-18)
 
 O fundador aprovou a configuração **N-046/N-047 EXPERIMENTAL** para teste solo separado, como variante `DF-CF-0.1-lab`. A primeira tarefa Codex deve implementar **motor determinístico versionado e simulador** com Manobra/Leitura, 3/1/2, 10 rodadas principal (5/20 sensibilidades) e controles B-M/baseline; preservar P2A intacta. Após revisão da engenharia e análise, uma segunda task poderá integrar a variante a uma interface jogável para testes humanos consentidos. Sem promessa de melhora, regras finais, multiplayer ou pagamentos.
+
+**NOCTE-P2B-F implementation note (2026-10-18):** [LAB-P2B-F](LAB-P2B-F.md) adds exact within-round conditional valuation and an approximate sample-average finite-horizon Focus policy. Its simulated EV supports moving to a separately selectable solo experimental variant for human comprehension/repetition testing after review; it does not satisfy human validation or authorize changes to P2A, online play, N-045, or rule status.

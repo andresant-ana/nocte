@@ -31,3 +31,7 @@ Authoritative final evidence uses **v2**: `p1c-exact-{3to2,1to1}-v2.json`, repre
 ## P2B-E Cofre + Foco evidence (separate experimental profile)
 
 `results/p2b-e-*.json` are fixed-seed paired counterfactual reports from Issue #14. They compare baseline, diagnostic ablations, and N-046/N-047 with explicit resource policies, horizon and payout sensitivity. They do not change P1 results or canonize final gameplay. Method, the selected quantitative readout, reproduction and limitations: [LAB-P2B](../docs/LAB-P2B.md).
+
+## P2B-F conditional solver and intertemporal Focus evidence
+
+`results/p2b-f-{h5,h10,h20}-3to2.json` and `results/p2b-f-h10-1to1.json` are Issue #16 reports: 512 independent training scenarios per remaining-horizon stage, 1,000 paired evaluation Nights per cell, with exact current-round recursion and sample-average Bellman continuation values. Each file includes baseline/conserve/immediate/intertemporal metrics, inherited P2B-E `conserve/eager/horizon` policies on matching named lanes, local perfect-hole-information upper bound, three visible-state case studies, intervals and runtime metadata. The seed root is `nocte-p2b-f-20261018`; reproduce from [LAB-P2B-F](../docs/LAB-P2B-F.md). Training and evaluation are disjoint; inherited baseline policies share the evaluation lanes for fair comparisons. These remain computational experimental evidence, not human skill or product-balance validation.
