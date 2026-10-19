@@ -55,6 +55,8 @@
 | N-049 | CANDIDATE | Futuramente estudar uma loja de cosméticos (verso de carta, mesa, perfil, títulos, efeitos), recompensas por desafios/marcos e eventual compra opcional de cosméticos. Modelo de moeda única com três fontes foi sugerido; alternativa de moedas conquistável/premium segregadas será comparada. Sem lançamento/implementação autorizado. | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [VISION](VISION.md) |
 | N-050 | OPEN | É aceitável permitir trocar fichas de jogo por moeda de loja que também pode ser comprada por dinheiro real? Conflito com proibição N-009 no MVP; exigir revisão de emissão ilimitada solo, farming, colusão, segurança, compliance e alternativas de marcos com teto antes de decidir. | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [OPEN-QUESTIONS](OPEN-QUESTIONS.md) |
 | N-051 | EXPERIMENTAL (UX) | Aprovação para **testar botões Leitura e Manobra diretamente acessíveis**, sem a etapa visível de recusar Leitura; qualquer clique em Manobra só deve pular Leitura ao confirmar operação atômica, sem reescrever regras do motor. Tarefa P2C-C #21 separada. | [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md), [PLAYTEST-P2C](PLAYTEST-P2C.md) |
+| N-052 | RATIFIED (sequência experimental) | **Fundador aprovou estudar A0 → A1**: começar com banca fictícia que zera/reinicia por Noite, exposição inicialmente fixa e solo isolado; só depois avaliar exposições variáveis escolhidas antes das cartas, **sem aprovar A1 em código**. Não ratifica valor inicial, liquidação, falência, double, score, regras finais, carteira persistente ou moeda de loja. | [ECONOMY-RFC-P4](ECONOMY-RFC-P4.md) |
+| N-053 | OPEN (contrato A0) | Antes de codificar uma banca com efeitos sobre jogadas, resolver saldo inicial por horizonte, reservar exposições de duas mãos, double com saldo insuficiente, esgotamento/recovery, liquidação, tratamento de negativos, empates e garantia de que `match_points` permanece independente. Possível subteste visual sem restrição financeira deve ser explicitamente rotulado como **simulação de placar, não banca funcional**. | [ECONOMY-RFC-P4](ECONOMY-RFC-P4.md), [OPEN-QUESTIONS](OPEN-QUESTIONS.md) |
 
 ## Decisions not to infer
 
@@ -66,7 +68,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-052 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-054 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 
@@ -103,3 +105,11 @@ Issue #18 expõe `DF-CF-0.1-lab` como modo solo separado no navegador, reaprovei
 ## Direção de banca e mérito; UX experimental — 2026-10-19
 
 O fundador aprovou combinar **crescimento de banca fictícia com melhoria real de habilidade** (N-048 RATIFIED somente como direção). Também propôs loja com cosméticos e moeda obtida por desafios, fichas e dinheiro real: detalhes econômicos seguem N-049 CANDIDATE e N-050 OPEN, preservando N-009/N-038 para MVP. O feedback de Cofre+Foco foi informal n=1, favorável à mecânica e crítico ao clique obrigatório em “Pular Leitura”; a melhoria visual simultânea é N-051 EXPERIMENTAL, autorizada somente para teste de UX na Issue #21. Nenhuma banca, conversão ou compra foi autorizada para código.
+
+## RFC P4-D — pesquisa de banca sem autorização de código (2026-10-19)
+
+Issue #23 documentou opções A (banca por Noite), B (persistente) e C (pote zero-sum em duelos), alternativas de timing da exposição e R1/R2/R3 de recompensa cosmética. Recomendação A0→A1 é **N-052 RATIFIED (sequência experimental)**, sem regra financeira ratificada. N-009/N-012/N-021/N-038 mantidos; N-050 continua OPEN. O relato do fundador sobre a UX corrigida é feedback manual n=1, não playtest completo da economia. [RFC](ECONOMY-RFC-P4.md).
+
+## Aprovação expressa do fundador da sequência de pesquisa — 2026-10-19
+
+Em resposta à proposta “aprova A0 → A1 para os próximos experimentos de banca?”, o fundador respondeu **sim**. Assim, N-052 passa de CANDIDATE a **RATIFIED somente como sequência experimental**: A0 de banca fictícia por Noite e exposição fixa primeiro; A1 de stake limitada pré-cartas como experimento **posterior e não autorizado ainda em código**. N-053 OPEN registra saldos, insuficiência, reservas, double e terminalidade necessários para um contrato executável. A0 não pode ser integrado ao baseline silenciosamente; nenhuma regra econômica, carteira ou loja foi ratificada. N-009/N-021/N-038/N-050 permanecem.

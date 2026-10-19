@@ -38,3 +38,9 @@ P1A implementation alternatives and the versioned lab defaults are recorded in [
 ## Standard resolution record
 
 For each answer: baseline rule version, contenders rejected, tests performed, effects on fairness and credits, founder approval status, new registry entry, and date. Don't close the issue by merely choosing a default in source code.
+
+## Aditivo RFC P4-D — questões deliberadamente não encerradas (2026-10-19)
+
+O-22 continua OPEN: banca reiniciada por Noite (A0/A1) versus persistente (B), exata regra de insuficiência de fichas, aposta pre-deal versus pós-composição, double sem crédito e ranking normalizado. O-23 continua OPEN: desbloqueio direto R1, moeda conquistável/premium segregadas R2 ou moeda única de três origens R3 (proposta original do fundador), conversão sujeita a N-009/N-050 e revisão jurídica. A recomendação **N-052 CANDIDATE** não equivale à aprovação de código, stakes, loja nem saldo persistente. Ver [ECONOMY-RFC-P4](ECONOMY-RFC-P4.md).
+
+**Atualização 2026-10-19:** a ordem de pesquisa **A0 → A1** foi aprovada expressamente (N-052 RATIFIED como direção experimental), mas O-22/N-053 seguem OPEN quanto a saldo inicial, insuficiência, semântica de double, baixa liquidez/falência, prática gratuita e tratamento de exposições. Nenhum default numérico foi ratificado. O-23/N-050 permanecem OPEN para loja/moeda real.

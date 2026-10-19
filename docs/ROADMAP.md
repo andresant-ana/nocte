@@ -88,3 +88,9 @@ O fundador aprovou a configuração **N-046/N-047 EXPERIMENTAL** para teste solo
 **N-048 RATIFIED como direção:** o jogador deve buscar tanto banca virtual fictícia quanto melhoria de habilidade. A métrica competitiva não pode ser apenas saldo/stake. **N-049 CANDIDATE / N-050 OPEN:** desafios e possíveis cosméticos de loja futura; conversão de fichas para moeda de loja e monetização real dependem de RFC separado, controles anti-farm e revisão de compliance. N-009 e N-038 continuam valendo no MVP; nenhuma economia adicional foi implementada nem autorizada. Veja [ECONOMY-REWARDS-DIRECTION](ECONOMY-REWARDS-DIRECTION.md).
 
 **Próximo sprint de interface:** NOCTE-P2C-C, Issue #21, **N-051 EXPERIMENTAL** — acessar Leitura/Manobra diretamente abaixo das mãos, sem tornar obrigatória a rejeição explícita da Leitura; confirmação de Manobra sem gasto/skip ao cancelar. Retomar playtest antes de abrir qualquer implementação de fichas e loja.
+
+## P4-D — RFC documental da banca (proposta, 2026-10-19)
+
+[ECONOMY-RFC-P4.md](ECONOMY-RFC-P4.md) compara A0/A1 (banca de sessão apenas), B persistente, C duelos de redistribuição e R1/R2/R3 de cosméticos. **N-052 RATIFIED (sequência experimental)**: começar com estudo de banca por sessão A0; só então avaliar stakes dinâmicos A1, sem alterar P2C, abrir carteira, habilitar compras ou real-money mechanics. Gate obrigatório: fundador escolhe hipótese, orçamento/regras, limites do motor, relatório de simulação e experiência humana. N-050 continua OPEN.
+
+**Aprovação do fundador (2026-10-19):** N-052 RATIFIED **somente a sequência A0 → A1**. A Issue sucessora deve fechar o contrato A0 documentando `B₀`, reservas das duas mãos/double, limite de saldo e recuperação gratuita antes de Codex escrever lógica de carteira; essas escolhas continuam N-053 OPEN. O modo P2C atual segue canônico como controle; monetização e loja continuam fora do escopo.
