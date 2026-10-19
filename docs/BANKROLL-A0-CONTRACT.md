@@ -1,8 +1,8 @@
-# NOCTE-P4-A0-S — contrato candidato da banca por Noite
+# NOCTE-P4-A0-S — contrato experimental da banca por Noite
 
 **Versão:** `BANKROLL-LAB-A0-contract-v0.1`<br>
 **Data:** 2026-10-19<br>
-**Status:** proposta para decisão expressa do fundador; **nenhum parâmetro abaixo está RATIFIED nem autorizado para código**.<br>
+**Status:** configuração A0.1 **EXPERIMENTAL aprovada pelo fundador em 2026-10-19** para implementação em modo solo isolado, não ratificada para produto final. A0.2/A0.3 seguem alternativas não aprovadas.<br>
 **Issue:** [#26](https://github.com/andresant-ana/nocte/issues/26)<br>
 **Decisões preservadas:** N-009, N-012, N-021, N-038, N-048, N-050, N-052 e N-053.
 
@@ -10,7 +10,7 @@
 
 Este documento apresenta uma recomendação operacional para o primeiro experimento A0: uma banca fictícia, local e renovada no início de cada Noite, em modo solo isolado `BANKROLL-LAB-A0`. O objetivo é testar exposição fixa e cobertura de risco. Não é saldo de conta, moeda persistente, loja, aposta de dinheiro real, nem medida de habilidade.
 
-N-052 ratifica somente a sequência experimental A0 → A1. N-053 continua **OPEN**. O contrato abaixo é uma recomendação **CANDIDATE**, sujeita à escolha explícita do fundador antes da Issue de implementação. A recomendação não encerra questões de payout, balanceamento ou jogo final.
+N-052 ratifica somente a sequência experimental A0 → A1. O fundador aprovou A0.1 e seus parâmetros na seção 7 (N-053/N-054 EXPERIMENTAL). Não houve aprovação de A1, de balanceamento ou de regras finais.
 
 O modo A0 deve referenciar uma versão explícita das regras de Duas Faces/Cofre + Foco. Para a primeira comparação, recomenda-se o perfil solo `DF-CF-0.1-lab` com a configuração já versionada, sem alterar o motor, P2A, DF-SYM-0.1, `match_points`, custos/uso de Foco, Leitura, Manobra, política S17 ou exposição-base. A banca é um adaptador experimental separado. O modo básico e a tela P2C atual não recebem saldo implicitamente.
 
@@ -37,15 +37,15 @@ No A0.3, por contraste, `B₀=60` e duas rodadas de `−40` deixam saldo visual 
 
 ### Escolha recomendada
 
-Recomendo **A0.1, cobertura do pior caso**, com parâmetros iniciais candidatos `B₀ = 150`, exposição fixa de 10 por mão, reserva de 40 por rodada, horizonte principal `H = 10` e prática gratuita após ficar abaixo da cobertura. `B₀=150` é uma hipótese de teste, não um valor aprovado. Nos exemplos determinísticos deste documento, ela cobre a Noite principal em uma trajetória moderadamente negativa de −5 por rodada e suporta três perdas máximas consecutivas antes da prática; `B₀=100` suporta somente duas perdas máximas. `B₀=200` oferece mais amortecimento, mas também reduz a frequência da transição para prática. Não há dados de usuários ou valor esperado de política que permitam chamar qualquer saldo de calibrado.
+A configuração de laboratório aprovada é **A0.1, cobertura do pior caso**, com `B₀ = 150`, exposição fixa de 10 por mão, reserva de 40 por rodada, horizonte principal `H = 10` e prática gratuita após ficar abaixo da cobertura. `B₀=150` está aprovado para este teste experimental, não como valor final balanceado. Nos exemplos determinísticos deste documento, ela cobre a Noite principal em uma trajetória moderadamente negativa de −5 por rodada e suporta três perdas máximas consecutivas antes da prática; `B₀=100` suporta somente duas perdas máximas. `B₀=200` oferece mais amortecimento, mas também reduz a frequência da transição para prática. Não há dados de usuários ou valor esperado de política que permitam chamar qualquer saldo de calibrado.
 
 ## 3. Contrato A0.1 proposto
 
 ### 3.1 Valores e escopo
 
-| Campo | Valor candidato | Semântica |
+| Campo | Valor experimental aprovado para A0.1 | Semântica |
 | --- | ---: | --- |
-| Saldo no início da Noite, `B₀` | **150 fichas** | Reinicializado em cada Noite A0; não entra/sai de perfil. Valores 60/100/200 são sensibilidades. |
+| Saldo no início da Noite, `B₀` | **150 fichas** | Reinicializado em cada Noite A0; não entra/sai de perfil. Valores 60/100/200 são sensibilidades não aprovadas para a UI. |
 | Exposição inicial Luz | 10 | Mantém a exposição-base da regra experimental de referência. |
 | Exposição inicial Sombra | 10 | Idem; não há alocação variável entre as mãos. |
 | Double por mão | +10 de exposição; total da mão 20 | Disponível exatamente quando o motor existente o considera legal. Sem restrição nova por saldo em A0.1. |
@@ -145,11 +145,11 @@ Suponha `B₀=150`, duas rodadas completas com `Δ=+15` e `Δ=−10`: a banca fi
 - `150` é o ponto intermediário: dez rodadas de referência seguem financiadas no cenário moderado construído; três perdas máximas continuam possíveis antes da transição. Para H=20, ainda financia as vinte rodadas no exemplo −5.
 - `200` cobre cinco perdas máximas e reduz a chance de chegar à prática em horizonte curto; pode atenuar a sensação de escassez que A0 quer observar. O exemplo não prova que isso aconteça com jogadores.
 
-Logo, 150 é uma hipótese inicial equilibrada entre acesso a uma Noite de 10 rodadas e ocorrência observável de insuficiência. O fundador pode escolher 60, 100, 150, 200 ou outro número; aprovação do documento não deve ser interpretada como ratificação desse valor.
+O fundador aprovou 150 **somente para o laboratório A0.1**. Isso não prova que o valor esteja calibrado nem ratifica 150 como regra final. Os cenários acima são exemplos contábeis hipotéticos.
 
 ## 6. Critérios verificáveis para a futura Issue `NOCTE-P4-A0-E`
 
-Os critérios abaixo são um contrato de implementação **proposto**, condicionados à decisão expressa do fundador sobre `B₀`, horizonte, reserva e prática. Não implementar neste PR.
+Os critérios abaixo constituem contrato de implementação **autorizado somente para o modo experimental A0.1**, com testes obrigatórios. Este PR é documental; a implementação será uma Issue Codex separada.
 
 ### Testes matemáticos e de estado
 
@@ -173,20 +173,23 @@ Os critérios abaixo são um contrato de implementação **proposto**, condicion
 - Resumo ao final deve separar saldo inicial, saldo final/expirado, rodadas financiadas, rodadas em prática, exposição/doubles, delta líquido e `match_points`; não mostrar um ranking por saldo.
 - Testar teclado, leitor de tela, viewport mobile e números exatamente nos limites `39/40/41`.
 
-## 7. Aprovações ainda necessárias
+## 7. Aprovação expressa dos parâmetros de laboratório — 2026-10-19
 
-| Parâmetro | Recomendação CANDIDATE | Estado e pergunta ao fundador |
-| --- | --- | --- |
-| Modelo | A0.1 reserva de pior caso 40 | Escolher A0.1, A0.2 ou usar A0.3 somente como controle visual. |
-| Saldo por Noite | 150 | Aprovar/substituir por 60, 100, 200 ou valor próprio. |
-| Exposição | 10 por mão, fixa | Confirmar manutenção da exposição experimental e ausência de seleção de stake. |
-| Double | Preservado no A0.1; ambas cobertas | Confirmar reserva máxima incluindo dois doubles; A0.2 teria restrição de legalidade por saldo. |
-| Insuficiência | `B<40` leva a prática gratuita pelo resto da Noite | Confirmar transição entre rodadas, sem interromper partida e sem repor fichas. |
-| Horizonte | 10 principal; 5/20 sensitividades | Aprovar o horizonte para instrumentação. |
-| Abandono | Sem score da rodada incompleta; banca remanescente expira | Confirmar a semântica se o protótipo permitir abandonar durante uma rodada. |
-| Regras de jogo | Reusar regra versionada, sem alteração | Fixar versão/perfil exato da primeira comparação A0. |
+O fundador aprovou **A0.1 para execução como experimento local e isolado**, não para produto final:
 
-Enquanto essas escolhas não forem respondidas, N-053 permanece OPEN e a futura Issue de código não deve começar com parâmetros inferidos deste RFC.
+| Parâmetro | Regra aprovada somente em A0.1 |
+| --- | --- |
+| Perfil | `BANKROLL-LAB-A0-0.1` solo, selecione explicitamente; usar `DF-CF-0.1-lab` já versionado |
+| Banca | `B₀=150` fichas fictícias, reiniciar a cada Noite |
+| Duração | `H=10` principal; H=5/20 são sensibilidades não aprovadas como seletor UI de A0 |
+| Exposição inicial | 10 por mão, fixa; double segue as regras experimentais do motor |
+| Reserva | 40 no início de cada rodada financiada para cobrir duas possíveis dobradas; sem débito efetivo antes da liquidação |
+| Liquidação | Aplicar `round.score` somente após settlement, exatamente uma vez; liberar a reserva, manter banca >= 0 |
+| Insolvência | Se B<40 antes da próxima rodada, entrar irreversivelmente em prática gratuita nas demais rodadas; pontuação segue, saldo da banca congela |
+| Encerramento | Saldo e reserva expiram quando termina ou abandona a Noite; rodada inacabada não gera liquidação fictícia |
+| Separação | Foco, classificação, `match_points`, modo básico, P2A, CF padrão e loja intocados |
+
+A implementação em Issue específica do Codex **está autorizada** com PR sem auto-merge e testes de saldo, idempotência, sigilo, double e prática. **A1, A0.2/A0.3, banca persistente, e-commerce, monetização ou credit ledger remoto NÃO estão autorizados.** N-053 resolvida para A0.1, N-054 EXPERIMENTAL; outras variantes continuam OPEN/CANDIDATE.
 
 ## 8. Riscos e limites de evidência
 
@@ -195,7 +198,7 @@ Enquanto essas escolhas não forem respondidas, N-053 permanece OPEN e a futura 
 - Reserva de pior caso simplifica legitimidade, mas prende 40 mesmo quando uma mão não pode dobrar. Otimizar reserva por mão reduziria bloqueios, mas adicionaria estado/complexidade e mudaria o contrato.
 - Banca finita pode causar sequências extensas de prática. A prática evita bloqueio e emissão, mas significa que banca deixa de informar performance ao fim de algumas Noites.
 - O modo local não é autoritativo nem persistente; seed, resultados e saldo não têm integridade de servidor. Não usar em multiplayer nem chamar de sistema econômico lançado.
-- N-009/N-012/N-021/N-038/N-048/N-050 permanecem. N-046/N-047 continuam regras **EXPERIMENTAIS** do perfil de jogo; A0 não as torna RATIFIED. N-052 permanece somente sequência **RATIFIED**; N-053 continua **OPEN** até decisão explícita.
+- N-009/N-012/N-021/N-038/N-048/N-050 permanecem. N-046/N-047 continuam regras **EXPERIMENTAIS** do perfil de jogo; A0 não as torna RATIFIED. N-052 permanece sequência **RATIFIED**; N-053 está resolvida somente para A0.1 EXPERIMENTAL e permanece em aberto para variantes futuras.
 
 ## 9. Fontes e reprodução dos exemplos
 

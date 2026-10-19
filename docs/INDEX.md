@@ -14,7 +14,7 @@
 | [COMPETITION-ECONOMY.md](COMPETITION-ECONOMY.md) | Ranked mirroring, virtual economies, Subsolo, statistics and anti-abuse |
 | [ECONOMY-REWARDS-DIRECTION.md](ECONOMY-REWARDS-DIRECTION.md) | N-048 product direction: fictional bankroll plus skill; candidate cosmetics, reward and future-store constraints |
 | [ECONOMY-RFC-P4.md](ECONOMY-RFC-P4.md) | Candidate comparison of session bank, persistent credit balance, duels, stake timing, rankings and cosmetic currencies (Issue #23) |
-| [BANKROLL-A0-CONTRACT.md](BANKROLL-A0-CONTRACT.md) | Candidate session bankroll contract, reserve/settlement math, insolvency choices and acceptance criteria (Issue #26; N-053 remains OPEN) |
+| [BANKROLL-A0-CONTRACT.md](BANKROLL-A0-CONTRACT.md) | Founder-approved A0.1 EXPERIMENTAL local bankroll contract, reserve/settlement math and acceptance criteria (Issue #26; N-053 resolved for A0.1 only) |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |
