@@ -69,6 +69,29 @@ describe("solo prototype landing", () => {
     expect(screen.getByRole("button", { name: /Iniciar estudo P2A/i })).toBeInTheDocument();
   });
 
+  it("keeps A0.1 as an explicit isolated mode, shows the 150/40 ledger, expires on abandon, and resets on a new Night", async () => {
+    vi.stubGlobal("crypto", webcrypto as Crypto);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "bankroll-a0");
+    expect(screen.getByText(/banca fictícia reiniciada em 150 fichas por noite/i)).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: /Duração da Noite/i })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Jogar livre" }));
+    expect(await screen.findByRole("region", { name: "Banca fictícia A0.1" })).toBeInTheDocument();
+    expect(screen.getByText("150 fichas")).toBeInTheDocument();
+    expect(screen.getByText(/exposição fixa 10 \+ 10 · cobertura reservada 40 · disponível 110/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Encerrar Noite" }));
+    expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining("saldo remanescente de 150 fichas fictícias"));
+    expect(await screen.findByText(/Banca A0.1 expirada: 150 fichas fictícias/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Voltar à configuração" }));
+    expect(screen.getByRole("combobox", { name: "Modo de jogo" })).toHaveValue("bankroll-a0");
+    await user.click(screen.getByRole("button", { name: "Jogar livre" }));
+    expect(await screen.findByText("150 fichas")).toBeInTheDocument();
+    expect(screen.getByText(/cobertura reservada 40 · disponível 110/i)).toBeInTheDocument();
+  });
+
   it("shows the study consent briefing before logging and returns to unrecorded free play when declined", async () => {
     vi.stubGlobal("crypto", webcrypto as Crypto);
     const user = userEvent.setup();

@@ -118,3 +118,7 @@ Em resposta à proposta “aprova A0 → A1 para os próximos experimentos de ba
 ## Aprovação experimental A0.1 — 2026-10-19
 
 O fundador aprovou expressamente o modelo A0.1 com **B₀=150**, **10 rodadas**, **10 fichas por mão**, **reserva de 40** para cobrir ambos os doubles, **prática gratuita no restante da Noite se o saldo cair abaixo de 40**, e **expiração da banca no fim ou abandono**. As regras se tornam **EXPERIMENTAL para implementação isolada**, não RATIFIED finais. N-053 resolvida **somente para A0.1**; N-054 EXPERIMENTAL. A1, economia persistente, monetização, N-045/N-050 continuam sem aprovação.
+
+## Implementação experimental P4-A0-E — 2026-10-19
+
+Issue #28 implementa `BANKROLL-LAB-A0-0.1` como modo solo explicitamente selecionado, separado do Cofre + Foco sem banca e de DF-SYM/P2A. A banca local e temporária aplica exclusivamente o `round.score` final do motor, reserva 40 sem débito, congela abaixo da cobertura em prática gratuita e expira ao concluir/abandonar. [PLAYTEST-P4-A0](PLAYTEST-P4-A0.md) é apenas prospectivo; não há resultados humanos. N-053/N-054 permanecem **EXPERIMENTAL** somente para A0.1; N-009/N-012/N-021/N-038/N-048/N-050/N-052 permanecem inalteradas. Nada nesta implementação autoriza A1, persistência, economia, ranking por banca ou monetização.

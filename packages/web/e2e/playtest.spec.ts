@@ -121,3 +121,51 @@ test("Cofre + Foco shows all abilities together, cancels direct Manobra safely, 
   await expect(page.getByText("0 de 3 restantes")).toBeVisible();
   await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toHaveCount(0);
 });
+
+test("A0.1 settles one motor round, begins round two, and expires on abandonment", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("bankroll-a0");
+  await expect(page.getByText(/10 rodadas e cobertura reservada de 40/i)).toBeVisible();
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+
+  const bank = page.getByRole("region", { name: "Banca fictícia A0.1" });
+  await expect(bank).toContainText("150 fichas");
+  await expect(bank).toContainText("cobertura reservada 40 · disponível 110");
+  await expect(page.getByText(/NOITE · RODADA 1 DE 10/i)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  const finishRound = async () => {
+    const compose = page.getByRole("button", { name: "Confirmar composição" });
+    if (await compose.count()) await compose.click();
+    const conserve = page.getByRole("button", { name: /Conservar Foco e continuar|Continuar às mãos/i });
+    if (await conserve.count()) await conserve.click();
+    for (let action = 0; action < 4; action += 1) {
+      const stand = page.getByRole("button", { name: "Parar" });
+      if (await stand.count()) await stand.click();
+    }
+    const resolve = page.getByRole("button", { name: "Resolver dealer" });
+    if (await resolve.count()) await resolve.click();
+    await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+  };
+
+  await finishRound();
+  const roundScoreText = await page.getByText(/Pontuação desta rodada:/).textContent();
+  const scoreMatch = roundScoreText?.match(/Pontuação desta rodada: ([−-]?\d+) pontos/);
+  expect(scoreMatch).not.toBeNull();
+  const engineScore = Number(scoreMatch![1]!.replace("−", "-"));
+  const settledBank = await bank.locator(".bankroll-heading strong").textContent();
+  expect(Number(settledBank?.replace(" fichas", ""))).toBe(150 + engineScore);
+  await expect(bank).toContainText("Rodadas financiadas");
+  await expect(bank).toContainText("1");
+  await page.getByRole("button", { name: "Próxima rodada" }).click();
+  await expect(page.getByText(/NOITE · RODADA 2 DE 10/i)).toBeVisible();
+  await expect(bank).toContainText("Rodada financiada");
+  await expect(bank).toContainText("cobertura reservada 40");
+
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Encerrar Noite" }).click();
+  await expect(page.getByRole("heading", { name: "Noite encerrada" })).toBeVisible();
+  await expect(page.getByText(/Banca A0.1 expirada:/i)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});

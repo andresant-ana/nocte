@@ -1,7 +1,7 @@
 # NOCTE — canonical document map
 
 **Baseline:** 2026-10-18, v0.1 (initial recording of founder decisions and exploratory Duas Faces research).
-**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor; P2B-F adds a conditional round solver and approximate intertemporal strategy lab. P2C-A adds a separate browser solo table; P2C-C improves simultaneous access to its experimental abilities. The manual exploratory protocol has no human playtest results. P4-D records the approved A0→A1 research sequence, while A0 financial parameters remain OPEN and unimplemented. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
+**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor; P2B-F adds a conditional round solver and approximate intertemporal strategy lab. P2C-A adds a separate browser solo table; P2C-C improves simultaneous access to its experimental abilities. The manual exploratory protocol has no human playtest results. P4-D records the approved A0→A1 research sequence and A0.1 contract; NOCTE-P4-A0-E adds a separate client-only bankroll mode under Issue #28, with no human validation or product-balance claim. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
 
 | Document | Authority / purpose |
 | --- | --- |
@@ -15,6 +15,7 @@
 | [ECONOMY-REWARDS-DIRECTION.md](ECONOMY-REWARDS-DIRECTION.md) | N-048 product direction: fictional bankroll plus skill; candidate cosmetics, reward and future-store constraints |
 | [ECONOMY-RFC-P4.md](ECONOMY-RFC-P4.md) | Candidate comparison of session bank, persistent credit balance, duels, stake timing, rankings and cosmetic currencies (Issue #23) |
 | [BANKROLL-A0-CONTRACT.md](BANKROLL-A0-CONTRACT.md) | Founder-approved A0.1 EXPERIMENTAL local bankroll contract, reserve/settlement math and acceptance criteria (Issue #26; N-053 resolved for A0.1 only) |
+| [PLAYTEST-P4-A0.md](PLAYTEST-P4-A0.md) | Prospective, consent-based exploratory protocol for A0.1 versus Cofre + Foco without a bank; no human results recorded |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |
