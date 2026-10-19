@@ -47,7 +47,7 @@ test("local study round reveals, exports, and clears only completed data", async
   await expect(page.getByLabel("Registros consentidos")).toContainText("0");
 });
 
-test("Cofre + Foco solo confirms private Read, preserves Focus into round two, and fits a phone viewport", async ({ page }) => {
+test("Cofre + Foco shows all abilities together, cancels direct Manobra safely, and fits a phone viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("cofre-foco");
@@ -79,12 +79,34 @@ test("Cofre + Foco solo confirms private Read, preserves Focus into round two, a
   }
   expect(focusWindowFound).toBe(true);
   await expect(page.getByRole("list", { name: "Cartas visíveis do dealer" }).getByLabel(/Carta do dealer fechada/)).toBeVisible();
-  await page.getByRole("button", { name: "Escolher Leitura" }).click();
+  await expect(page.getByRole("button", { name: "Escolher Leitura · 2 Focos" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Escolher Manobra · 1 Foco" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Conservar Foco e continuar" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Escolher Manobra · 1 Foco" }).click();
+  const target = page.getByRole("group", { name: "Cartas elegíveis para Manobra" }).getByRole("button").first();
+  await target.click();
+  await page.getByRole("button", { name: /Pré-visualizar Manobra/i }).click();
+  await expect(page.getByRole("dialog", { name: "Confirmar Manobra" })).toBeVisible();
+  await expect(page.getByText(/Leitura pendente será pulada na mesma transição/i)).toBeVisible();
+  await page.getByRole("button", { name: "Cancelar · manter Foco" }).click();
+  await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Escolher Leitura · 2 Focos" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Escolher Leitura · 2 Focos" }).click();
   await expect(page.getByRole("dialog", { name: "Confirmar Leitura" })).toBeVisible();
   await page.getByRole("button", { name: "Confirmar gasto" }).click();
   await expect(page.getByText("1 de 3 restantes")).toBeVisible();
   await expect(page.getByRole("list", { name: "Cartas visíveis do dealer" }).getByLabel(/Compra do dealer/)).toHaveCount(0);
-  await page.getByRole("button", { name: "Continuar sem Manobra" }).click();
+
+  await page.getByRole("button", { name: "Escolher Manobra · 1 Foco" }).click();
+  await page.getByRole("group", { name: "Cartas elegíveis para Manobra" }).getByRole("button").first().click();
+  await page.getByRole("button", { name: /Pré-visualizar Manobra/i }).click();
+  await expect(page.getByRole("dialog", { name: "Confirmar Manobra" })).toBeVisible();
+  await expect(page.getByText(/Leitura pendente será pulada na mesma transição/i)).toHaveCount(0);
+  await page.getByRole("button", { name: "Confirmar gasto" }).click();
+  await expect(page.getByText("0 de 3 restantes")).toBeVisible();
+  await page.getByRole("button", { name: "Continuar às mãos" }).click();
 
   for (let action = 0; action < 5; action += 1) {
     const stand = page.getByRole("button", { name: "Parar" });
@@ -96,6 +118,6 @@ test("Cofre + Foco solo confirms private Read, preserves Focus into round two, a
   await expect(page.getByRole("button", { name: "Próxima rodada" })).toBeEnabled();
   await page.getByRole("button", { name: "Próxima rodada" }).click();
   await expect(page.getByText(/NOITE · RODADA 2 DE 10/i)).toBeVisible();
-  await expect(page.getByText("1 de 3 restantes")).toBeVisible();
+  await expect(page.getByText("0 de 3 restantes")).toBeVisible();
   await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toHaveCount(0);
 });

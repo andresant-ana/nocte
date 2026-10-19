@@ -79,8 +79,12 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .focus-window { margin: 1.25rem 0; padding: 1rem; border: 1px solid #c1ad78; background: #11100ecc; }
 .focus-window h3 { margin-top: 0; color: #f0d897; }
 .focus-window > p, .ability-panel > p, .swap-preview p { color: #ddd4c0; font: .94rem/1.55 system-ui, sans-serif; }
+.focus-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; align-items: stretch; }
 .ability-panel { margin: .8rem 0; padding: .85rem; border: 1px solid #53675a; }
 .ability-panel h4 { margin: 0; color: #e1ca8b; font: 700 1rem system-ui, sans-serif; }
+.ability-status { min-height: 2.8em; }
+.ability-panel button:disabled { cursor: not-allowed; opacity: .55; }
+.maneuver-picker { margin-top: .75rem; }
 .ability-panel button, .maneuver-targets button { margin: .25rem .35rem .25rem 0; }
 .maneuver-targets { display: flex; flex-wrap: wrap; gap: .35rem; margin: .75rem 0; }
 .maneuver-targets button { margin: 0; }
@@ -121,4 +125,4 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .study-progress { margin: 0 0 .5rem; text-transform: uppercase; letter-spacing: .08em; }
 .text-button { display: block; margin: 1rem 0 0 auto; color: #ddd4c0; border-color: #77633a; background: transparent; }
 @media (max-width: 480px) { .landing-shell { margin: 1rem auto; } .landing-actions { flex-direction: column; } .landing-actions button { width: 100%; } }
-@media (max-width: 600px) { .hands-grid { grid-template-columns: 1fr; } .table-heading { flex-direction: column; } .scoreboard { text-align: left; } .app-shell { margin: .75rem auto; } .focus-resource { align-items: flex-start; flex-direction: column; } .focus-breakdown { gap: .6rem .9rem; } .initial-and-cofre { grid-template-columns: 1fr; } .ability-confirmation .landing-actions { flex-direction: column; } }
+@media (max-width: 600px) { .hands-grid { grid-template-columns: 1fr; } .table-heading { flex-direction: column; } .scoreboard { text-align: left; } .app-shell { margin: .75rem auto; } .focus-resource { align-items: flex-start; flex-direction: column; } .focus-breakdown { gap: .6rem .9rem; } .initial-and-cofre { grid-template-columns: 1fr; } .focus-choices { grid-template-columns: 1fr; } .ability-confirmation .landing-actions { flex-direction: column; } }
