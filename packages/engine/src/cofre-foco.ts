@@ -241,6 +241,31 @@ export function legalCofreFocoActions(night: CofreFocoNight, handName?: HandName
   return hand.cards.length === 2 ? ["hit", "stand", "double"] : ["hit", "stand"];
 }
 
+export type LegalCofreFocoFocusOptions = Readonly<{
+  canRead: boolean;
+  canDecideRead: boolean;
+  canDecideManeuver: boolean;
+  maneuverTargets: readonly Readonly<{ hand: HandName; cardIndex: number }>[];
+}>;
+
+/** Legal Focus options for the current state; UI callers must not reimplement eligibility. */
+export function legalCofreFocoFocusOptions(night: CofreFocoNight): LegalCofreFocoFocusOptions {
+  const round = night.round;
+  const inWindow = night.status === "active" && round?.phase === "focusWindow";
+  const canDecideRead = Boolean(inWindow && !round!.readDecisionMade);
+  const canRead = Boolean(inWindow && night.rules.readEnabled && !round!.readDecisionMade && !round!.readUsed
+    && hasPendingHand(round!) && night.focusRemaining >= night.rules.readCost);
+  const canDecideManeuver = Boolean(inWindow && round!.readDecisionMade && !round!.maneuverDecisionMade);
+  const canAffordManeuver = night.focusRemaining >= night.rules.maneuverCost;
+  const maneuverTargets = canDecideManeuver && canAffordManeuver && night.rules.maneuverEnabled && night.rules.hasCofre
+    ? handNames.flatMap(hand => {
+      const target = round!.hands?.[hand];
+      return target && target.status === "playing" && !target.openingNatural && target.cards.length === 2
+        ? ([0, 1] as const).map(cardIndex => ({ hand, cardIndex })) : [];
+    }) : [];
+  return structuredClone({ canRead, canDecideRead, canDecideManeuver, maneuverTargets });
+}
+
 export function applyCofreFocoAction(night: CofreFocoNight, action: Action, draw: CardSource): CofreFocoNight {
   const allowed = legalCofreFocoActions(night);
   if (!allowed.includes(action)) throw new Error(`Illegal Duas Faces action: ${action}.`);

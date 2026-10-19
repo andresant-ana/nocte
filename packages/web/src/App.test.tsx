@@ -15,7 +15,7 @@ describe("solo prototype landing", () => {
     expect(screen.getByRole("heading", { name: "NOCTE" })).toBeInTheDocument();
     expect(screen.getByText(/jogo solo.*local/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Jogar livre" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Iniciar estudo" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Iniciar estudo P2A" })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: /perfil experimental/i })).toHaveValue("DF-SYM-0.1-lab-infinite-3to2-peek-natural-first");
     expect(screen.queryByRole("textbox")).toBeNull();
   });
@@ -38,16 +38,42 @@ describe("solo prototype landing", () => {
     }
     expect(screen.getByRole("region", { name: "Resultado da rodada" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Nova Noite" }));
-    expect(await screen.findByText(/NOITE · RODADA 1/i)).toBeInTheDocument();
-    expect(screen.getByLabelText("Placar da Noite")).toHaveTextContent("0");
-    expect(screen.queryByRole("combobox", { name: /perfil experimental/i })).toBeNull();
+    expect(await screen.findByRole("combobox", { name: "Modo de jogo" })).toHaveValue("basic");
+    expect(screen.getByLabelText("Perfil experimental de regras")).toHaveValue("DF-SYM-0.1-lab-infinite-1to1-peek-natural-first");
+  });
+
+  it("lets players choose Cofre + Foco, payout and diagnostic horizon only before a new Night", async () => {
+    vi.stubGlobal("crypto", webcrypto as Crypto);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "cofre-foco");
+    await user.selectOptions(screen.getByRole("combobox", { name: /perfil experimental/i }), "DF-SYM-0.1-lab-infinite-1to1-peek-natural-first");
+    await user.selectOptions(screen.getByRole("combobox", { name: /Duração da Noite/i }), "5");
+    expect(screen.getAllByText(/diagnóstico/i).length).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: /Iniciar estudo P2A/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/P2A só está disponível no modo Duas Faces básico/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Jogar livre" }));
+    expect(await screen.findByRole("heading", { name: /Duas Faces · Cofre \+ Foco/i })).toBeInTheDocument();
+    expect(screen.getByText(/DF-CF-0.1-lab-infinite-1to1 · EXPERIMENTAL · natural 1:1/i)).toBeInTheDocument();
+    expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "Modo de jogo" })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Encerrar Noite" }));
+    expect(await screen.findByRole("heading", { name: "Noite encerrada" })).toBeInTheDocument();
+    expect(screen.getByText(/Foco restante \(3\) expirou/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Voltar à configuração" }));
+    expect(screen.getByRole("combobox", { name: "Modo de jogo" })).toHaveValue("cofre-foco");
+    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "basic");
+    expect(screen.getByRole("button", { name: /Iniciar estudo P2A/i })).toBeInTheDocument();
   });
 
   it("shows the study consent briefing before logging and returns to unrecorded free play when declined", async () => {
     vi.stubGlobal("crypto", webcrypto as Crypto);
     const user = userEvent.setup();
     render(<App />);
-    await user.click(screen.getByRole("button", { name: "Iniciar estudo" }));
+    await user.click(screen.getByRole("button", { name: "Iniciar estudo P2A" }));
     expect(screen.getByRole("heading", { name: "Estudo local" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Confirmar composição/i })).toBeNull();
     await user.click(screen.getByRole("button", { name: /Declinar e jogar livre/i }));

@@ -24,6 +24,8 @@
 
 **NOCTE-P2A implementation note (2026-10-18):** The local, browser-only solo prototype and pre-registered study flow are available in this repository. This is implementation status, not evidence that the study was run. The pool is stratified, the teaching aid is an explicitly experimental suggestion, and outcomes cannot establish population balance, retention or commercial viability. Human recruitment and results remain pending; see [PLAYTEST-P2A](PLAYTEST-P2A.md).
 
+**NOCTE-P2C-A implementation note (2026-10-19):** A separately selectable browser-only `DF-CF-0.1-lab` solo mode reuses the experimental engine and leaves the P2A table/study protocol as the basic-mode baseline. [PLAYTEST-P2C](PLAYTEST-P2C.md) is a manual exploratory protocol; no human sessions or results are claimed. N-045 remains OPEN and N-046/N-047 remain EXPERIMENTAL.
+
 - Flat but usable keyboard/mouse/touch table supporting composition of four cards and dealer steps.
 - Invite 5–20 friends for short comparative play; log rounds and feedback **with consent**.
 - G-FUN: players recognize decisions, report understanding, desire to play again, and prefer some NOCTE sessions to ordinary blackjack. Qualitative; no invented thresholds.

@@ -1,7 +1,7 @@
 # NOCTE — canonical document map
 
 **Baseline:** 2026-10-18, v0.1 (initial recording of founder decisions and exploratory Duas Faces research).
-**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor; P2B-F adds a conditional round solver and approximate intertemporal strategy lab. Neither has human playtest results or final balance claims. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
+**Stage:** P1A–P1C and P2A local solo prototype/protocol integrated. NOCTE-P2B-E implements the isolated Cofre + Foco experimental motor; P2B-F adds a conditional round solver and approximate intertemporal strategy lab. P2C-A adds a separate browser solo table for the experimental mode and a manual exploratory protocol. Neither has human playtest results or final balance claims. This is not a deployed or networked game. The term *canonical* means an authoritative record of **status**, not that every discussed mechanic is finalized.
 
 | Document | Authority / purpose |
 | --- | --- |
@@ -18,6 +18,7 @@
 | [LAB-P1B.md](LAB-P1B.md) | Model EV solver, fair counterfactual benchmark, reproduction and quantitative evidence |
 | [LAB-P1C.md](LAB-P1C.md) | Strategic-depth audit, compression risk, paired sessions and conditional next gate |
 | [PLAYTEST-P2A.md](PLAYTEST-P2A.md) | Local solo prototype protocol, consent, fixed scenario pools, data handling and blank report |
+| [PLAYTEST-P2C.md](PLAYTEST-P2C.md) | Manual exploratory comparison protocol for basic Duas Faces and experimental Cofre + Foco; no human results recorded |
 | [LAB-P2B.md](LAB-P2B.md) | Isolated Cofre + Foco motor, paired comparison study, results and reproducibility |
 | [LAB-P2B-F.md](LAB-P2B-F.md) | Conditional solver, sample-average Focus DP, inherited policy comparison, evidence and limits |
 | [ROADMAP.md](ROADMAP.md) | Phases and go/no-go gates; no fabricated progress |

@@ -1,7 +1,8 @@
 import { DF_SYM_01_3_TO_2, type Card, type CardSource, type RuleProfile } from "@nocte/engine";
+import type { CofreFocoDraws } from "@nocte/engine/cofre-foco";
 
 export const BROWSER_STREAM_VERSION = "sha256-counter-rejection-v1";
-export type BrowserLane = "initial" | "dealer" | "luz" | "sombra";
+export type BrowserLane = "initial" | "dealer" | "luz" | "sombra" | "cofre";
 const RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
 const WORD_RANGE = 0x1_0000_0000;
 const DRAW_BUFFER_SIZE = 64;
@@ -61,7 +62,13 @@ export type PreparedRound = Readonly<{
   index: number;
   rules: RuleProfile;
   initial: CardSource;
-  draws: Readonly<Record<Exclude<BrowserLane, "initial">, CardSource>>;
+  draws: Readonly<Record<Exclude<BrowserLane, "initial" | "cofre">, CardSource>>;
+}>;
+
+export type PreparedCofreFocoRound = Readonly<{
+  seed: string;
+  index: number;
+  draws: CofreFocoDraws & Readonly<{ luz: CardSource; sombra: CardSource }>;
 }>;
 
 /** Prepare named browser-safe streams before a synchronous engine transition begins. */
@@ -85,5 +92,33 @@ export async function prepareRound(
     rules,
     initial: source(initial),
     draws: { luz: source(luz), sombra: source(sombra), dealer: source(dealer) },
+  };
+}
+
+/**
+ * P2C pairing contract: four player cards and dealer up/hole are the same six
+ * cards as P2A's `initial` lane. The experimental Cofre has its own lane, and
+ * later dealer draws use a separate lane without re-drawing the hole.
+ */
+export async function prepareCofreFocoRound(seed: string, index: number): Promise<PreparedCofreFocoRound> {
+  if (!seed || !Number.isSafeInteger(index) || index < 0) throw new Error("Cenário inválido.");
+  if (!globalThis.crypto?.subtle) throw new Error("Este navegador não oferece SHA-256 seguro para preparar a rodada.");
+  const [initialAndDealer, dealerDraws, cofre, luz, sombra] = await Promise.all([
+    cards(new CounterRandom(seed, index, "initial"), 6),
+    cards(new CounterRandom(seed, index, "dealer"), DRAW_BUFFER_SIZE),
+    cards(new CounterRandom(seed, index, "cofre"), 1),
+    cards(new CounterRandom(seed, index, "luz"), DRAW_BUFFER_SIZE),
+    cards(new CounterRandom(seed, index, "sombra"), DRAW_BUFFER_SIZE),
+  ]);
+  return {
+    seed,
+    index,
+    draws: {
+      initial: source(initialAndDealer.slice(0, 4)),
+      dealer: source([initialAndDealer[4]!, initialAndDealer[5]!, ...dealerDraws]),
+      cofre: source(cofre),
+      luz: source(luz),
+      sombra: source(sombra),
+    },
   };
 }
