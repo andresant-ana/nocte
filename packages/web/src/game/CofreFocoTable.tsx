@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent }
 import { handValue, partitions, type Action, type Card, type HandName, type Partition } from "@nocte/engine";
 import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
+import type { PublicBankrollA0 } from "./bankroll-a0-session";
 
 type CofreSession = Pick<CofreFocoSessionAdapter,
   "current" | "focusOptions" | "legalActions" | "compose" | "skipRead" | "readDealerHole" |
@@ -11,6 +12,7 @@ type Props = {
   session: CofreSession;
   night: PublicCofreFocoNight;
   rules: CofreFocoRules;
+  bankroll?: PublicBankrollA0;
   error?: string | null;
   onNightChange: (night: PublicCofreFocoNight) => void;
   onNextRound: () => void;
@@ -42,7 +44,7 @@ function phaseLabel(night: PublicCofreFocoNight): string {
   return "Rodada concluída.";
 }
 
-export function CofreFocoTable({ session, night, rules, error, onNightChange, onNextRound, onReturnToSetup }: Props) {
+export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
@@ -116,7 +118,10 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
     return session.continueAfterAbilities();
   });
   const abandon = () => {
-    if (!window.confirm("Encerrar esta Noite? O Foco restante expirará.")) return;
+    const prompt = bankroll
+      ? `Encerrar esta Noite? O saldo remanescente de ${bankroll.bankroll} fichas fictícias e a reserva expirarão. Não há reembolso nem persistência.`
+      : "Encerrar esta Noite? O Foco restante expirará.";
+    if (!window.confirm(prompt)) return;
     update(() => session.abandonNight());
   };
 
@@ -157,6 +162,29 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
           <div><dt>Rodadas</dt><dd>{night.completedRounds}/{night.horizon}</dd></div>
         </dl>
       </section>
+
+      {bankroll && <section className="bankroll-resource" aria-label="Banca fictícia A0.1">
+        <div className="bankroll-heading">
+          <div>
+            <p className="eyebrow">LABORATÓRIO LOCAL · EXPERIMENTAL</p>
+            <h3>Banca desta Noite</h3>
+          </div>
+          <strong aria-live="polite">{bankroll.bankroll} fichas</strong>
+        </div>
+        {bankroll.pendingKind === "funded" && <>
+          <p role="status">Rodada financiada · exposição fixa 10 + 10 · cobertura reservada {bankroll.escrow} · disponível {bankroll.available}.</p>
+          <p className="muted">A reserva cobre os dois doubles possíveis; não é debitada. O saldo só muda pelo score final do motor.</p>
+        </>}
+        {bankroll.pendingKind === "practice" && <p className="practice-notice" role="status">Prática gratuita — banca congelada até o fim da Noite. O jogo e a pontuação continuam normalmente.</p>}
+        {!bankroll.pendingKind && bankroll.status === "active" && <p className="muted">Rodada concluída · saldo atualizado pelo motor. A elegibilidade da próxima rodada será verificada ao iniciá-la.</p>}
+        {!bankroll.pendingKind && bankroll.status === "practice" && <p className="practice-notice" role="status">Prática gratuita — banca congelada em {bankroll.bankroll} até o fim da Noite.</p>}
+        {(bankroll.status === "complete" || bankroll.status === "abandoned") && <p className="muted">Banca expirada ao {bankroll.status === "complete" ? "concluir" : "abandonar"} a Noite: {bankroll.expiredBalance ?? bankroll.bankroll} fichas fictícias. Nada é transferido ou salvo.</p>}
+        <dl className="bankroll-breakdown">
+          <div><dt>Rodadas financiadas</dt><dd>{bankroll.fundedRounds}</dd></div>
+          <div><dt>Rodadas de prática</dt><dd>{bankroll.practiceRounds}</dd></div>
+          <div><dt>Reserva atual</dt><dd>{bankroll.escrow}</dd></div>
+        </dl>
+      </section>}
 
       <p className="phase-status" role="status" aria-live="polite">{phaseLabel(night)}</p>
       {(error || localError) && <p className="recoverable-error" role="alert">{localError ?? error}</p>}
@@ -308,6 +336,8 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
           <h3>{night.status === "complete" ? "Noite concluída" : night.status === "abandoned" ? "Noite encerrada" : "Rodada concluída"}</h3>
           <p>Pontuação desta rodada: {round.score === undefined ? "—" : scoreText(round.score)} pontos.</p>
           <p>Pontuação acumulada: {scoreText(night.totalScore)} pontos. Foco restante: {night.focusRemaining}.</p>
+          {bankroll && <p>Score do motor: {scoreText(round.score ?? 0)} · variação da banca nesta rodada: {bankroll.lastBankDelta === null ? "aguardando settlement" : scoreText(bankroll.lastBankDelta)} fichas{bankroll.lastRoundKind === "practice" ? " (banca congelada em prática)" : ""}.</p>}
+          {bankroll && night.status === "complete" && <p>Resumo A0.1 · banca inicial 150 · banca final/expirada {bankroll.expiredBalance ?? bankroll.bankroll} · saldo líquido {scoreText((bankroll.expiredBalance ?? bankroll.bankroll) - 150)} · financiadas {bankroll.fundedRounds} · prática {bankroll.practiceRounds}. Esta banca não mede habilidade.</p>}
           {night.status === "complete" && <p>Foco não usado expirou ao fim da Noite.</p>}
           <div className="landing-actions">
             {night.status === "active" && <button type="button" onClick={onNextRound}>Próxima rodada</button>}
@@ -323,6 +353,7 @@ export function CofreFocoTable({ session, night, rules, error, onNightChange, on
         <section className="round-summary" aria-label="Noite encerrada">
           <h3>Noite encerrada</h3>
           <p>O Foco restante ({night.expiredFocus}) expirou. Pontuação acumulada até aqui: {scoreText(night.totalScore)}.</p>
+          {bankroll && <p>Banca A0.1 expirada: {bankroll.expiredBalance ?? bankroll.bankroll} fichas fictícias. Não houve settlement da rodada inacabada.</p>}
           <button type="button" onClick={onReturnToSetup}>Voltar à configuração</button>
         </section>
       )}

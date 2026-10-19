@@ -204,4 +204,8 @@ A implementação em Issue específica do Codex **está autorizada** com PR sem 
 
 Fontes normativas: [Decision Register](DECISION-REGISTER.md), [RFC P4-D](ECONOMY-RFC-P4.md), [Competitive Economy](COMPETITION-ECONOMY.md), [Gameplay](GAMEPLAY.md), [CF-RFC-P2B](CF-RFC-P2B.md), [Playtest P2C](PLAYTEST-P2C.md) e [Open Questions](OPEN-QUESTIONS.md).
 
-Para reproduzir as tabelas sem executar código, use a recorrência `Bₙ = B₀ + ΣΔᵣ` enquanto `Bᵣ≥40`, financiando também a rodada que começa exatamente em 40. Em `Δ=−5`, o número de rodadas cobertas é `min(H, floor((B₀−40)/5)+1)`; em perdas máximas `Δ=−40`, substitua o divisor 5 por 40. Após a primeira liquidação abaixo de 40, congele o saldo e conte as rodadas restantes como prática. Nenhum teste de software ou experimento foi executado neste PR documental.
+Para reproduzir as tabelas sem executar código, use a recorrência `Bₙ = B₀ + ΣΔᵣ` enquanto `Bᵣ≥40`, financiando também a rodada que começa exatamente em 40. Em `Δ=−5`, o número de rodadas cobertas é `min(H, floor((B₀−40)/5)+1)`; em perdas máximas `Δ=−40`, substitua o divisor 5 por 40. Após a primeira liquidação abaixo de 40, congele o saldo e conte as rodadas restantes como prática. Nenhum teste de software ou experimento foi executado no PR documental #27.
+
+## 10. Implementação A0.1
+
+Issue #28 implementa este contrato como o modo isolado `BANKROLL-LAB-A0-0.1` do protótipo local. A integração deve manter todas as condições e fronteiras acima; a entrada no código não muda o status experimental. O protocolo prospectivo e as limitações de validação estão em [PLAYTEST-P4-A0.md](PLAYTEST-P4-A0.md). Não há sessões humanas reportadas, nem evidência para calibrar banca ou declarar a experiência balanceada.

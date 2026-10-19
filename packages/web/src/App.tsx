@@ -8,16 +8,18 @@ import {
 import { CF_LAB_01_1_TO_1, CF_LAB_01_3_TO_2, type CofreFocoRules, type PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import { CofreFocoTable } from "./game/CofreFocoTable";
 import { CofreFocoSessionAdapter } from "./game/cofre-foco-session";
+import { BankrollA0SessionAdapter } from "./game/bankroll-a0-session";
 import { GameTable } from "./game/GameTable";
 import { SoloRoundController } from "./game/controller";
 import { prepareCofreFocoRound, prepareRound } from "./game/random";
 import { StudyFlow } from "./study/StudyFlow";
 
 type ProfileId = RuleProfile["id"];
-type GameMode = "basic" | "cofre-foco";
+type GameMode = "basic" | "cofre-foco" | "bankroll-a0";
 type ActiveBasic = { mode: "basic"; controller: SoloRoundController; view: PublicRound; profile: RuleProfile; roundNumber: number };
 type ActiveCofreFoco = { mode: "cofre-foco"; controller: CofreFocoSessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; horizon: number; seed: string };
-type ActiveGame = ActiveBasic | ActiveCofreFoco;
+type ActiveBankrollA0 = { mode: "bankroll-a0"; controller: BankrollA0SessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; seed: string };
+type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0;
 const getProfile = (id: ProfileId): RuleProfile => id === DF_SYM_01_1_TO_1.id ? DF_SYM_01_1_TO_1 : DF_SYM_01_3_TO_2;
 const getCofreFocoRules = (profile: ProfileId): CofreFocoRules => profile === DF_SYM_01_1_TO_1.id ? CF_LAB_01_1_TO_1 : CF_LAB_01_3_TO_2;
 
@@ -70,7 +72,27 @@ export function App() {
     }
   };
 
-  const startSelectedNight = () => mode === "basic" ? void startBasicNight() : void startCofreFocoNight();
+  const startBankrollA0Night = async () => {
+    setError(null);
+    try {
+      const seed = localSeed();
+      const rules = getCofreFocoRules(profile);
+      const prepared = await prepareCofreFocoRound(seed, 0);
+      const controller = BankrollA0SessionAdapter.start(prepared, rules, seed);
+      setNightScore(0);
+      setRoundNumber(0);
+      scoreApplied.current = false;
+      setActive({ mode: "bankroll-a0", controller, view: controller.current, rules, seed });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível iniciar a Noite A0.1.");
+    }
+  };
+
+  const startSelectedNight = () => {
+    if (mode === "basic") void startBasicNight();
+    else if (mode === "cofre-foco") void startCofreFocoNight();
+    else void startBankrollA0Night();
+  };
 
   const nextBasicRound = async () => {
     if (!active || active.mode !== "basic") return;
@@ -100,6 +122,19 @@ export function App() {
     }
   };
 
+  const nextBankrollA0Round = async () => {
+    if (!active || active.mode !== "bankroll-a0") return;
+    setError(null);
+    try {
+      const nextIndex = active.view.completedRounds;
+      const prepared = await prepareCofreFocoRound(active.seed, nextIndex);
+      const view = active.controller.nextRound(prepared);
+      setActive({ ...active, view });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível preparar a próxima rodada A0.1.");
+    }
+  };
+
   const onBasicRoundChange = (view: PublicRound) => {
     setActive((current) => current?.mode === "basic" ? { ...current, view } : current);
     if (view.phase === "complete" && active?.mode === "basic" && !scoreApplied.current) {
@@ -110,6 +145,12 @@ export function App() {
 
   const onCofreFocoNightChange = (view: PublicCofreFocoNight) => {
     setActive((current) => current?.mode === "cofre-foco" ? { ...current, view } : current);
+  };
+
+  const onBankrollA0NightChange = (view: PublicCofreFocoNight) => {
+    setActive((current) => current?.mode === "bankroll-a0"
+      ? { ...current, view }
+      : current);
   };
 
   const returnToSetup = () => {
@@ -162,6 +203,24 @@ export function App() {
     );
   }
 
+  if (active?.mode === "bankroll-a0") {
+    return (
+      <main className="app-shell">
+        <CofreFocoTable
+          key={`bankroll-a0-round-${active.view.roundNumber}`}
+          session={active.controller}
+          night={active.view}
+          rules={active.rules}
+          error={error}
+          bankroll={active.controller.bankroll}
+          onNightChange={onBankrollA0NightChange}
+          onNextRound={() => void nextBankrollA0Round()}
+          onReturnToSetup={returnToSetup}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="landing-shell">
       <p className="eyebrow">PROTÓTIPO SOLO · LABORATÓRIO LOCAL</p>
@@ -174,11 +233,14 @@ export function App() {
         <select id="game-mode" aria-label="Modo de jogo" value={mode} onChange={(event) => setMode(event.target.value as GameMode)}>
           <option value="basic">Duas Faces básico · DF-SYM-0.1 · EXPERIMENTAL</option>
           <option value="cofre-foco">Cofre + Foco solo · DF-CF-0.1-lab · EXPERIMENTAL</option>
+          <option value="bankroll-a0">Cofre + Foco · banca fictícia A0.1 · EXPERIMENTAL</option>
         </select>
         <p className="mode-explanation">
           {mode === "basic"
             ? "Quatro cartas para compor Luz e Sombra. Este é o baseline do protótipo e o único modo do protocolo P2A."
-            : "Quinta carta aberta no Cofre e 3 Focos compartilhados por Noite. Leitura e Manobra são opcionais; esta configuração continua experimental."
+            : mode === "cofre-foco"
+              ? "Quinta carta aberta no Cofre e 3 Focos compartilhados por Noite. Leitura e Manobra são opcionais; esta configuração continua experimental."
+              : "Variação local e temporária sobre Cofre + Foco, com banca fictícia isolada e sem persistência. As regras experimentais do motor permanecem as mesmas."
           }
         </p>
 
@@ -189,7 +251,9 @@ export function App() {
         </select>
         <p className="experimental-note">Os dois modos e os perfis de pagamento são EXPERIMENTAIS.</p>
 
-        {mode === "cofre-foco" && <>
+        {mode === "bankroll-a0" && <p className="mode-explanation">Banca fictícia reiniciada em 150 fichas por Noite, 10 rodadas e cobertura reservada de 40 por rodada financiada. Se o saldo ficar abaixo de 40 entre rodadas, a Noite continua em prática gratuita. Nada persiste após sair.</p>}
+
+        {(mode === "cofre-foco") && <>
           <label className="profile-label" htmlFor="night-horizon">Duração da Noite experimental</label>
           <select id="night-horizon" aria-label="Duração da Noite experimental" value={horizon} onChange={(event) => setHorizon(Number(event.target.value) as 5 | 10 | 20)}>
             <option value={10}>10 rodadas · principal</option>
@@ -205,7 +269,7 @@ export function App() {
         <button type="button" onClick={startSelectedNight}>Jogar livre</button>
         {mode === "basic"
           ? <button type="button" className="secondary-action" onClick={() => setShowStudy(true)}>Iniciar estudo P2A</button>
-          : <p className="study-mode-note">O protocolo P2A só está disponível no modo Duas Faces básico e não avalia Cofre + Foco.</p>
+          : <p className="study-mode-note">O protocolo P2A só está disponível no modo Duas Faces básico e não avalia Cofre + Foco nem a banca A0.1.</p>
         }
       </div>
     </main>

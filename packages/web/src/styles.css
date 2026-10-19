@@ -69,6 +69,17 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .focus-breakdown div { display: grid; gap: .2rem; }
 .focus-breakdown dt { color: #c8bfa9; font: .76rem system-ui, sans-serif; }
 .focus-breakdown dd { margin: 0; color: #f0d897; font: 700 1rem system-ui, sans-serif; }
+.bankroll-resource { margin: 1rem 0; padding: 1rem 1.2rem; border: 1px solid #b87958; background: #211512e8; }
+.bankroll-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.bankroll-heading h3 { margin: .1rem 0; color: #f0d897; font: 700 1.2rem Georgia, serif; }
+.bankroll-heading strong { color: #f0d897; font: 700 1.5rem Georgia, serif; }
+.bankroll-heading .eyebrow { margin: 0; color: #d69a79; font-size: .68rem; }
+.bankroll-resource > p { color: #eee8d8; font: .92rem/1.5 system-ui, sans-serif; }
+.bankroll-breakdown { display: flex; flex-wrap: wrap; gap: .5rem 1.2rem; margin: .8rem 0 0; }
+.bankroll-breakdown div { display: grid; gap: .2rem; }
+.bankroll-breakdown dt { color: #c8bfa9; font: .76rem system-ui, sans-serif; }
+.bankroll-breakdown dd { margin: 0; color: #f0d897; font: 700 1rem system-ui, sans-serif; }
+.practice-notice { padding: .65rem .8rem; border-left: 3px solid #d69a79; background: #d69a7918; font-weight: 700 !important; }
 .initial-and-cofre { display: grid; grid-template-columns: minmax(0, 1fr) minmax(9rem, .35fr); gap: 1rem; align-items: stretch; }
 .initial-and-cofre > div { min-width: 0; padding: .75rem 1rem; border: 1px solid #53675a; background: #0e1714a8; }
 .initial-and-cofre h4 { margin: .2rem 0; color: #e1ca8b; font: 600 .9rem system-ui, sans-serif; }
@@ -125,4 +136,4 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .study-progress { margin: 0 0 .5rem; text-transform: uppercase; letter-spacing: .08em; }
 .text-button { display: block; margin: 1rem 0 0 auto; color: #ddd4c0; border-color: #77633a; background: transparent; }
 @media (max-width: 480px) { .landing-shell { margin: 1rem auto; } .landing-actions { flex-direction: column; } .landing-actions button { width: 100%; } }
-@media (max-width: 600px) { .hands-grid { grid-template-columns: 1fr; } .table-heading { flex-direction: column; } .scoreboard { text-align: left; } .app-shell { margin: .75rem auto; } .focus-resource { align-items: flex-start; flex-direction: column; } .focus-breakdown { gap: .6rem .9rem; } .initial-and-cofre { grid-template-columns: 1fr; } .focus-choices { grid-template-columns: 1fr; } .ability-confirmation .landing-actions { flex-direction: column; } }
+@media (max-width: 600px) { .hands-grid { grid-template-columns: 1fr; } .table-heading { flex-direction: column; } .scoreboard { text-align: left; } .app-shell { margin: .75rem auto; } .focus-resource { align-items: flex-start; flex-direction: column; } .focus-breakdown { gap: .6rem .9rem; } .bankroll-heading { align-items: flex-start; flex-direction: column; } .initial-and-cofre { grid-template-columns: 1fr; } .focus-choices { grid-template-columns: 1fr; } .ability-confirmation .landing-actions { flex-direction: column; } }
