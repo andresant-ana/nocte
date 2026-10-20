@@ -17,6 +17,7 @@
 | [BANKROLL-A0-CONTRACT.md](BANKROLL-A0-CONTRACT.md) | Founder-approved A0.1 EXPERIMENTAL local bankroll contract, reserve/settlement math and acceptance criteria (Issue #26; N-053 resolved for A0.1 only) |
 | [PLAYTEST-P4-A0.md](PLAYTEST-P4-A0.md) | Prospective, consent-based exploratory protocol for A0.1 versus Cofre + Foco without a bank; no human results recorded |
 | [LAB-P4-A0-V.md](LAB-P4-A0-V.md) | Offline paired A0.1 bankroll sensitivity, policies, uncertainty, E2E transition evidence and limitations (Issue #30) |
+| [BANKROLL-A1-RFC.md](BANKROLL-A1-RFC.md) | Candidate/OPEN RFC comparing pre-card exposure models, reserve math, Focus/stake incentives, ranking separation and next research gates (Issue #32; no A1 implementation authorized) |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |

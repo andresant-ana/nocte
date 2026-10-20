@@ -98,3 +98,7 @@ O fundador aprovou a configuração **N-046/N-047 EXPERIMENTAL** para teste solo
 ## NOCTE-P4-A0-V — evidência offline da banca (2026-10-19)
 
 Issue #30 adiciona [LAB-P4-A0-V](LAB-P4-A0-V.md): 1.000 Noites pareadas para cada payout, horizonte principal H=10, três políticas de jogo e B0 de sensibilidade 60/100/150/200. Em 3:2, com B0=150, ocorreu prática em 0,6–1,0% das Noites; B0=60 produziu 27,8–36,2%. A banca é uma camada contábil pós-motor e não alterou score/Foco. Teste Chromium determinístico confirma a transição funded→practice em saldo 40 e conservação de `match_points`/Foco. Tudo é evidência computacional, não humana; N-053/N-054 permanecem EXPERIMENTAL só para A0.1. A1, aposta variável, persistência, loja e monetização seguem fora do escopo e sem autorização.
+
+## NOCTE-P4-A1-D — proposta documental, não autorizada para código (2026-10-20)
+
+Issue #32 produz [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md): compara exposição A1a selecionada por rodada, A1b selecionada uma vez por Noite e A1c (A0.1 sem variabilidade). A1a é uma hipótese candidata para um futuro estudo, não uma regra aprovada. O RFC preserva B₀=150, H=10, stake 10 e reserva 40 do A0.1 como controle; exemplos 5/10/20 e reserva `4s` exigem decisão. A1 só pode chegar a simulação/implementação após gate documental do fundador e avaliação humana de A0; nenhum resultado de A0-V mede a resposta a stakes variáveis.

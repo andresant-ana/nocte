@@ -58,6 +58,7 @@
 | N-052 | RATIFIED (sequência experimental) | **Fundador aprovou estudar A0 → A1**: começar com banca fictícia que zera/reinicia por Noite, exposição inicialmente fixa e solo isolado; só depois avaliar exposições variáveis escolhidas antes das cartas, **sem aprovar A1 em código**. Não ratifica valor inicial, liquidação, falência, double, score, regras finais, carteira persistente ou moeda de loja. | [ECONOMY-RFC-P4](ECONOMY-RFC-P4.md) |
 | N-053 | EXPERIMENTAL (A0 contract resolved) | Fundador aprovou **somente o laboratório local A0.1**: B₀=150, H=10, banca reiniciada, exposição fixa 10+10, reserva de pior caso 40, double legal preservado, prática gratuita nas rodadas restantes se B<40, saldo expira ao final ou abandono, liquidação idempotente uma vez pelo `round.score`. **Não aprova A1, B/C, economy final nem monetização.** | [BANKROLL-A0-CONTRACT](BANKROLL-A0-CONTRACT.md) |
 | N-054 | EXPERIMENTAL | Fundador autorizou a configuração **BANKROLL-LAB-A0-0.1** para execução isolada por Codex: banca inicial 150 fictícias/Noite, H=10, 10 por mão, cobertura reservada 40, prática sem movimentar saldo abaixo de 40, reset/expiração e separação de Foco, rating e `match_points`. Testes exigidos, PR sem auto-merge. **Não é balanço ou produto ratificado.** | [BANKROLL-A0-CONTRACT](BANKROLL-A0-CONTRACT.md) |
+| N-055 | CANDIDATE | RFC propõe avaliar stake pré-deal limitada e igual para Luz/Sombra como futuro experimento A1, mantendo A0.1 como controle. Recomenda A1a por rodada para pesquisa; bandas 5/10/20 e reserva 4s são apenas ilustrações. Não autoriza código A1, não muda A0.1 nem seleciona ranking/solver. | [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md) |
 
 ## Decisions not to infer
 
@@ -69,7 +70,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-055 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-056 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 
@@ -126,3 +127,7 @@ Issue #28 implementa `BANKROLL-LAB-A0-0.1` como modo solo explicitamente selecio
 ## Evidência experimental P4-A0-V — 2026-10-19
 
 Issue #30 mede offline a transição para prática de A0.1 sob quatro saldos de sensibilidade, três políticas computacionais, payouts 3:2/1:1 e comparação pareada do score sem a camada bancária. Em H=10, n=1.000, a configuração B0=150 chegou à prática em 0,6–1,0% das Noites simuladas nas políticas; B0=60, em 27,8–38,2%. A simulação reaproveita score final do motor; saldo não altera ações, `match_points` ou Foco. Playwright determinístico prova a sequência de saldo 40→0→prática e independência de score/Foco. Evidência e limites estão em [LAB-P4-A0-V](LAB-P4-A0-V.md) e `lab/results/p4-a0-v-*.json`. Estes dados **não ratificam saldo, exposição, payout ou regra** e não medem resposta humana; N-053/N-054 permanecem EXPERIMENTAL para A0.1. N-009/N-012/N-021/N-038/N-048/N-050/N-052 permanecem sem alteração. Nenhuma autorização de A1, persistência, loja, moeda ou monetização é inferida.
+
+## RFC P4-A1-D — proposta de exposição pré-cartas (2026-10-20)
+
+Issue #32 acrescenta [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md), comparando stake limitada por rodada (A1a), fixa por Noite (A1b) e controle A0.1 sem variabilidade (A1c). N-055 é **CANDIDATE** somente para avaliar essa hipótese; nenhuma implementação A1 foi aprovada. A recomendação A1a, bandas ilustrativas, reserva `4s`, unidade fracionária e protocolo ainda exigem decisão expressa do fundador. A0.1 e os relatórios A0-V permanecem inalterados; O-25 fica OPEN.
