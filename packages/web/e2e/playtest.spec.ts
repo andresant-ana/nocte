@@ -169,3 +169,84 @@ test("A0.1 settles one motor round, begins round two, and expires on abandonment
   await expect(page.getByText(/Banca A0.1 expirada:/i)).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
+
+test("A0.1 enters irreversible free practice after a funded balance of 40 loses 40, while score and Focus stay independent", async ({ page }) => {
+  await page.addInitScript(() => {
+    // Playwright-only deterministic draw fixture. The production app exposes no seed or fixture controls.
+    Object.defineProperty(Object.getPrototypeOf(globalThis.crypto), "getRandomValues", {
+      configurable: true,
+      value<T extends ArrayBufferView | null>(array: T): T {
+        if (array) new Uint8Array(array.buffer, array.byteOffset, array.byteLength).fill(0);
+        return array;
+      },
+    });
+    const subtlePrototype = Object.getPrototypeOf(globalThis.crypto.subtle);
+    Object.defineProperty(subtlePrototype, "digest", {
+      configurable: true,
+      value: async (_algorithm: AlgorithmIdentifier, input: BufferSource) => {
+        const bytes = input instanceof ArrayBuffer
+          ? new Uint8Array(input)
+          : new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+        const [, , , lane] = JSON.parse(new TextDecoder().decode(bytes)) as [string, string, number, string, number];
+        const sequence = lane === "initial" ? [9, 5, 9, 5, 9, 9]
+          : lane === "luz" || lane === "sombra" ? [1]
+            : lane === "cofre" ? [2]
+              : [0];
+        const block = new Uint8Array(32); const view = new DataView(block.buffer);
+        for (let word = 0; word < 8; word++) view.setUint32(word * 4, sequence[word % sequence.length] ?? 0, true);
+        return block.buffer;
+      },
+    });
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("bankroll-a0");
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  const bank = page.getByRole("region", { name: "Banca fictícia A0.1" });
+
+  const finishRound = async (doubles: number, practice = false) => {
+    await page.getByRole("button", { name: "Confirmar composição" }).click();
+    await page.getByRole("button", { name: "Conservar Foco e continuar" }).click();
+    if (doubles === 2) {
+      await page.getByRole("button", { name: "Dobrar" }).click();
+      await page.getByRole("button", { name: "Dobrar" }).click();
+    } else if (doubles === 1) {
+      await page.getByRole("button", { name: "Dobrar" }).click();
+      await page.getByRole("button", { name: "Parar" }).click();
+    } else {
+      await page.getByRole("button", { name: "Parar" }).click();
+      await page.getByRole("button", { name: "Parar" }).click();
+    }
+    await page.getByRole("button", { name: "Resolver dealer" }).click();
+    await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+    if (practice) {
+      await expect(bank).toContainText("banca congelada em 0 até o fim da Noite");
+      await expect(bank).toContainText("0 fichas");
+    }
+  };
+
+  for (const [round, doubles] of [[1, 2], [2, 2], [3, 1], [4, 2]] as const) {
+    await finishRound(doubles);
+    const expectedBalance = [110, 70, 40, 0][round - 1]!;
+    await expect(bank.locator(".bankroll-heading strong")).toHaveText(`${expectedBalance} fichas`);
+    if (round < 4) {
+      await page.getByRole("button", { name: "Próxima rodada" }).click();
+      await expect(page.getByText(new RegExp(`RODADA ${round + 1} DE 10`, "i"))).toBeVisible();
+    }
+  }
+
+  await page.getByRole("button", { name: "Próxima rodada" }).click();
+  await expect(page.getByText(/RODADA 5 DE 10/i)).toBeVisible();
+  await expect(bank).toContainText("Prática gratuita — banca congelada");
+  await expect(bank.locator(".bankroll-heading strong")).toHaveText("0 fichas");
+  await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+  const scoreBeforePractice = await page.getByLabel("Placar da Noite").locator("strong").textContent();
+  await finishRound(0, true);
+  const scoreAfterPractice = await page.getByLabel("Placar da Noite").locator("strong").textContent();
+  expect(scoreAfterPractice).not.toBe(scoreBeforePractice);
+  await expect(bank.locator(".bankroll-heading strong")).toHaveText("0 fichas");
+  await expect(bank).toContainText("Rodadas de prática");
+  await expect(bank.locator(".bankroll-breakdown")).toContainText("1");
+  await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+});

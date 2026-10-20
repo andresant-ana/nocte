@@ -1,0 +1,1467 @@
+{
+  "result": {
+    "schemaVersion": 1,
+    "labVersion": "a0.1-paired-bankroll-sensitivity-v1",
+    "streamVersion": "sha256-counter-rejection-v1",
+    "seed": "nocte-p4-a0-v-20261019",
+    "nights": 1000,
+    "horizon": 10,
+    "payout": "1:1",
+    "startingBalances": [
+      60,
+      100,
+      150,
+      200
+    ],
+    "rules": {
+      "exposurePerHand": 10,
+      "coverage": 40,
+      "fundedWhenBalanceAtLeast": 40,
+      "practiceIsIrreversible": true
+    },
+    "protocol": "One deterministic engine trajectory is generated per policy/Night, then replayed through every starting-balance ledger; bank balance never enters policy decisions. Engine scores, match_points and Focus therefore match the no-bank CF control exactly for the same policy/actions. Common named streams pair policy comparisons; this is not a finite shoe.",
+    "policies": {
+      "conserve": {
+        "definition": "DF-CF engine and P1B conditional actions; no Read or Manobra; Foco expires. Composition uses the public four-card P1B solver.",
+        "score": {
+          "n": 1000,
+          "mean": 28.370000000000033,
+          "variance": 3548.992092092086,
+          "standardError": 1.8838768781669586,
+          "confidence95": [
+            24.677601318792796,
+            32.06239868120727
+          ]
+        },
+        "focusSpent": {
+          "n": 1000,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "focusExpired": {
+          "n": 1000,
+          "mean": 3,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            3,
+            3
+          ]
+        },
+        "balances": [
+          {
+            "startingBalance": 60,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 382,
+              "estimate": 0.382,
+              "confidence95": [
+                0.3523909215155227,
+                0.41251222655086556
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 7.599999999999994,
+              "variance": 11.43743743743743,
+              "standardError": 0.10694595568527793,
+              "confidence95": [
+                7.390385926856849,
+                7.809614073143139
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 4,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 2.399999999999999,
+              "variance": 11.437437437437433,
+              "standardError": 0.10694595568527794,
+              "confidence95": [
+                2.1903859268568544,
+                2.6096140731431436
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 6,
+                "p95": 9
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.7600000000000011,
+              "variance": 0.1143743743743745,
+              "standardError": 0.010694595568527802,
+              "confidence95": [
+                0.7390385926856866,
+                0.7809614073143156
+              ],
+              "quantiles": {
+                "p05": 0.1,
+                "p25": 0.4,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 82.70000000000003,
+              "variance": 3325.835835835832,
+              "standardError": 1.8236874282167521,
+              "confidence95": [
+                79.1255726406952,
+                86.27442735930487
+              ],
+              "quantiles": {
+                "p05": 20,
+                "p25": 30,
+                "p50": 80,
+                "p75": 120,
+                "p95": 190
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 22.69999999999997,
+              "variance": 3325.8358358358328,
+              "standardError": 1.8236874282167526,
+              "confidence95": [
+                19.125572640695136,
+                26.274427359304806
+              ],
+              "quantiles": {
+                "p05": -40,
+                "p25": -30,
+                "p50": 20,
+                "p75": 60,
+                "p95": 130
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 3,
+              "estimate": 0.003,
+              "confidence95": [
+                0.0010207654054443255,
+                0.008783171789427854
+              ]
+            }
+          },
+          {
+            "startingBalance": 100,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 82,
+              "estimate": 0.082,
+              "confidence95": [
+                0.06655169717368087,
+                0.10064759004454163
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 9.66299999999999,
+              "variance": 1.5810120120120108,
+              "standardError": 0.0397619417535413,
+              "confidence95": [
+                9.585066594163049,
+                9.74093340583693
+              ],
+              "quantiles": {
+                "p05": 7,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0.3369999999999997,
+              "variance": 1.5810120120120115,
+              "standardError": 0.03976194175354131,
+              "confidence95": [
+                0.2590665941630587,
+                0.41493340583694066
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 3
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.9663000000000002,
+              "variance": 0.01581012012012013,
+              "standardError": 0.003976194175354132,
+              "confidence95": [
+                0.9585066594163061,
+                0.9740933405836942
+              ],
+              "quantiles": {
+                "p05": 0.7,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 127.66000000000007,
+              "variance": 3567.6920920920898,
+              "standardError": 1.8888335268339795,
+              "confidence95": [
+                123.95788628740547,
+                131.36211371259466
+              ],
+              "quantiles": {
+                "p05": 30,
+                "p25": 90,
+                "p50": 130,
+                "p75": 170,
+                "p95": 230
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 27.65999999999999,
+              "variance": 3567.6920920920916,
+              "standardError": 1.88883352683398,
+              "confidence95": [
+                23.957886287405387,
+                31.362113712594592
+              ],
+              "quantiles": {
+                "p05": -70,
+                "p25": -10,
+                "p50": 30,
+                "p75": 70,
+                "p95": 130
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 1,
+              "estimate": 0.001,
+              "confidence95": [
+                0.0001765418290572713,
+                0.0056427029601604705
+              ]
+            }
+          },
+          {
+            "startingBalance": 150,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 10,
+              "estimate": 0.01,
+              "confidence95": [
+                0.005440695309270557,
+                0.01830966530539216
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 9.982000000000008,
+              "variance": 0.04772372372372385,
+              "standardError": 0.006908235934283358,
+              "confidence95": [
+                9.968459857568813,
+                9.995540142431203
+              ],
+              "quantiles": {
+                "p05": 10,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0.01799999999999999,
+              "variance": 0.04772372372372373,
+              "standardError": 0.006908235934283348,
+              "confidence95": [
+                0.0044598575688046295,
+                0.03154014243119535
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 0
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.9982000000000011,
+              "variance": 0.00047723723723723846,
+              "standardError": 0.0006908235934283357,
+              "confidence95": [
+                0.9968459857568815,
+                0.9995540142431206
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 178.38000000000017,
+              "variance": 3541.116716716721,
+              "standardError": 1.8817855129415575,
+              "confidence95": [
+                174.69170039463472,
+                182.0682996053656
+              ],
+              "quantiles": {
+                "p05": 80,
+                "p25": 140,
+                "p50": 180,
+                "p75": 220,
+                "p95": 280
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 28.379999999999995,
+              "variance": 3541.116716716717,
+              "standardError": 1.8817855129415564,
+              "confidence95": [
+                24.691700394634545,
+                32.068299605365446
+              ],
+              "quantiles": {
+                "p05": -70,
+                "p25": -10,
+                "p50": 30,
+                "p75": 70,
+                "p95": 130
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            }
+          },
+          {
+            "startingBalance": 200,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 10,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                10,
+                10
+              ],
+              "quantiles": {
+                "p05": 10,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 0
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 1,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                1,
+                1
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 228.37,
+              "variance": 3548.9920920920877,
+              "standardError": 1.8838768781669593,
+              "confidence95": [
+                224.67760131879277,
+                232.06239868120724
+              ],
+              "quantiles": {
+                "p05": 130,
+                "p25": 190,
+                "p50": 230,
+                "p75": 270,
+                "p95": 330
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 28.370000000000033,
+              "variance": 3548.992092092086,
+              "standardError": 1.8838768781669586,
+              "confidence95": [
+                24.677601318792796,
+                32.06239868120727
+              ],
+              "quantiles": {
+                "p05": -70,
+                "p25": -10,
+                "p50": 30,
+                "p75": 70,
+                "p95": 130
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            }
+          }
+        ]
+      },
+      "myopic": {
+        "definition": "P2B-F exact current-round solver with zero continuation values; spends only when its current-round conditional EV recommends it.",
+        "score": {
+          "n": 1000,
+          "mean": 35.339999999999954,
+          "variance": 3601.285685685682,
+          "standardError": 1.8977053737832124,
+          "confidence95": [
+            31.62049746738486,
+            39.05950253261505
+          ]
+        },
+        "focusSpent": {
+          "n": 1000,
+          "mean": 3,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            3,
+            3
+          ]
+        },
+        "focusExpired": {
+          "n": 1000,
+          "mean": 0,
+          "variance": 0,
+          "standardError": 0,
+          "confidence95": [
+            0,
+            0
+          ]
+        },
+        "balances": [
+          {
+            "startingBalance": 60,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 294,
+              "estimate": 0.294,
+              "confidence95": [
+                0.26659352137379233,
+                0.32298316084380063
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 8.216000000000003,
+              "variance": 9.178522522522524,
+              "standardError": 0.0958046059567207,
+              "confidence95": [
+                8.02822297232483,
+                8.403777027675176
+              ],
+              "quantiles": {
+                "p05": 2,
+                "p25": 7,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 1.783999999999998,
+              "variance": 9.178522522522524,
+              "standardError": 0.0958046059567207,
+              "confidence95": [
+                1.5962229723248256,
+                1.9717770276751705
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 3,
+                "p95": 8
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.8216000000000001,
+              "variance": 0.09178522522522527,
+              "standardError": 0.009580460595672071,
+              "confidence95": [
+                0.8028222972324829,
+                0.8403777027675173
+              ],
+              "quantiles": {
+                "p05": 0.2,
+                "p25": 0.7,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 90.99,
+              "variance": 3467.1870870870875,
+              "standardError": 1.8620384225592896,
+              "confidence95": [
+                87.34040469178379,
+                94.6395953082162
+              ],
+              "quantiles": {
+                "p05": 20,
+                "p25": 30,
+                "p50": 90,
+                "p75": 130,
+                "p95": 200
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 30.990000000000038,
+              "variance": 3467.187087087089,
+              "standardError": 1.86203842255929,
+              "confidence95": [
+                27.340404691783828,
+                34.63959530821624
+              ],
+              "quantiles": {
+                "p05": -40,
+                "p25": -30,
+                "p50": 30,
+                "p75": 70,
+                "p95": 140
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 4,
+              "estimate": 0.004,
+              "confidence95": [
+                0.0015565629678934295,
+                0.010239720429805971
+              ]
+            }
+          },
+          {
+            "startingBalance": 100,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 69,
+              "estimate": 0.069,
+              "confidence95": [
+                0.05488371422135517,
+                0.08641507236011349
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 9.717000000000006,
+              "variance": 1.3222332332332318,
+              "standardError": 0.036362525121795816,
+              "confidence95": [
+                9.645729450761285,
+                9.788270549238726
+              ],
+              "quantiles": {
+                "p05": 7,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0.2829999999999999,
+              "variance": 1.3222332332332323,
+              "standardError": 0.03636252512179582,
+              "confidence95": [
+                0.2117294507612801,
+                0.3542705492387197
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 3
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.9716999999999999,
+              "variance": 0.013222332332332323,
+              "standardError": 0.003636252512179582,
+              "confidence95": [
+                0.9645729450761279,
+                0.9788270549238719
+              ],
+              "quantiles": {
+                "p05": 0.7,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 134.58999999999986,
+              "variance": 3655.887787787787,
+              "standardError": 1.9120376010392126,
+              "confidence95": [
+                130.842406301963,
+                138.33759369803673
+              ],
+              "quantiles": {
+                "p05": 30,
+                "p25": 90,
+                "p50": 130,
+                "p75": 180,
+                "p95": 240
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 34.589999999999954,
+              "variance": 3655.887787787787,
+              "standardError": 1.9120376010392126,
+              "confidence95": [
+                30.8424063019631,
+                38.33759369803681
+              ],
+              "quantiles": {
+                "p05": -70,
+                "p25": -10,
+                "p50": 30,
+                "p75": 80,
+                "p95": 140
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 1,
+              "estimate": 0.001,
+              "confidence95": [
+                0.0001765418290572713,
+                0.0056427029601604705
+              ]
+            }
+          },
+          {
+            "startingBalance": 150,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 6,
+              "estimate": 0.006,
+              "confidence95": [
+                0.0027526315709082315,
+                0.013028344232445605
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 9.986999999999998,
+              "variance": 0.04087187187187178,
+              "standardError": 0.006393111282612855,
+              "confidence95": [
+                9.974469501886077,
+                9.99953049811392
+              ],
+              "quantiles": {
+                "p05": 10,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0.013000000000000001,
+              "variance": 0.040871871871871884,
+              "standardError": 0.006393111282612863,
+              "confidence95": [
+                0.00046950188607879084,
+                0.02553049811392121
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 0
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.998700000000001,
+              "variance": 0.0004087187187187193,
+              "standardError": 0.0006393111282612866,
+              "confidence95": [
+                0.997446950188609,
+                0.9999530498113931
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 185.35999999999984,
+              "variance": 3593.2636636636585,
+              "standardError": 1.8955905843993999,
+              "confidence95": [
+                181.64464245457702,
+                189.07535754542266
+              ],
+              "quantiles": {
+                "p05": 90,
+                "p25": 140,
+                "p50": 180,
+                "p75": 230,
+                "p95": 290
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 35.36000000000004,
+              "variance": 3593.2636636636585,
+              "standardError": 1.8955905843993999,
+              "confidence95": [
+                31.64464245457722,
+                39.07535754542287
+              ],
+              "quantiles": {
+                "p05": -60,
+                "p25": -10,
+                "p50": 30,
+                "p75": 80,
+                "p95": 140
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            }
+          },
+          {
+            "startingBalance": 200,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 10,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                10,
+                10
+              ],
+              "quantiles": {
+                "p05": 10,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 0
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 1,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                1,
+                1
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 235.3400000000001,
+              "variance": 3601.2856856856815,
+              "standardError": 1.8977053737832124,
+              "confidence95": [
+                231.62049746738498,
+                239.0595025326152
+              ],
+              "quantiles": {
+                "p05": 140,
+                "p25": 190,
+                "p50": 230,
+                "p75": 280,
+                "p95": 340
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 35.339999999999954,
+              "variance": 3601.285685685682,
+              "standardError": 1.8977053737832124,
+              "confidence95": [
+                31.62049746738486,
+                39.05950253261505
+              ],
+              "quantiles": {
+                "p05": -60,
+                "p25": -10,
+                "p50": 30,
+                "p75": 80,
+                "p95": 140
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            }
+          }
+        ]
+      },
+      "intertemporal": {
+        "definition": "P2B-F exact current-round solver with sample-average finite-horizon Focus values trained on 512 independent scenarios per stage.",
+        "score": {
+          "n": 1000,
+          "mean": 49.559999999999995,
+          "variance": 3754.9613613613587,
+          "standardError": 1.9377722676726898,
+          "confidence95": [
+            45.76196635536152,
+            53.35803364463847
+          ]
+        },
+        "focusSpent": {
+          "n": 1000,
+          "mean": 2.8650000000000015,
+          "variance": 0.12289789789789782,
+          "standardError": 0.011085932432497404,
+          "confidence95": [
+            2.8432715724323065,
+            2.8867284275676965
+          ]
+        },
+        "focusExpired": {
+          "n": 1000,
+          "mean": 0.13500000000000012,
+          "variance": 0.12289789789789787,
+          "standardError": 0.011085932432497406,
+          "confidence95": [
+            0.1132715724323052,
+            0.15672842756769503
+          ]
+        },
+        "balances": [
+          {
+            "startingBalance": 60,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 292,
+              "estimate": 0.292,
+              "confidence95": [
+                0.2646572082575304,
+                0.3209347815544081
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 8.057000000000011,
+              "variance": 10.546297297297317,
+              "standardError": 0.10269516686435305,
+              "confidence95": [
+                7.855717472945879,
+                8.258282527054144
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 6,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 1.9429999999999998,
+              "variance": 10.54629729729732,
+              "standardError": 0.10269516686435307,
+              "confidence95": [
+                1.7417174729458678,
+                2.144282527054132
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 4,
+                "p95": 9
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.8057000000000006,
+              "variance": 0.10546297297297298,
+              "standardError": 0.010269516686435297,
+              "confidence95": [
+                0.7855717472945875,
+                0.8258282527054138
+              ],
+              "quantiles": {
+                "p05": 0.1,
+                "p25": 0.6,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 101.01999999999997,
+              "variance": 4148.708308308305,
+              "standardError": 2.03683782081645,
+              "confidence95": [
+                97.02779787119972,
+                105.01220212880021
+              ],
+              "quantiles": {
+                "p05": 20,
+                "p25": 30,
+                "p50": 100,
+                "p75": 150,
+                "p95": 210
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 41.020000000000024,
+              "variance": 4148.708308308304,
+              "standardError": 2.0368378208164497,
+              "confidence95": [
+                37.02779787119978,
+                45.01220212880027
+              ],
+              "quantiles": {
+                "p05": -40,
+                "p25": -30,
+                "p50": 40,
+                "p75": 90,
+                "p95": 150
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 2,
+              "estimate": 0.002,
+              "confidence95": [
+                0.000548632102457155,
+                0.007262958889587807
+              ]
+            }
+          },
+          {
+            "startingBalance": 100,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 60,
+              "estimate": 0.06,
+              "confidence95": [
+                0.046896260125365796,
+                0.07647141063065788
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 9.726999999999988,
+              "variance": 1.4058768768768763,
+              "standardError": 0.03749502469497622,
+              "confidence95": [
+                9.653509751597834,
+                9.800490248402141
+              ],
+              "quantiles": {
+                "p05": 8,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0.2729999999999999,
+              "variance": 1.4058768768768775,
+              "standardError": 0.03749502469497623,
+              "confidence95": [
+                0.1995097515978465,
+                0.3464902484021533
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 2
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.9727000000000002,
+              "variance": 0.014058768768768777,
+              "standardError": 0.0037495024694976235,
+              "confidence95": [
+                0.9653509751597849,
+                0.9800490248402156
+              ],
+              "quantiles": {
+                "p05": 0.8,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 148.13000000000002,
+              "variance": 3958.5616616616594,
+              "standardError": 1.9896134452857066,
+              "confidence95": [
+                144.23035764724003,
+                152.02964235276002
+              ],
+              "quantiles": {
+                "p05": 30,
+                "p25": 100,
+                "p50": 150,
+                "p75": 190,
+                "p95": 250
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 48.13,
+              "variance": 3958.5616616616617,
+              "standardError": 1.989613445285707,
+              "confidence95": [
+                44.23035764724002,
+                52.029642352759986
+              ],
+              "quantiles": {
+                "p05": -70,
+                "p25": 0,
+                "p50": 50,
+                "p75": 90,
+                "p95": 150
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 1,
+              "estimate": 0.001,
+              "confidence95": [
+                0.0001765418290572713,
+                0.0056427029601604705
+              ]
+            }
+          },
+          {
+            "startingBalance": 150,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 7,
+              "estimate": 0.007,
+              "confidence95": [
+                0.0033948250792319975,
+                0.01437849692694906
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 9.984000000000009,
+              "variance": 0.05179579579579593,
+              "standardError": 0.007196929608923233,
+              "confidence95": [
+                9.969894017966519,
+                9.998105982033499
+              ],
+              "quantiles": {
+                "p05": 10,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0.016000000000000007,
+              "variance": 0.05179579579579578,
+              "standardError": 0.007196929608923224,
+              "confidence95": [
+                0.0018940179665104893,
+                0.030105982033489527
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 0
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 0.9983999999999997,
+              "variance": 0.0005179579579579561,
+              "standardError": 0.0007196929608923212,
+              "confidence95": [
+                0.9969894017966507,
+                0.9998105982033487
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 199.4900000000001,
+              "variance": 3771.6115115115035,
+              "standardError": 1.9420637248843056,
+              "confidence95": [
+                195.68355509922685,
+                203.29644490077334
+              ],
+              "quantiles": {
+                "p05": 100,
+                "p25": 160,
+                "p50": 200,
+                "p75": 240,
+                "p95": 300
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 49.48999999999999,
+              "variance": 3771.6115115115017,
+              "standardError": 1.9420637248843051,
+              "confidence95": [
+                45.68355509922675,
+                53.296444900773224
+              ],
+              "quantiles": {
+                "p05": -50,
+                "p25": 10,
+                "p50": 50,
+                "p75": 90,
+                "p95": 150
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            }
+          },
+          {
+            "startingBalance": 200,
+            "practiceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            },
+            "fundedRounds": {
+              "n": 1000,
+              "mean": 10,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                10,
+                10
+              ],
+              "quantiles": {
+                "p05": 10,
+                "p25": 10,
+                "p50": 10,
+                "p75": 10,
+                "p95": 10
+              }
+            },
+            "practiceRounds": {
+              "n": 1000,
+              "mean": 0,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                0,
+                0
+              ],
+              "quantiles": {
+                "p05": 0,
+                "p25": 0,
+                "p50": 0,
+                "p75": 0,
+                "p95": 0
+              }
+            },
+            "fundedFractionOfNight": {
+              "n": 1000,
+              "mean": 1,
+              "variance": 0,
+              "standardError": 0,
+              "confidence95": [
+                1,
+                1
+              ],
+              "quantiles": {
+                "p05": 1,
+                "p25": 1,
+                "p50": 1,
+                "p75": 1,
+                "p95": 1
+              }
+            },
+            "finalBankroll": {
+              "n": 1000,
+              "mean": 249.5599999999999,
+              "variance": 3754.961361361361,
+              "standardError": 1.9377722676726905,
+              "confidence95": [
+                245.7619663553614,
+                253.35803364463837
+              ],
+              "quantiles": {
+                "p05": 150,
+                "p25": 210,
+                "p50": 250,
+                "p75": 290,
+                "p95": 350
+              }
+            },
+            "bankDelta": {
+              "n": 1000,
+              "mean": 49.559999999999995,
+              "variance": 3754.9613613613587,
+              "standardError": 1.9377722676726898,
+              "confidence95": [
+                45.76196635536152,
+                53.35803364463847
+              ],
+              "quantiles": {
+                "p05": -50,
+                "p25": 10,
+                "p50": 50,
+                "p75": 90,
+                "p95": 150
+              }
+            },
+            "zeroBalanceProbability": {
+              "n": 1000,
+              "events": 0,
+              "estimate": 0,
+              "confidence95": [
+                0,
+                0.003826898586390522
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "pairedPolicyScoreDifferences": {
+      "myopic-minus-conserve": {
+        "scoreDifference": {
+          "n": 1000,
+          "mean": 6.97,
+          "variance": 249.56866866866847,
+          "standardError": 0.49956848246128227,
+          "confidence95": [
+            5.990845774375886,
+            7.949154225624113
+          ]
+        },
+        "win": 534,
+        "loss": 184,
+        "tie": 282
+      },
+      "intertemporal-minus-conserve": {
+        "scoreDifference": {
+          "n": 1000,
+          "mean": 21.190000000000012,
+          "variance": 563.6475475475477,
+          "standardError": 0.7507646419135278,
+          "confidence95": [
+            19.718501301849496,
+            22.661498698150528
+          ]
+        },
+        "win": 747,
+        "loss": 113,
+        "tie": 140
+      },
+      "intertemporal-minus-myopic": {
+        "scoreDifference": {
+          "n": 1000,
+          "mean": 14.22,
+          "variance": 615.4070070070071,
+          "standardError": 0.7844788123378522,
+          "confidence95": [
+            12.68242152781781,
+            15.75757847218219
+          ]
+        },
+        "win": 658,
+        "loss": 213,
+        "tie": 129
+      }
+    },
+    "pairedNoBankCheck": {
+      "scoreMeanDifference": 0,
+      "scoreVarianceDifference": 0,
+      "note": "A0 is an accounting overlay; no-bank score mean 28.370000 points/Night and variance 3548.992092 are identical by construction for each policy."
+    },
+    "limitations": [
+      "The A0 ledger is applied after engine trajectory generation; it cannot affect actions, match_points, Focus or random streams. This estimates threshold exposure conditional on each named policy, not a behavioral response to having a bank.",
+      "Conserve and myopic are deterministic model policies, not human strategies. Intertemporal continuation values use finite sample-average Bellman training and are approximate; within-round decisions use the exact P2B-F model.",
+      "Infinite ranks with replacement, S17, the selected experimental natural payout and versioned engine rules; no finite shoe, multiplayer mirror, server authority, human data, learning, enjoyment or retention inference.",
+      "Wilson 95% intervals cover practice/depletion proportions; normal 95% intervals from sample means cover score, funded/practice counts and bankroll EV. Bank quantiles are empirical, without bootstrap intervals. Intervals are marginal, not multiplicity-adjusted.",
+      "Starting balances 60/100/200 and horizon 5/20 are sensitivities only; they are not approved UI rules. A0.1 approved display remains 150 and 10 rounds. Payout 1:1 is a sensitivity profile, not a rule change."
+    ]
+  },
+  "execution": {
+    "elapsedMs": 8816,
+    "node": "v24.21.0",
+    "timingNote": "execution is nondeterministic metadata; result is reproducible for the same code and parameters"
+  }
+}
