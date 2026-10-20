@@ -34,6 +34,7 @@ P1A implementation alternatives and the versioned lab defaults are recorded in [
 | O-22 | Fase futura — banca | Banca de sessão ou persistente, gestão de exposição, criação/retirada de fichas solo, recuperação e rating independente? N-009/N-012/N-021/N-048 |
 | O-23 | Fase futura — recompensas | Uma moeda de loja via desafios, fichas e dinheiro real ou moedas conquistável/premium segregadas? Há conversão permitida? Proteger contra farming, inflação e riscos legais antes de implementar. N-009/N-038/N-049/N-050 |
 | O-24 | P2C UX | Validar botões Leitura/Manobra simultâneos, skip transacional e cancelamento sem perder decisão ou Foco, sem mudar lógica de janela pós-peek. N-051 / Issue #21 |
+| O-25 | P4 / stake pré-cartas | Escolher A1a por rodada, A1b por Noite ou manter A0.1; definir bandas, reserva/insolvência, stake solver e utilidade de risco, unidade para payout fracionário, exposição de `match_points`/rating, interação com Foco, payout e gate humano. A1 não está autorizada. N-055 / Issue #32 |
 
 ## Standard resolution record
 
@@ -48,3 +49,7 @@ O-22 continua OPEN: banca reiniciada por Noite (A0/A1) versus persistente (B), e
 **Especificação P4-A0-S — proposta para revisão, 2026-10-19:** [BANKROLL-A0-CONTRACT](BANKROLL-A0-CONTRACT.md) compara reserva máxima A0.1, double condicional A0.2 e saldo meramente visual A0.3. Recomenda A0.1, `B₀=150`, exposição 10+10, reserva 40, horizonte H=10 e prática gratuita quando `B<40`; cada elemento é CANDIDATE e aguarda aprovação. N-053/O-22 permanecem OPEN; não iniciar A0-E por inferência nem modificar N-009/N-012/N-021/N-038/N-050/N-052.
 
 **Decisão posterior (2026-10-19) — prevalece sobre referências históricas acima:** A0.1 aprovada para laboratório solo com B₀ 150, H10, 10+10, cobertura 40, prática restante da Noite abaixo de 40 e expiração sem persistência. N-053 **EXPERIMENTAL (resolvida apenas para A0.1)** e N-054 **EXPERIMENTAL**. O-22 ainda OPEN para A1, B/C e jogo final; O-23/N-050 permanecem OPEN.
+
+## RFC P4-A1-D — exposição pré-cartas (2026-10-20)
+
+O-25 foi aberta para as decisões de stake pré-deal e objetivo de política. [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md) recomenda apenas estudar A1a por rodada como candidato, compara A1b e preserva A1c/A0.1 como controle. Os exemplos `{5,10,20}` e reserva `4s` não foram aprovados. A1 permanece sem autorização de implementação até revisão expressa do fundador, evidência A0 humana e definição do próximo protocolo. N-053/N-054 seguem limitadas ao A0.1.
