@@ -1,10 +1,10 @@
 # NOCTE-P4-A1-D — RFC de exposição pré-cartas
 
-**Versão:** `BANKROLL-A1-RFC-v0.1`  
-**Data:** 2026-10-20  
-**Issue:** [#32](https://github.com/andresant-ana/nocte/issues/32)  
-**Status:** **CANDIDATE / OPEN — proposta documental para revisão do fundador. A1 não está autorizada para implementação nem para uso como regra final.**  
-**Escopo:** modelos de exposição fictícia em laboratório solo; nenhum código de jogo, motor, UI, carteira ou ranking é alterado.  
+**Versão:** `BANKROLL-A1-RFC-v0.1`<br>
+**Data:** 2026-10-20<br>
+**Issue:** [#32](https://github.com/andresant-ana/nocte/issues/32)<br>
+**Status:** **CANDIDATE / OPEN — proposta documental para revisão do fundador. A1 não está autorizada para implementação nem para uso como regra final.**<br>
+**Escopo:** modelos de exposição fictícia em laboratório solo; nenhum código de jogo, motor, UI, carteira ou ranking é alterado.<br>
 **Baseline preservada:** `BANKROLL-LAB-A0-0.1` conforme N-053/N-054 EXPERIMENTAL, sem alteração de parâmetros ou resultados.
 
 ## 1. Resumo da recomendação
