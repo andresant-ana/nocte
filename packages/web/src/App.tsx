@@ -9,17 +9,20 @@ import { CF_LAB_01_1_TO_1, CF_LAB_01_3_TO_2, type CofreFocoRules, type PublicCof
 import { CofreFocoTable } from "./game/CofreFocoTable";
 import { CofreFocoSessionAdapter } from "./game/cofre-foco-session";
 import { BankrollA0SessionAdapter } from "./game/bankroll-a0-session";
+import { BankrollA1aSessionAdapter } from "./game/bankroll-a1a-session";
+import { BankrollA1aBettingTable } from "./game/BankrollA1aBettingTable";
 import { GameTable } from "./game/GameTable";
 import { SoloRoundController } from "./game/controller";
 import { prepareCofreFocoRound, prepareP5CofreFocoRound, prepareRound } from "./game/random";
 import { StudyFlow } from "./study/StudyFlow";
 
 type ProfileId = RuleProfile["id"];
-type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards";
+type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards" | "bankroll-a1a";
 type ActiveBasic = { mode: "basic"; controller: SoloRoundController; view: PublicRound; profile: RuleProfile; roundNumber: number };
 type ActiveCofreFoco = { mode: "cofre-foco" | "p5-cards"; cardIdentityMode: boolean; controller: CofreFocoSessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; horizon: number; seed: string };
 type ActiveBankrollA0 = { mode: "bankroll-a0"; controller: BankrollA0SessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; seed: string };
-type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0;
+type ActiveBankrollA1a = { mode: "bankroll-a1a"; controller: BankrollA1aSessionAdapter; rules: CofreFocoRules; seed: string | null; revision: number };
+type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0 | ActiveBankrollA1a;
 const getProfile = (id: ProfileId): RuleProfile => id === DF_SYM_01_1_TO_1.id ? DF_SYM_01_1_TO_1 : DF_SYM_01_3_TO_2;
 const getCofreFocoRules = (profile: ProfileId): CofreFocoRules => profile === DF_SYM_01_1_TO_1.id ? CF_LAB_01_1_TO_1 : CF_LAB_01_3_TO_2;
 
@@ -39,6 +42,9 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [showStudy, setShowStudy] = useState(false);
   const scoreApplied = useRef(false);
+  const a1aStartPending = useRef(false);
+  const a1aSessionGeneration = useRef(0);
+  const [a1aPreparing, setA1aPreparing] = useState(false);
 
   const startBasicNight = async (selectedProfile = profile) => {
     setError(null);
@@ -104,11 +110,79 @@ export function App() {
     }
   };
 
+  const startBankrollA1aNight = () => {
+    a1aSessionGeneration.current += 1;
+    a1aStartPending.current = false;
+    setA1aPreparing(false);
+    setError(null);
+    try {
+      const rules = getCofreFocoRules(profile);
+      const controller = BankrollA1aSessionAdapter.start(rules);
+      setNightScore(0);
+      setRoundNumber(0);
+      scoreApplied.current = false;
+      setActive({ mode: "bankroll-a1a", controller, rules, seed: null, revision: 0 });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível iniciar o laboratório A1a.");
+    }
+  };
+
   const startSelectedNight = () => {
     if (mode === "basic") void startBasicNight();
     else if (mode === "cofre-foco") void startCofreFocoNight();
     else if (mode === "bankroll-a0") void startBankrollA0Night();
+    else if (mode === "bankroll-a1a") startBankrollA1aNight();
     else void startP5CardNight();
+  };
+
+  const startA1aRound = async (stake: number) => {
+    if (!active || active.mode !== "bankroll-a1a" || !active.controller.isBetting || a1aStartPending.current) return;
+    // Validate the wager before touching the RNG, including the practice-only case.
+    const bank = active.controller.bankroll;
+    const validStake = bank.status === "practice" ? stake === 0
+      : bank.status === "active" && Number.isSafeInteger(stake) && stake >= 1 && stake <= bank.maxStake;
+    if (!validStake) {
+      setError("Aposta inválida para o saldo atual; ajuste as fichas antes de distribuir.");
+      return;
+    }
+    a1aStartPending.current = true; // synchronous guard against rapid double clicks
+    const generation = a1aSessionGeneration.current;
+    setA1aPreparing(true);
+    setError(null);
+    try {
+      // The seed and every card stream are created only after a valid wager is confirmed.
+      const seed = active.seed ?? localSeed();
+      const roundIndex = active.controller.bankroll.completedRounds;
+      const prepared = await prepareP5CofreFocoRound(seed, roundIndex);
+      // Abandoning during asynchronous preparation must never resurrect the Night.
+      if (generation !== a1aSessionGeneration.current) return;
+      active.controller.startRound(prepared, stake);
+      setActive((current) => current?.mode === "bankroll-a1a" && current.controller === active.controller
+        ? { ...current, seed, revision: current.revision + 1 } : current);
+    } catch (cause) {
+      if (generation === a1aSessionGeneration.current)
+        setError(cause instanceof Error ? cause.message : "Não foi possível iniciar a rodada A1a.");
+    } finally {
+      if (generation === a1aSessionGeneration.current) {
+        a1aStartPending.current = false;
+        setA1aPreparing(false);
+      }
+    }
+  };
+
+  const nextA1aBetting = () => {
+    if (!active || active.mode !== "bankroll-a1a") return;
+    try {
+      active.controller.enterBetting();
+      setActive({ ...active, revision: active.revision + 1 });
+      setError(null);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível abrir a próxima aposta A1a.");
+    }
+  };
+
+  const onA1aNightChange = (_view: PublicCofreFocoNight) => {
+    setActive((current) => current?.mode === "bankroll-a1a" ? { ...current, revision: current.revision + 1 } : current);
   };
 
   const nextBasicRound = async () => {
@@ -173,6 +247,9 @@ export function App() {
   };
 
   const returnToSetup = () => {
+    a1aSessionGeneration.current += 1;
+    a1aStartPending.current = false;
+    setA1aPreparing(false);
     setActive(null);
     setNightScore(0);
     setRoundNumber(0);
@@ -241,6 +318,37 @@ export function App() {
     );
   }
 
+  if (active?.mode === "bankroll-a1a" && active.controller.isBetting) {
+    return <main className="game-session-shell">
+      <BankrollA1aBettingTable
+        key={`a1a-bet-${active.controller.bankroll.completedRounds}-${active.revision}`}
+        bankroll={active.controller.bankroll}
+        error={error}
+        preparing={a1aPreparing}
+        onConfirm={(stake) => void startA1aRound(stake)}
+        onPractice={() => void startA1aRound(0)}
+        onAbandon={() => { active.controller.abandonBeforeDeal(); returnToSetup(); }}
+      />
+    </main>;
+  }
+
+  if (active?.mode === "bankroll-a1a" && !active.controller.isBetting) {
+    return <main className="game-session-shell">
+      <CofreFocoTable
+        key={`bankroll-a1a-round-${active.controller.bankroll.completedRounds}`}
+        session={active.controller}
+        night={active.controller.current}
+        rules={active.rules}
+        error={error}
+        bankroll={active.controller.bankroll}
+        onNightChange={onA1aNightChange}
+        onNextRound={nextA1aBetting}
+        onReturnToSetup={returnToSetup}
+        cardIdentityMode
+      />
+    </main>;
+  }
+
   return (
     <main className="landing-shell">
       <p className="eyebrow">PROTÓTIPO SOLO · LABORATÓRIO LOCAL</p>
@@ -255,6 +363,7 @@ export function App() {
           <option value="cofre-foco">Cofre + Foco solo · DF-CF-0.1-lab · EXPERIMENTAL</option>
           <option value="bankroll-a0">Cofre + Foco · banca fictícia A0.1 · EXPERIMENTAL</option>
           <option value="p5-cards">Laboratório P5 · cartas com naipes · EXPERIMENTAL</option>
+          <option value="bankroll-a1a">Apostas livres · fichas A1a · EXPERIMENTAL</option>
         </select>
         <p className="mode-explanation">
           {mode === "basic"
@@ -263,7 +372,9 @@ export function App() {
               ? "Quinta carta aberta no Cofre e 3 Focos compartilhados por Noite. Leitura e Manobra são opcionais; esta configuração continua experimental."
               : mode === "bankroll-a0"
                 ? "Variação local e temporária sobre Cofre + Foco, com banca fictícia isolada e sem persistência. As regras experimentais do motor permanecem as mesmas."
-                : "Laboratório de cartas sem apostas ou banca. J/Q/K mantêm valor 10; naipes e identidades são apenas visuais e usam o motor Cofre + Foco sem alterar regras ou resultados."
+                : mode === "p5-cards"
+                ? "Laboratório de cartas sem apostas ou banca. J/Q/K mantêm valor 10; naipes e identidades são apenas visuais e usam o motor Cofre + Foco sem alterar regras ou resultados."
+                : "Aposta inteira escolhida antes de cada distribuição, igual para Luz e Sombra, com cobertura 4s. Laboratório local separado da banca fixa A0.1; Foco e pontos não escalam com a aposta."
           }
         </p>
 
@@ -275,6 +386,7 @@ export function App() {
         <p className="experimental-note">Os dois modos e os perfis de pagamento são EXPERIMENTAIS.</p>
 
         {mode === "bankroll-a0" && <p className="mode-explanation">Banca fictícia reiniciada em 150 fichas por Noite, 10 rodadas e cobertura reservada de 40 por rodada financiada. Se o saldo ficar abaixo de 40 entre rodadas, a Noite continua em prática gratuita. Nada persiste após sair.</p>}
+        {mode === "bankroll-a1a" && <p className="mode-explanation">Banca reiniciada em 150 fichas, 10 rodadas. Escolha s fichas por mão antes de cada distribuição; R=4s cobre ambos os doubles. O ledger aceita meios de ficha exatos. A prática gratuita começa quando nenhuma aposta mínima cabe. Perfil EXPERIMENTAL, sem persistência.</p>}
 
         {(mode === "cofre-foco") && <>
           <label className="profile-label" htmlFor="night-horizon">Duração da Noite experimental</label>

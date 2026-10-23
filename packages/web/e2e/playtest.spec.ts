@@ -116,8 +116,11 @@ test("Cofre + Foco shows all abilities together, cancels direct Manobra safely, 
   if (await resolve.count()) await resolve.click();
   await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Próxima rodada" })).toBeEnabled();
+  const completedRoundLabel = await page.locator(".table-title-block .eyebrow").textContent();
+  const completedRoundNumber = Number(completedRoundLabel?.match(/RODADA (\d+)/i)?.[1]);
+  expect(Number.isInteger(completedRoundNumber)).toBe(true);
   await page.getByRole("button", { name: "Próxima rodada" }).click();
-  await expect(page.getByText(/NOITE · RODADA 2 DE 10/i)).toBeVisible();
+  await expect(page.getByText(new RegExp(`NOITE · RODADA ${completedRoundNumber + 1} DE 10`, "i"))).toBeVisible();
   await expect(page.getByText("0 de 3 restantes")).toBeVisible();
   await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toHaveCount(0);
 });
@@ -358,4 +361,149 @@ test("A0.1 enters irreversible free practice after a funded balance of 40 loses 
   await expect(details.getByText("4 / 1")).toBeVisible();
   await expect(details.getByText("0 · prática")).toBeVisible();
   await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+});
+
+test("A1a confirms the stake before any random draw, keeps the whole stake equal, lowers it to available coverage, and freezes bank in practice", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __a1aCryptoCalls: number }).__a1aCryptoCalls = 0;
+    Object.defineProperty(Object.getPrototypeOf(globalThis.crypto), "getRandomValues", {
+      configurable: true,
+      value<T extends ArrayBufferView | null>(array: T): T {
+        (window as unknown as { __a1aCryptoCalls: number }).__a1aCryptoCalls += 1;
+        if (array) new Uint8Array(array.buffer, array.byteOffset, array.byteLength).fill(0);
+        return array;
+      },
+    });
+    const subtlePrototype = Object.getPrototypeOf(globalThis.crypto.subtle);
+    Object.defineProperty(subtlePrototype, "digest", {
+      configurable: true,
+      value: async (_algorithm: AlgorithmIdentifier, input: BufferSource) => {
+        (window as unknown as { __a1aCryptoCalls: number }).__a1aCryptoCalls += 1;
+        const bytes = input instanceof ArrayBuffer ? new Uint8Array(input) : new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+        const [version, , , lane, counter] = JSON.parse(new TextDecoder().decode(bytes)) as [string, string, number, string, number];
+        let words: number[];
+        if (version === "sha256-counter-p5-art-v1") words = Array(8).fill(0);
+        else if (lane === "initial") words = counter === 0 ? [9, 1, 9, 1, 9, 6, 0, 0] : Array(8).fill(0);
+        else if (lane === "luz" || lane === "sombra") words = Array(8).fill(1);
+        else if (lane === "cofre") words = Array(8).fill(4);
+        else words = Array(8).fill(0);
+        const block = new Uint8Array(32); const view = new DataView(block.buffer);
+        words.forEach((word, index) => view.setUint32(index * 4, word, true));
+        return block.buffer;
+      },
+    });
+  });
+
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("bankroll-a1a");
+  await expect(page.getByText(/cobertura 4s/i)).toBeVisible();
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { __a1aCryptoCalls: number }).__a1aCryptoCalls)).toBe(0);
+
+  const viewports = [
+    { width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1920, height: 1080 },
+    { width: 390, height: 844 }, { width: 360, height: 640 },
+  ];
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    const metrics = await page.evaluate(() => {
+      const shell = document.querySelector<HTMLElement>(".game-session-shell")!;
+      return {
+      width: document.documentElement.scrollWidth, innerWidth,
+      height: document.documentElement.scrollHeight, innerHeight,
+      shellHeight: shell.scrollHeight, shellClientHeight: shell.clientHeight,
+      };
+    });
+    expect(metrics.width, `betting horizontal scroll ${viewport.width}x${viewport.height}`).toBeLessThanOrEqual(metrics.innerWidth + 1);
+    expect(metrics.height, `betting vertical scroll ${viewport.width}x${viewport.height}`).toBeLessThanOrEqual(metrics.innerHeight + 1);
+    expect(metrics.shellHeight).toBeLessThanOrEqual(metrics.shellClientHeight + 1);
+    for (const name of ["Fichas por mão (Luz e Sombra)", "Adicionar 5 fichas", "Desfazer", "Limpar", "Repetir aposta", "Confirmar aposta e distribuir"]) {
+      const locator = name === "Fichas por mão (Luz e Sombra)" ? page.getByRole("spinbutton", { name }) : page.getByRole("button", { name });
+      if (name === "Repetir aposta" || name === "Desfazer") {
+        await expect(locator).toBeVisible(); await expect(locator).toBeInViewport();
+        continue; // unavailable actions stay visible but disabled until a prior stake/edit exists
+      }
+      await expect(locator).toBeVisible(); await expect(locator).toBeInViewport(); await expect(locator).toBeEnabled();
+      expect(await locator.evaluate(element => {
+        const rect = element.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return hit === element || element.contains(hit);
+      }), `${name} is clickable at ${viewport.width}x${viewport.height}`).toBe(true);
+    }
+    if (viewport.width !== 360) await page.screenshot({ path: testInfo.outputPath(`a1a-betting-${viewport.width}x${viewport.height}.png`) });
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Adicionar 5 fichas" }).click();
+  await expect(page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" })).toHaveValue("6");
+  await page.getByRole("button", { name: "Desfazer" }).click();
+  await expect(page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" })).toHaveValue("1");
+  await page.getByRole("button", { name: "Limpar" }).click();
+  await page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" }).fill("5");
+  await expect(page.getByText("Reserva máxima `R = 4s`")).toBeVisible();
+  await expect(page.getByText("20 fichas", { exact: true })).toBeVisible();
+  // Simultaneous click events must open only one wagered round, with no stale retry error.
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).evaluate(element => {
+    (element as HTMLButtonElement).click();
+    (element as HTMLButtonElement).click();
+  });
+  await expect(page.locator('.viewport-table[data-game-phase="compose"]')).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  expect(await page.evaluate(() => (window as unknown as { __a1aCryptoCalls: number }).__a1aCryptoCalls)).toBeGreaterThan(0);
+  const dealer = page.getByRole("list", { name: "Cartas visíveis do dealer" });
+  await expect(dealer.getByRole("img", { name: "Carta do dealer fechada" })).toBeVisible();
+  await expect(dealer.getByRole("img", { name: /Carta lida do dealer|Compra do dealer/ })).toHaveCount(0);
+
+  const bank = page.getByRole("region", { name: "Banca fictícia A1a" });
+  const profit = page.getByLabel("Lucro da Noite");
+  const finishLossRound = async () => {
+    await page.getByRole("button", { name: "Confirmar composição" }).click();
+    const conserve = page.getByRole("button", { name: "Conservar Foco" });
+    if (await conserve.count()) await conserve.click();
+    await page.getByRole("button", { name: "Dobrar" }).click();
+    await page.getByRole("button", { name: "Dobrar" }).click();
+    await page.getByRole("button", { name: "Resolver dealer" }).click();
+    await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+    await expect(page.getByText(/Pontuação desta rodada: −40 pontos/)).toBeVisible();
+  };
+
+  await expect(bank).toContainText("150 fichas");
+  await expect(profit.locator("strong")).toHaveText("0 fichas");
+  await expect(bank).toContainText("5 por mão · reserva 20");
+  await finishLossRound();
+  await expect(bank).toContainText("130 fichas");
+  await expect(profit.locator("strong")).toHaveText("−20 fichas");
+  await page.getByRole("button", { name: "Próxima rodada" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+  await expect(page.getByText(/Escolha entre 1 e 32 fichas por mão/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Repetir aposta" })).toBeEnabled();
+  await page.getByRole("button", { name: "Repetir aposta" }).click();
+  await expect(page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" })).toHaveValue("5");
+  await page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" }).fill("27");
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+  await finishLossRound();
+  await expect(bank).toContainText("22 fichas");
+  await expect(profit.locator("strong")).toHaveText("−128 fichas");
+  await page.getByRole("button", { name: "Próxima rodada" }).click();
+  await expect(page.getByText(/Escolha entre 1 e 5 fichas por mão/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Repetir aposta" })).toBeDisabled();
+  await expect(page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" })).toHaveValue("5");
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+  await finishLossRound();
+  await expect(bank).toContainText("2 fichas");
+  await expect(profit.locator("strong")).toHaveText("−148 fichas");
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toContainText("Pontuação acumulada: −120 · Foco");
+  await expect(page.getByRole("button", { name: "Próxima rodada" })).toBeEnabled();
+  await page.getByRole("button", { name: "Próxima rodada" }).click();
+  await expect(page.getByText(/Prática gratuita: a banca está congelada/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Iniciar rodada gratuita" })).toBeVisible();
+  const focusBeforePractice = await page.getByLabel("Foco restante").locator("strong").textContent();
+  await page.getByRole("button", { name: "Iniciar rodada gratuita" }).click();
+  await finishLossRound();
+  await expect(profit.locator("strong")).toHaveText("−148 fichas");
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toContainText("Pontuação acumulada: −160 · Foco");
+  await expect(page.getByLabel("Foco restante").locator("strong")).toContainText(focusBeforePractice!);
+  await expect(bank).toContainText("2 fichas");
+  await expect(bank).toContainText("Saldo congelado até o fim da Noite");
 });

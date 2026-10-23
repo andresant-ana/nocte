@@ -114,3 +114,7 @@ Issue #35 / **N-056** aprova a direção criativa P5 e autoriza laboratórios so
 - **Marco 5 — backlog social (documentação):** servidor autoritativo e revisão de infraestrutura antes de banco persistente/salas/duelos; sem carteira de browser.
 
 Não há resultados humanos de P5. O viewport-fit requer playtest de clareza e aprendizado; produção audiovisual futura exigirá avaliação independente de acessibilidade e resposta sensorial. Resultados de P1–P4 não demonstram esses atributos.
+
+### NOCTE-P5-A1a-E — Issue #38
+
+Implementação experimental em branch/PR próprio: modo local `BANKROLL-LAB-A1a-0.1`, aposta igual por rodada pré-distribuição, reserva `4s`, ticks de meia ficha e prática gratuita abaixo da aposta mínima coberta. O laboratório preserva A0.1, P2A, perfil e score do motor; testes automatizados cobrem a contabilidade, o fluxo de informação e a fase de aposta sem scroll. Este marco não inclui solver/simulação de política de stake nem playtest humano. Não inferir dominância, diversão, justiça, segurança ou calibragem. Ver [LAB-P5-A1A](LAB-P5-A1A.md).
