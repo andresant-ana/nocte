@@ -3,6 +3,8 @@ import { handValue, partitions, type Action, type Card, type HandName, type Part
 import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
 import type { PublicBankrollA0 } from "./bankroll-a0-session";
+import type { PublicBankrollA1a } from "./bankroll-a1a-session";
+import { formatHalfChips } from "./bankroll-a1a";
 import { PlayingCard } from "./PlayingCard";
 
 type CofreSession = Pick<CofreFocoSessionAdapter,
@@ -13,7 +15,7 @@ type Props = {
   session: CofreSession;
   night: PublicCofreFocoNight;
   rules: CofreFocoRules;
-  bankroll?: PublicBankrollA0;
+  bankroll?: PublicBankrollA0 | PublicBankrollA1a;
   error?: string | null;
   onNightChange: (night: PublicCofreFocoNight) => void;
   onNextRound: () => void;
@@ -122,8 +124,9 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
     return session.continueAfterAbilities();
   });
   const abandon = () => {
+    const bankAmount = bankroll && "version" in bankroll ? bankroll.balance : bankroll?.bankroll;
     const prompt = bankroll
-      ? `Encerrar esta Noite? O saldo remanescente de ${bankroll.bankroll} fichas fictícias e a reserva expirarão. Não há reembolso nem persistência.`
+      ? `Encerrar esta Noite? O saldo remanescente de ${bankAmount} fichas fictícias e a reserva expirarão. Não há reembolso nem persistência.`
       : "Encerrar esta Noite? O Foco restante expirará.";
     if (window.confirm(prompt)) update(() => session.abandonNight());
   };
@@ -151,11 +154,12 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
         <div className="table-hud">
           <div className="hud-stat" aria-label="Placar da Noite"><span>Pontos</span><strong aria-live="polite">{scoreText(night.totalScore)}</strong></div>
           <div className="hud-stat" aria-label="Foco restante"><span>Foco</span><strong aria-live="polite">{night.focusRemaining} de {rules.focusPerNight} restantes</strong></div>
-          {bankroll && <div className="hud-stat bank-stat" role="region" aria-label="Banca fictícia A0.1">
-            <span>Banca · {bankroll.pendingKind === "practice" || bankroll.status === "practice" ? "prática" : "financiada"}</span>
-            <strong aria-live="polite">{bankroll.bankroll} fichas</strong>
-            {bankroll.pendingKind === "funded" && <small>10+10 · reserva {bankroll.escrow} · disponível {bankroll.available}</small>}
-            {(bankroll.pendingKind === "practice" || bankroll.status === "practice") && <small>Saldo congelado até o fim da Noite</small>}
+          {bankroll && <div className="hud-stat bank-stat" role="region" aria-label={`Banca fictícia ${"version" in bankroll ? "A1a" : "A0.1"}`}>
+            <span>Banca · {bankroll.status === "practice" || ("pendingKind" in bankroll && bankroll.pendingKind === "practice") ? "prática" : "financiada"}</span>
+            <strong aria-live="polite">{"version" in bankroll ? bankroll.balance : bankroll.bankroll} fichas</strong>
+            {"version" in bankroll && bankroll.currentStake !== null && <small>{bankroll.currentStake} por mão · reserva {bankroll.coverage} · livre {bankroll.available}</small>}
+            {"pendingKind" in bankroll && bankroll.pendingKind === "funded" && <small>10+10 · reserva {bankroll.escrow} · disponível {bankroll.available}</small>}
+            {bankroll.status === "practice" && <small>Saldo congelado até o fim da Noite</small>}
           </div>}
           <button type="button" className="hud-button secondary-action" onClick={(event) => openInfo(event.currentTarget)}>Guia e dados</button>
           {night.status === "active" && <button type="button" className="hud-button secondary-action" onClick={abandon}>Encerrar</button>}
@@ -209,7 +213,9 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
                 <h3 id={`cf-${name}-title`}>{title}{round.currentHand === name && round.phase === "player" ? " · sua vez" : ""}</h3>
                 <Cards cards={hand.cards} label={`Cartas da mão ${title}`} />
                 <p className="hand-meta">Total {value.total}{value.soft ? " suave" : ""}{hand.openingNatural ? " · natural" : hand.maneuverTwentyOne ? " · 21 comum por Manobra" : value.bust ? " · estourou" : ""}</p>
-                <p className="hand-meta">Exposição {hand.exposure} · {statuses[hand.status]}</p>
+                <p className="hand-meta">{bankroll && "version" in bankroll
+                  ? `Aposta ${bankroll.currentStake ?? 0} · exposição aberta ${((bankroll.currentStake ?? 0) * hand.exposure) / 10} fichas · ${statuses[hand.status]}`
+                  : `Exposição ${hand.exposure} · ${statuses[hand.status]}`}</p>
                 {settlement && <p className="hand-result hand-meta">{outcomes[settlement.outcome]} · {scoreText(settlement.score)} pontos</p>}
               </section>;
             })}
@@ -284,14 +290,16 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
           <h3>{night.status === "complete" ? "Noite concluída" : night.status === "abandoned" ? "Noite encerrada" : "Rodada concluída"}</h3>
           <p>Pontuação desta rodada: {round.score === undefined ? "—" : scoreText(round.score)} pontos.</p>
           <p>Pontuação acumulada: {scoreText(night.totalScore)} · Foco {night.focusRemaining}.</p>
-          {bankroll && <p>Variação da banca nesta rodada: {bankroll.lastBankDelta === null ? "aguardando settlement" : `${scoreText(bankroll.lastBankDelta)} fichas`}{bankroll.lastRoundKind === "practice" ? " (banca congelada em prática)" : ""}.</p>}
-          {bankroll && night.status === "abandoned" && <p>Banca A0.1 expirada: {bankroll.bankroll} fichas fictícias.</p>}
+          {bankroll && <p>Variação da banca nesta rodada: {"version" in bankroll
+            ? bankroll.lastSettlement ? `${formatHalfChips(bankroll.lastSettlement.deltaTicks)} fichas${bankroll.lastSettlement.kind === "practice" ? " (banca congelada em prática)" : ""}` : "aguardando settlement"
+            : bankroll.lastBankDelta === null ? "aguardando settlement" : `${scoreText(bankroll.lastBankDelta)} fichas${bankroll.lastRoundKind === "practice" ? " (banca congelada em prática)" : ""}`}.</p>}
+          {bankroll && night.status === "abandoned" && <p>Banca {"version" in bankroll ? "A1a" : "A0.1"} expirada: {"version" in bankroll ? bankroll.balance : bankroll.bankroll} fichas fictícias.</p>}
           <div className="landing-actions">
             {night.status === "active" && <button type="button" onClick={onNextRound}>Próxima rodada</button>}
             {(night.status === "complete" || night.status === "abandoned") && <button type="button" onClick={onReturnToSetup}>Voltar à configuração</button>}
           </div>
         </section>}
-        {night.status === "abandoned" && round.phase !== "complete" && <div className="round-summary" aria-label="Noite encerrada"><strong>Noite encerrada · recursos expirados</strong>{bankroll && <p>Banca A0.1 expirada: {bankroll.bankroll} fichas fictícias.</p>}<button type="button" onClick={onReturnToSetup}>Voltar à configuração</button></div>}
+        {night.status === "abandoned" && round.phase !== "complete" && <div className="round-summary" aria-label="Noite encerrada"><strong>Noite encerrada · recursos expirados</strong>{bankroll && <p>Banca {"version" in bankroll ? "A1a" : "A0.1"} expirada: {"version" in bankroll ? bankroll.balance : bankroll.bankroll} fichas fictícias.</p>}<button type="button" onClick={onReturnToSetup}>Voltar à configuração</button></div>}
       </section>
 
       {showInfo && <div className="info-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) closeInfo(); }}>
@@ -312,8 +320,8 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
             <div><dt>Foco usado</dt><dd>Leitura {night.focusSpent.read} · Manobra {night.focusSpent.maneuver}</dd></div>
             <div><dt>Pontuação</dt><dd>{scoreText(night.totalScore)}</dd></div>
             {bankroll && <>
-              <div><dt>Banca A0.1</dt><dd>{bankroll.bankroll} · {bankroll.pendingKind === "practice" || bankroll.status === "practice" ? "prática" : "financiada"}</dd></div>
-              <div><dt>Cobertura / disponível</dt><dd>{bankroll.escrow} / {bankroll.available}</dd></div>
+              <div><dt>Banca {"version" in bankroll ? "A1a" : "A0.1"}</dt><dd>{"version" in bankroll ? bankroll.balance : bankroll.bankroll} · {bankroll.status === "practice" || ("pendingKind" in bankroll && bankroll.pendingKind === "practice") ? "prática" : "financiada"}</dd></div>
+              <div><dt>{"version" in bankroll ? "Aposta / cobertura" : "Cobertura / disponível"}</dt><dd>{"version" in bankroll ? `${bankroll.currentStake ?? "—"} / ${bankroll.coverage}` : `${bankroll.escrow} / ${bankroll.available}`}</dd></div>
               <div><dt>Financiadas / prática</dt><dd>{bankroll.fundedRounds} / {bankroll.practiceRounds}</dd></div>
             </>}
           </dl>

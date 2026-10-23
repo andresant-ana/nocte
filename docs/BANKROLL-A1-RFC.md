@@ -233,6 +233,10 @@ Até essas respostas serem registradas por revisão documental, N-052 continua s
 
 Fontes: [Decision Register](DECISION-REGISTER.md), [RFC P4](ECONOMY-RFC-P4.md), [contrato A0.1](BANKROLL-A0-CONTRACT.md), [evidência A0-V](LAB-P4-A0-V.md), [protocolo humano A0](PLAYTEST-P4-A0.md), [Open Questions](OPEN-QUESTIONS.md), [economia competitiva](COMPETITION-ECONOMY.md) e [direção de recompensas](ECONOMY-REWARDS-DIRECTION.md).
 
+## Aditivo de execução experimental A1a — Issue #38 (2026-10-23)
+
+O RFC acima preserva a proposta histórica: N-055 continua CANDIDATE e seus exemplos 5/10/20 nunca foram aprovados por ele. A aprovação registrada em N-056/Issue #35 autoriza somente o perfil implementável `BANKROLL-LAB-A1a-0.1`: B₀=150, H=10, aposta inteira `s≥1` igual por mão e escolhida antes de gerar cartas, stake máximo elegível `floor(B/4)`, reserva `4s`, prática quando nenhum stake mínimo cabe e liquidação exata em meios de ficha. Issue #38 implementa esse perfil isolado; veja [LAB-P5-A1A](LAB-P5-A1A.md) para contrato, implementação, reprodução e evidência automatizada. Isso não escolhe payout, altera A0.1 ou o motor, nem ratifica N-055, regras finais, ranking financeiro ou resultados humanos.
+
 ## Aditivo de autorização experimental — Issue #35 (2026-10-23)
 
 A aprovação expressa do fundador registrada na Issue #35 autoriza um **laboratório A1a implementável em PR próprio**, supersedendo apenas a antiga frase de gate “A1 não está autorizada para código”. N-055 permanece no histórico como CANDIDATE; N-056 é a autorização vigente para um teste solo. Parâmetros que a Issue autoriza experimentar: banca reiniciada `B₀=150`, horizonte principal `H=10`, aposta inteira igual `s≥1` por mão escolhida antes de cada rodada, máximo elegível `floor(B/4)`, reserva de pior caso `4s`, prática gratuita no restante da Noite se nem `s=1` couber, e liquidação contábil exata em meios de ficha (ticks inteiros). Igualdade de stake não reintroduz a divisão flexível de exposição rejeitada por N-021.
