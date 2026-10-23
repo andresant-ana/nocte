@@ -116,8 +116,11 @@ test("Cofre + Foco shows all abilities together, cancels direct Manobra safely, 
   if (await resolve.count()) await resolve.click();
   await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Próxima rodada" })).toBeEnabled();
+  const completedRoundLabel = await page.locator(".table-title-block .eyebrow").textContent();
+  const completedRoundNumber = Number(completedRoundLabel?.match(/RODADA (\d+)/i)?.[1]);
+  expect(Number.isInteger(completedRoundNumber)).toBe(true);
   await page.getByRole("button", { name: "Próxima rodada" }).click();
-  await expect(page.getByText(/NOITE · RODADA 2 DE 10/i)).toBeVisible();
+  await expect(page.getByText(new RegExp(`NOITE · RODADA ${completedRoundNumber + 1} DE 10`, "i"))).toBeVisible();
   await expect(page.getByText("0 de 3 restantes")).toBeVisible();
   await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toHaveCount(0);
 });
