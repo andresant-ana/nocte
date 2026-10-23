@@ -42,6 +42,9 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [showStudy, setShowStudy] = useState(false);
   const scoreApplied = useRef(false);
+  const a1aStartPending = useRef(false);
+  const a1aSessionGeneration = useRef(0);
+  const [a1aPreparing, setA1aPreparing] = useState(false);
 
   const startBasicNight = async (selectedProfile = profile) => {
     setError(null);
@@ -108,6 +111,9 @@ export function App() {
   };
 
   const startBankrollA1aNight = () => {
+    a1aSessionGeneration.current += 1;
+    a1aStartPending.current = false;
+    setA1aPreparing(false);
     setError(null);
     try {
       const rules = getCofreFocoRules(profile);
@@ -130,17 +136,37 @@ export function App() {
   };
 
   const startA1aRound = async (stake: number) => {
-    if (!active || active.mode !== "bankroll-a1a" || !active.controller.isBetting) return;
+    if (!active || active.mode !== "bankroll-a1a" || !active.controller.isBetting || a1aStartPending.current) return;
+    // Validate the wager before touching the RNG, including the practice-only case.
+    const bank = active.controller.bankroll;
+    const validStake = bank.status === "practice" ? stake === 0
+      : bank.status === "active" && Number.isSafeInteger(stake) && stake >= 1 && stake <= bank.maxStake;
+    if (!validStake) {
+      setError("Aposta inválida para o saldo atual; ajuste as fichas antes de distribuir.");
+      return;
+    }
+    a1aStartPending.current = true; // synchronous guard against rapid double clicks
+    const generation = a1aSessionGeneration.current;
+    setA1aPreparing(true);
     setError(null);
     try {
-      // The seed and every card stream are created only after the wager is confirmed.
+      // The seed and every card stream are created only after a valid wager is confirmed.
       const seed = active.seed ?? localSeed();
       const roundIndex = active.controller.bankroll.completedRounds;
       const prepared = await prepareP5CofreFocoRound(seed, roundIndex);
+      // Abandoning during asynchronous preparation must never resurrect the Night.
+      if (generation !== a1aSessionGeneration.current) return;
       active.controller.startRound(prepared, stake);
-      setActive({ ...active, seed, revision: active.revision + 1 });
+      setActive((current) => current?.mode === "bankroll-a1a" && current.controller === active.controller
+        ? { ...current, seed, revision: current.revision + 1 } : current);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Não foi possível iniciar a rodada A1a.");
+      if (generation === a1aSessionGeneration.current)
+        setError(cause instanceof Error ? cause.message : "Não foi possível iniciar a rodada A1a.");
+    } finally {
+      if (generation === a1aSessionGeneration.current) {
+        a1aStartPending.current = false;
+        setA1aPreparing(false);
+      }
     }
   };
 
@@ -221,6 +247,9 @@ export function App() {
   };
 
   const returnToSetup = () => {
+    a1aSessionGeneration.current += 1;
+    a1aStartPending.current = false;
+    setA1aPreparing(false);
     setActive(null);
     setNightScore(0);
     setRoundNumber(0);
@@ -295,6 +324,7 @@ export function App() {
         key={`a1a-bet-${active.controller.bankroll.completedRounds}-${active.revision}`}
         bankroll={active.controller.bankroll}
         error={error}
+        preparing={a1aPreparing}
         onConfirm={(stake) => void startA1aRound(stake)}
         onPractice={() => void startA1aRound(0)}
         onAbandon={() => { active.controller.abandonBeforeDeal(); returnToSetup(); }}

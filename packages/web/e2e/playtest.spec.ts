@@ -443,7 +443,13 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   await page.getByRole("spinbutton", { name: "Fichas por mão (Luz e Sombra)" }).fill("5");
   await expect(page.getByText("Reserva máxima `R = 4s`")).toBeVisible();
   await expect(page.getByText("20 fichas", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+  // Simultaneous click events must open only one wagered round, with no stale retry error.
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).evaluate(element => {
+    (element as HTMLButtonElement).click();
+    (element as HTMLButtonElement).click();
+  });
+  await expect(page.locator('.viewport-table[data-game-phase="compose"]')).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveCount(0);
   expect(await page.evaluate(() => (window as unknown as { __a1aCryptoCalls: number }).__a1aCryptoCalls)).toBeGreaterThan(0);
   const dealer = page.getByRole("list", { name: "Cartas visíveis do dealer" });
   await expect(dealer.getByRole("img", { name: "Carta do dealer fechada" })).toBeVisible();

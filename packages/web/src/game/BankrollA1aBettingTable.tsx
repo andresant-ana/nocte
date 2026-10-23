@@ -5,6 +5,7 @@ import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
 type Props = {
   bankroll: PublicBankrollA1a;
   error: string | null;
+  preparing: boolean;
   onConfirm: (stake: number) => void;
   onPractice: () => void;
   onAbandon: () => void;
@@ -12,7 +13,7 @@ type Props = {
 
 const denominations = [1, 5, 10, 25] as const;
 
-export function BankrollA1aBettingTable({ bankroll, error, onConfirm, onPractice, onAbandon }: Props) {
+export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm, onPractice, onAbandon }: Props) {
   const initial = String(Math.min(bankroll.lastSettlement?.stake ?? bankroll.lastStake ?? 1, Math.max(1, bankroll.maxStake)));
   const [value, setValue] = useState(initial);
   const [history, setHistory] = useState<number[]>([]);
@@ -82,8 +83,8 @@ export function BankrollA1aBettingTable({ bankroll, error, onConfirm, onPractice
     <section className="table-action-dock a1a-bet-dock" aria-label="Confirmar aposta">
       <p>Depois da confirmação, a aposta fica travada para as duas mãos. O motor continua na exposição-base 10; a banca aplica o score final por `s/10`. Isso não multiplica pontos nem Foco.</p>
       {bankroll.status === "practice"
-        ? <button type="button" onClick={onPractice}>Iniciar rodada gratuita</button>
-        : <button type="button" disabled={!canConfirm} onClick={() => onConfirm(stake)}>Confirmar aposta e distribuir</button>}
+        ? <button type="button" disabled={preparing} onClick={onPractice}>{preparing ? "Distribuindo..." : "Iniciar rodada gratuita"}</button>
+        : <button type="button" disabled={!canConfirm || preparing} onClick={() => onConfirm(stake)}>{preparing ? "Distribuindo..." : "Confirmar aposta e distribuir"}</button>}
     </section>
   </section>;
 }
