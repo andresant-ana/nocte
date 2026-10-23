@@ -27,7 +27,7 @@ Não há saldo persistente, serviço de servidor, multiplayer, transferências, 
 
 `packages/web/src/game/bankroll-a1a.test.ts` verifica stake máximo inicial 37, reserva integral, cobertura e perda máxima, natural 3:2 em ticks, redução quando o saldo cai, estados-limite 4/3,5, prática congelada, liquidação repetida/divergente, duplicidade de rodada e exatidão das incrementações do motor.
 
-O teste Playwright A1a injeta draws apenas no navegador de teste. Confirma que não há chamadas a `crypto.getRandomValues`/SHA antes de confirmar stake; confirma que a face fechada permanece oculta após o deal; testa chips, desfazer, limpar e input; liquida duas perdas com aposta 30 e depois 7, confirma saldo 30 e 2; e verifica que a rodada gratuita altera pontos mas não a banca. Faz verificações de scroll global e do shell, visibilidade, habilitação e hit-test da interface de aposta nas cinco viewports listadas acima.
+O teste Playwright A1a injeta draws apenas no navegador de teste. Confirma que não há chamadas a `crypto.getRandomValues`/SHA antes de confirmar stake; confirma que a face fechada permanece oculta após o deal; testa chips, desfazer, limpar, repetir e input; liquida perdas após stakes 5, 27 e 5, confirma saldos 130, 22 e 2; e verifica que a rodada gratuita altera pontos mas não banca nem Foco. Faz verificações de scroll global e do shell, visibilidade, habilitação e hit-test da interface de aposta nas cinco viewports listadas acima.
 
 ### Reproduzir
 
