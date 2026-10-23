@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { PublicBankrollA1a } from "./bankroll-a1a-session";
 import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
+import type { PublicPactContract } from "./pact-a1a-session";
 
 type Props = {
   bankroll: PublicBankrollA1a;
@@ -9,11 +10,12 @@ type Props = {
   onConfirm: (stake: number) => void;
   onPractice: () => void;
   onAbandon: () => void;
+  pact?: Readonly<{ contract: PublicPactContract; roundsRemaining: number }>;
 };
 
 const denominations = [1, 5, 10, 25] as const;
 
-export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm, onPractice, onAbandon }: Props) {
+export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm, onPractice, onAbandon, pact }: Props) {
   const initial = String(Math.min(bankroll.lastSettlement?.stake ?? bankroll.lastStake ?? 1, Math.max(1, bankroll.maxStake)));
   const [value, setValue] = useState(initial);
   const [history, setHistory] = useState<number[]>([]);
@@ -41,7 +43,14 @@ export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm,
       <div className="table-title-block">
         <p className="eyebrow">NOITE · RODADA {bankroll.completedRounds + 1} DE 10</p>
         <h2 id="a1a-bet-title">Aposta da rodada</h2>
-        <p className="table-profile">BANKROLL-LAB-A1a-0.1 · EXPERIMENTAL · Cofre + Foco</p>
+        <p className="table-profile">{pact ? "PACT-LAB-0.1 · EXPERIMENTAL · A1a + Cofre + Foco" : "BANKROLL-LAB-A1a-0.1 · EXPERIMENTAL · Cofre + Foco"}</p>
+        {pact && <p className="pact-status-strip" role="status">
+          {pact.contract.status === "refused" ? "Pactos recusados · sem Renúncia ou Privilégio"
+            : pact.contract.pact ? <>Pacto {pact.contract.pact === "veil" ? "Véu" : "Ferro"} · {pact.contract.status === "signed" ? `assinado · Ato II · ${pact.roundsRemaining} rodadas restantes` : pact.contract.status === "expired" ? "expirado" : `Ato II · ${pact.roundsRemaining} rodadas restantes`}
+                <span>Renúncia: {pact.contract.pact === "veil" ? "upcard oculta na composição" : `sem Dobrar ${pact.contract.ironFace === "luz" ? "Luz" : "Sombra"}`}</span>
+                <span>Privilégio: {pact.contract.pact === "veil" ? "Leitura" : "Manobra"} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : "Expirado"}</span>
+              </> : null}
+        </p>}
       </div>
       <div className="table-hud">
         <div className="hud-stat" aria-label="Banca A1a"><span>Banca</span><strong>{bankroll.balance} fichas</strong></div>

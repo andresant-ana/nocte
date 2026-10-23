@@ -3,7 +3,7 @@ import fc from "fast-check";
 import {
   CF_CONTROL_COFRE_FREE, CF_CONTROL_FOCUS_READ, CF_LAB_01_1_TO_1, CF_LAB_01_3_TO_2, beginRound, composeCofreFoco,
   createNight, continueAfterAbilities, legalCofreFocoActions, maneuver, abandonNight,
-  playCofreFocoDealer, projectCofreFoco, readDealerHole, skipManeuver,
+  playCofreFocoDealer, projectCofreFoco, readDealerHole, readDealerHoleWithPactPrivilege, maneuverWithPactPrivilege, skipManeuver,
   skipRead, applyCofreFocoAction, type Card, type CofreFocoDraws,
   type CofreFocoNight,
 } from "./cofre-foco.js";
@@ -54,6 +54,28 @@ describe("DF-CF-0.1-lab rules and hidden information", () => {
     const readWindow = composeCofreFoco(noReserve, { luz: [0, 1], sombra: [2, 3] });
     expect(projectCofreFoco(readWindow, "solo-player").round).not.toHaveProperty("cofre");
     expect(() => maneuver(skipRead(readWindow), "luz", 0)).toThrow();
+  });
+
+  it("applies free Pact privileges in the engine without spending Focus", () => {
+    const composed = composeStandard();
+    const read = readDealerHoleWithPactPrivilege(composed);
+    expect(read.round?.readUsed).toBe(true);
+    expect(read.focusRemaining).toBe(composed.focusRemaining);
+    expect(read.focusSpent).toEqual(composed.focusSpent);
+    const maneuverState = maneuverWithPactPrivilege(read, "luz", 0);
+    expect(maneuverState.round?.maneuverUsed).toBe(true);
+    expect(maneuverState.focusRemaining).toBe(composed.focusRemaining);
+    expect(maneuverState.focusSpent).toEqual(composed.focusSpent);
+  });
+
+  it("enforces an Iron double restriction in engine legal actions and rejects a direct prohibited action", () => {
+    const composed = composeStandard();
+    let player = skipAbilityWindow(composed);
+    player = applyCofreFocoAction(player, "stand", () => c("2"));
+    expect(player.round?.currentHand).toBe("sombra");
+    expect(legalCofreFocoActions(player, undefined, { forbiddenDoubleHand: "sombra" })).toEqual(["hit", "stand"]);
+    expect(() => applyCofreFocoAction(player, "double", () => c("2"), { forbiddenDoubleHand: "sombra" })).toThrow(/Illegal/);
+    expect(legalCofreFocoActions(player, undefined, { forbiddenDoubleHand: "luz" })).toContain("double");
   });
 
   it("hides the dealer hole before reading and reveals only it to the solo player after payment", () => {

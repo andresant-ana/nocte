@@ -1,19 +1,42 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { handValue, partitions, type Action, type Card, type HandName, type Partition } from "@nocte/engine";
-import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
+import type { CofreFocoRules, PublicCofreFocoNight, PublicCofreFocoRound } from "@nocte/engine/cofre-foco";
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
 import type { PublicBankrollA0 } from "./bankroll-a0-session";
 import type { PublicBankrollA1a } from "./bankroll-a1a-session";
 import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
 import { PlayingCard } from "./PlayingCard";
+import type { PublicPactContract, PactPublicNight } from "./pact-a1a-session";
 
-type CofreSession = Pick<CofreFocoSessionAdapter,
-  "current" | "focusOptions" | "legalActions" | "compose" | "skipRead" | "readDealerHole" |
-  "skipManeuver" | "maneuverDirect" | "continueAfterAbilities" | "act" | "resolveDealer" | "abandonNight">;
+// Pact projections physically omit dealerUp at runtime during composition.
+export type VisibleTableNight = Omit<PublicCofreFocoNight, "round"> & { round?: Omit<PublicCofreFocoRound, "dealerUp"> & { dealerUp?: Card } };
+type CofreSession = {
+  current: VisibleTableNight;
+  focusOptions: CofreFocoSessionAdapter["focusOptions"];
+  focusOptionsWithPactPrivilege: CofreFocoSessionAdapter["focusOptionsWithPactPrivilege"];
+  legalActions: readonly Action[];
+  compose: (partition: Partition) => VisibleTableNight;
+  skipRead: () => VisibleTableNight;
+  readDealerHole: () => VisibleTableNight;
+  skipManeuver: () => VisibleTableNight;
+  maneuverDirect: (hand: HandName, cardIndex: number) => VisibleTableNight;
+  continueAfterAbilities: () => VisibleTableNight;
+  act: (action: Action) => VisibleTableNight;
+  resolveDealer: () => VisibleTableNight;
+  abandonNight: () => VisibleTableNight;
+};
+type PactActions = Readonly<{
+  contract: PublicPactContract;
+  roundsRemaining: number;
+  canUseReadPrivilege: boolean;
+  canUseManeuverPrivilege: boolean;
+  readPrivilege: () => PactPublicNight;
+  maneuverPrivilege: (hand: HandName, cardIndex: number) => PactPublicNight;
+}>;
 
 type Props = {
   session: CofreSession;
-  night: PublicCofreFocoNight;
+  night: VisibleTableNight;
   rules: CofreFocoRules;
   bankroll?: PublicBankrollA0 | PublicBankrollA1a;
   error?: string | null;
@@ -21,6 +44,7 @@ type Props = {
   onNextRound: () => void;
   onReturnToSetup: () => void;
   cardIdentityMode?: boolean;
+  pact?: PactActions;
 };
 
 const actionLabels: Record<Action, string> = { hit: "Comprar", stand: "Parar", double: "Dobrar" };
@@ -37,11 +61,11 @@ function Cards({ cards, label }: { cards: readonly Card[]; label: string }) {
   </div>;
 }
 
-function ClosedCard() {
-  return <span className="playing-card card-closed" role="img" aria-label="Carta do dealer fechada">?</span>;
+function ClosedCard({ label = "Carta do dealer fechada" }: { label?: string }) {
+  return <span className="playing-card card-closed" role="img" aria-label={label}>?</span>;
 }
 
-function phaseLabel(night: PublicCofreFocoNight): string {
+function phaseLabel(night: VisibleTableNight): string {
   const round = night.round;
   if (!round) return "A Noite ainda não tem rodada ativa.";
   if (round.phase === "compose") return "Componha Luz e Sombra.";
@@ -51,12 +75,13 @@ function phaseLabel(night: PublicCofreFocoNight): string {
   return "Rodada concluída.";
 }
 
-export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, cardIdentityMode = false }: Props) {
+export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, cardIdentityMode = false, pact }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
   const [maneuverChooserOpen, setManeuverChooserOpen] = useState(false);
-  const [confirmation, setConfirmation] = useState<"read" | "maneuver" | null>(null);
+  const [confirmation, setConfirmation] = useState<"read" | "read-privilege" | "maneuver" | "maneuver-privilege" | null>(null);
+  const [maneuverPayment, setManeuverPayment] = useState<"focus" | "privilege">("focus");
   const [showInfo, setShowInfo] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const busy = useRef(false);
@@ -92,14 +117,14 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   };
 
-  const update = (operation: () => PublicCofreFocoNight): boolean => {
+  const update = (operation: () => VisibleTableNight): boolean => {
     if (busy.current) return false;
     busy.current = true;
     let succeeded = false;
     try {
       setLocalError(null);
       const next = operation();
-      onNightChange(next);
+      onNightChange(next as PublicCofreFocoNight);
       if (next.round?.roundNumber !== round?.roundNumber) setSelectedPartition(0);
       succeeded = true;
     } catch (cause) {
@@ -108,13 +133,18 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
     return succeeded;
   };
 
-  const requestConfirmation = (kind: "read" | "maneuver", trigger: HTMLElement) => {
+  const requestConfirmation = (kind: "read" | "read-privilege" | "maneuver" | "maneuver-privilege", trigger: HTMLElement) => {
     returnFocus.current = trigger;
     setConfirmation(kind);
   };
   const confirmRead = () => { if (update(() => session.readDealerHole())) setConfirmation(null); };
+  const confirmReadPrivilege = () => { if (pact && update(() => pact.readPrivilege())) setConfirmation(null); };
   const confirmManeuver = () => { if (update(() => {
     if (!selectedSwap) throw new Error("Selecione uma carta elegível para Manobra.");
+    if (maneuverPayment === "privilege") {
+      if (!pact) throw new Error("Privilégio de Manobra indisponível.");
+      return pact.maneuverPrivilege(selectedSwap.hand, selectedSwap.cardIndex);
+    }
     return session.maneuverDirect(selectedSwap.hand, selectedSwap.cardIndex);
   })) { setConfirmation(null); setManeuverChooserOpen(false); setSelectedSwap(null); } };
   const continueWithoutMoreAbilities = () => update(() => {
@@ -136,7 +166,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
   const partitionsForRound = round?.phase === "compose" ? partitions(round.originalCards) : [];
   const focusOptions = session.focusOptions;
   const handNames: readonly HandName[] = ["luz", "sombra"];
-  const dealerCards = round?.phase === "complete" && round.dealerHole
+  const dealerCards = round?.phase === "complete" && round.dealerUp && round.dealerHole
     ? [round.dealerUp, round.dealerHole, ...(round.dealerDraws ?? [])]
     : [round?.dealerUp, ...(round?.dealerHole ? [round.dealerHole] : [])].filter((card): card is Card => Boolean(card));
   const dealerValue = dealerCards.length > 1 ? handValue(dealerCards) : null;
@@ -150,6 +180,13 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
           <p className="eyebrow">NOITE · RODADA {round.roundNumber} DE {night.horizon}</p>
           <h2 id="cofre-table-title">Duas Faces · Cofre + Foco</h2>
           <p className="table-profile">{cardIdentityMode ? "Laboratório P5 de cartas · " : ""}{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
+          {pact && <p className="pact-status-strip" role="status">
+            {pact.contract.status === "refused" ? "Pactos recusados · regras A1a normais"
+              : pact.contract.pact ? <>Pacto {pact.contract.pact === "veil" ? "Véu" : "Ferro"} · {pact.contract.status === "expired" ? "expirado" : `Ato II · ${pact.roundsRemaining} rodada${pact.roundsRemaining === 1 ? "" : "s"} restante${pact.roundsRemaining === 1 ? "" : "s"}`}
+                  <span>Renúncia: {pact.contract.pact === "veil" ? "upcard oculta na composição" : `sem Dobrar ${pact.contract.ironFace === "luz" ? "Luz" : "Sombra"}`}</span>
+                  <span>Privilégio: {pact.contract.pact === "veil" ? "Leitura" : "Manobra"} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : "Expirado"}</span>
+                </> : null}
+          </p>}
         </div>
         <div className="table-hud">
           {bankroll && "version" in bankroll
@@ -177,9 +214,11 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
         <section className="dealer-area table-zone" aria-labelledby="cf-dealer-title">
           <h3 id="cf-dealer-title">Dealer</h3>
           <div className="card-row" role="list" aria-label="Cartas visíveis do dealer">
-            {round.dealerUp.art
+            {round.dealerUp?.art
               ? <div role="listitem"><PlayingCard card={round.dealerUp} label="Carta aberta do dealer" /></div>
-              : <span className="playing-card" role="listitem" aria-label={`Carta ${round.dealerUp.rank}`}>{round.dealerUp.rank}</span>}
+              : round.dealerUp
+                ? <span className="playing-card" role="listitem" aria-label={`Carta ${round.dealerUp.rank}`}>{round.dealerUp.rank}</span>
+              : <div role="listitem"><ClosedCard label={round.dealerUp ? "Carta fechada do dealer" : "Carta aberta do dealer oculta pelo Pacto do Véu durante composição"} /></div>}
             {round.dealerHole
               ? round.dealerHole.art
                 ? <div role="listitem"><PlayingCard card={round.dealerHole} label={`Carta lida do dealer: ${faceLabel(round.dealerHole)}`} /></div>
@@ -191,7 +230,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
           </div>
           {round.phase === "complete" && dealerValue && <span className="dealer-note">Total {dealerValue.total} · {dealerCards.map(faceLabel).join(" + ")}</span>}
           {round.dealerHole && round.phase !== "complete" && <span role="status" className="dealer-note">Leitura privada usada. Compras futuras continuam ocultas.</span>}
-          {!round.dealerHole && round.phase !== "complete" && <span className="dealer-note">Carta fechada</span>}
+          {!round.dealerHole && round.phase !== "complete" && <span className="dealer-note">{round.dealerUp ? "Carta fechada" : "Cartas do dealer ocultas durante a composição"}</span>}
           {round.naturalPeek === true && <span className="dealer-note">Natural do dealer · liquidado pelo peek.</span>}
         </section>
 
@@ -248,24 +287,28 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
             <section className="ability-panel" aria-labelledby="read-choice-title">
               <h4 id="read-choice-title">Leitura · {rules.readCost} Focos</h4>
               {round.readUsed ? <p className="ability-status" role="status">Usada nesta rodada</p>
-                : !round.readDecisionMade && focusOptions.canRead
-                  ? <button type="button" onClick={(event) => requestConfirmation("read", event.currentTarget)}>Escolher Leitura · {rules.readCost} Focos</button>
-                  : <p className="ability-status" role="status">{round.readDecisionMade ? "Decisão de Leitura encerrada" : "Indisponível"}</p>}
+                : !round.readDecisionMade ? <>
+                  {focusOptions.canRead && <button type="button" onClick={(event) => requestConfirmation("read", event.currentTarget)}>Escolher Leitura · {rules.readCost} Focos</button>}
+                  {pact?.canUseReadPrivilege && <button type="button" className="secondary-action" onClick={(event) => requestConfirmation("read-privilege", event.currentTarget)}>Usar Privilégio de Leitura · gratuito</button>}
+                  {!focusOptions.canRead && !pact?.canUseReadPrivilege && <p className="ability-status" role="status">Indisponível</p>}
+                </>
+                  : <p className="ability-status" role="status">Decisão de Leitura encerrada</p>}
             </section>
             <section className="ability-panel" aria-labelledby="maneuver-choice-title">
               <h4 id="maneuver-choice-title">Manobra · {rules.maneuverCost} Foco</h4>
               {round.maneuverUsed || round.maneuverDecisionMade ? <p className="ability-status" role="status">Decidida nesta rodada</p>
                 : <>
-                    <button type="button" disabled={focusOptions.maneuverTargets.length === 0} onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(true); }}>Escolher Manobra · {rules.maneuverCost} Foco</button>
-                    {focusOptions.maneuverTargets.length === 0 && <p className="ability-status" role="status">Indisponível nesta mão</p>}
+                    <button type="button" disabled={focusOptions.maneuverTargets.length === 0} onClick={() => { setManeuverPayment("focus"); setSelectedSwap(null); setManeuverChooserOpen(true); }}>Escolher Manobra · {rules.maneuverCost} Foco</button>
+                    {pact?.canUseManeuverPrivilege && <button type="button" className="secondary-action" disabled={session.focusOptionsWithPactPrivilege.maneuverTargets.length === 0} onClick={() => { setManeuverPayment("privilege"); setSelectedSwap(null); setManeuverChooserOpen(true); }}>Usar Privilégio de Manobra · gratuito</button>}
+                    {focusOptions.maneuverTargets.length === 0 && !(pact?.canUseManeuverPrivilege && session.focusOptionsWithPactPrivilege.maneuverTargets.length > 0) && <p className="ability-status" role="status">Indisponível nesta mão</p>}
                   </>}
             </section>
             <button type="button" className="secondary-action conserve-action" onClick={continueWithoutMoreAbilities}>
               {round.readDecisionMade && round.maneuverDecisionMade ? "Continuar" : "Conservar Foco"}
             </button>
-            {maneuverChooserOpen && focusOptions.maneuverTargets.length > 0 && <div className="maneuver-picker">
+            {maneuverChooserOpen && (maneuverPayment === "privilege" ? session.focusOptionsWithPactPrivilege.maneuverTargets : focusOptions.maneuverTargets).length > 0 && <div className="maneuver-picker">
               <div className="maneuver-targets" role="group" aria-label="Cartas elegíveis para Manobra">
-                {focusOptions.maneuverTargets.map(target => {
+                {(maneuverPayment === "privilege" ? session.focusOptionsWithPactPrivilege.maneuverTargets : focusOptions.maneuverTargets).map(target => {
                   const hand = round.hands![target.hand];
                   const handLabel = target.hand === "luz" ? "Luz" : "Sombra";
                   const rank = faceLabel(hand.cards[target.cardIndex]!);
@@ -274,9 +317,10 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
                     onClick={() => setSelectedSwap(target)}>{handLabel} · carta {target.cardIndex + 1} ({rank})</button>;
                 })}
               </div>
-              {selectedSwap && focusOptions.maneuverTargets.some(target => target.hand === selectedSwap.hand && target.cardIndex === selectedSwap.cardIndex) && <div className="swap-preview" aria-live="polite">
+              {selectedSwap && (maneuverPayment === "privilege" ? session.focusOptionsWithPactPrivilege.maneuverTargets : focusOptions.maneuverTargets).some(target => target.hand === selectedSwap.hand && target.cardIndex === selectedSwap.cardIndex) && <div className="swap-preview" aria-live="polite">
                 <p>Troca: {selectedSwap.hand === "luz" ? "Luz" : "Sombra"} recebe {faceLabel(round.cofre!)}; Cofre recebe {faceLabel(round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!)}.</p>
-                <button type="button" onClick={(event) => requestConfirmation("maneuver", event.currentTarget)}>Confirmar alvo</button>
+                <p>{maneuverPayment === "privilege" ? "Privilégio de Ferro · sem Foco · será consumido" : `Manobra normal · gasta ${rules.maneuverCost} Foco · preserva o Privilégio`}</p>
+                <button type="button" onClick={(event) => requestConfirmation(maneuverPayment === "privilege" ? "maneuver-privilege" : "maneuver", event.currentTarget)}>Confirmar alvo</button>
               </div>}
               <button type="button" className="secondary-action" onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(false); }}>Cancelar escolha</button>
             </div>}
@@ -333,14 +377,15 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
 
       {confirmation && <div className="confirmation-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setConfirmation(null); }}>
         <section className="ability-confirmation" role="dialog" aria-modal="true" aria-labelledby="ability-confirmation-title" onKeyDown={trapDialogFocus}>
-          <h3 id="ability-confirmation-title">Confirmar {confirmation === "read" ? "Leitura" : "Manobra"}</h3>
-          {confirmation === "read" ? <p>Revelar somente a carta fechada atual do dealer por {rules.readCost} Focos?</p> : <>
-            <p>Confirmar a troca e gastar {rules.maneuverCost} Foco?{!round.readDecisionMade && " A Leitura pendente será pulada na mesma transição."}</p>
+          <h3 id="ability-confirmation-title">Confirmar {confirmation.startsWith("read") ? "Leitura" : "Manobra"}</h3>
+          {confirmation === "read" ? <p>Revelar somente a carta fechada atual do dealer por {rules.readCost} Focos?</p>
+            : confirmation === "read-privilege" ? <p>Revelar somente a carta fechada atual do dealer sem gastar Foco e consumir o Privilégio do Véu?</p> : <>
+            <p>{confirmation === "maneuver-privilege" ? "Confirmar a troca sem gastar Foco e consumir o Privilégio de Ferro?" : `Confirmar a troca e gastar ${rules.maneuverCost} Foco?`}{!round.readDecisionMade && " A Leitura pendente será pulada na mesma transição."}</p>
             {selectedSwap && round.hands && <p>{selectedSwap.hand === "luz" ? "Luz" : "Sombra"}: {faceLabel(round.hands[selectedSwap.hand].cards[selectedSwap.cardIndex]!)} ↔ Cofre {faceLabel(round.cofre!)}.</p>}
           </>}
           <div className="landing-actions">
-            <button ref={confirmButton} type="button" onClick={confirmation === "read" ? confirmRead : confirmManeuver}>Confirmar gasto</button>
-            <button type="button" className="secondary-action" onClick={() => setConfirmation(null)}>{confirmation === "maneuver" ? "Cancelar · manter Foco" : "Cancelar"}</button>
+            <button ref={confirmButton} type="button" onClick={confirmation === "read" ? confirmRead : confirmation === "read-privilege" ? confirmReadPrivilege : confirmManeuver}>{confirmation.includes("privilege") ? "Confirmar Privilégio" : "Confirmar gasto"}</button>
+            <button type="button" className="secondary-action" onClick={() => setConfirmation(null)}>{confirmation.startsWith("maneuver") ? pact ? "Cancelar · manter recursos" : "Cancelar · manter Foco" : "Cancelar"}</button>
           </div>
         </section>
       </div>}

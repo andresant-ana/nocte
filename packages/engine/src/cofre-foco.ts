@@ -29,6 +29,10 @@ export type CofreFocoRules = Readonly<{
   diagnosticControl: boolean;
 }>;
 
+/** Optional, version-specific rules context. Omitted for every existing profile. */
+export type CofreFocoActionRestrictions = Readonly<{ forbiddenDoubleHand?: HandName }>;
+export type PactPrivilegePayment = "focus" | "pact-privilege";
+
 const profile = (payout: CofreFocoRules["naturalPayout"], id: CofreFocoRules["id"], options?: Partial<CofreFocoRules>): CofreFocoRules => Object.freeze({
   id, gameVersion: "DF-CF-0.1-lab", status: "EXPERIMENTAL", drawModel: "infinite-rank-with-replacement",
   dealerSoft17: "stand", dealerNaturalPeek: true, initialExposure: 10, naturalPayout: payout,
@@ -184,14 +188,24 @@ export function skipRead(night: CofreFocoNight): CofreFocoNight {
 }
 
 export function readDealerHole(night: CofreFocoNight): CofreFocoNight {
+  return readDealerHoleWithPayment(night, "focus");
+}
+
+/** PACT-LAB-0.1 only: marks Read used while leaving the Focus ledger untouched. */
+export function readDealerHoleWithPactPrivilege(night: CofreFocoNight): CofreFocoNight {
+  return readDealerHoleWithPayment(night, "pact-privilege");
+}
+
+function readDealerHoleWithPayment(night: CofreFocoNight, payment: PactPrivilegePayment): CofreFocoNight {
   const round = requirePhase(night, "focusWindow");
   if (!night.rules.readEnabled) throw new Error("Read is disabled in this diagnostic profile.");
   if (round.readDecisionMade || round.readUsed) throw new Error("Read is only available once per round.");
   if (!hasPendingHand(round)) throw new Error("Read requires at least one pending hand decision.");
-  if (night.focusRemaining < night.rules.readCost) throw new Error("Insufficient Focus for Read.");
-  const spent = { ...round.focusSpent, read: night.rules.readCost };
-  return { ...night, focusRemaining: night.focusRemaining - night.rules.readCost,
-    focusSpent: { ...night.focusSpent, read: night.focusSpent.read + night.rules.readCost },
+  const cost = payment === "focus" ? night.rules.readCost : 0;
+  if (night.focusRemaining < cost) throw new Error("Insufficient Focus for Read.");
+  const spent = { ...round.focusSpent, read: cost };
+  return { ...night, focusRemaining: night.focusRemaining - cost,
+    focusSpent: { ...night.focusSpent, read: night.focusSpent.read + cost },
     round: { ...round, readDecisionMade: true, readUsed: true, focusSpent: spent } };
 }
 
@@ -203,6 +217,15 @@ export function skipManeuver(night: CofreFocoNight): CofreFocoNight {
 }
 
 export function maneuver(night: CofreFocoNight, handName: HandName, cardIndex: number): CofreFocoNight {
+  return maneuverWithPayment(night, handName, cardIndex, "focus");
+}
+
+/** PACT-LAB-0.1 only: performs a normal legal Manobra without charging Focus. */
+export function maneuverWithPactPrivilege(night: CofreFocoNight, handName: HandName, cardIndex: number): CofreFocoNight {
+  return maneuverWithPayment(night, handName, cardIndex, "pact-privilege");
+}
+
+function maneuverWithPayment(night: CofreFocoNight, handName: HandName, cardIndex: number, payment: PactPrivilegePayment): CofreFocoNight {
   const round = requirePhase(night, "focusWindow");
   if (!night.rules.maneuverEnabled || !night.rules.hasCofre) throw new Error("Manobra is disabled in this diagnostic profile.");
   if (!round.readDecisionMade) throw new Error("Decide Read before Manobra.");
@@ -212,7 +235,8 @@ export function maneuver(night: CofreFocoNight, handName: HandName, cardIndex: n
   if (!target || target.status !== "playing" || target.openingNatural || target.cards.length !== 2) {
     throw new Error("Manobra requires an active original two-card hand.");
   }
-  if (night.focusRemaining < night.rules.maneuverCost) throw new Error("Insufficient Focus for Manobra.");
+  const cost = payment === "focus" ? night.rules.maneuverCost : 0;
+  if (night.focusRemaining < cost) throw new Error("Insufficient Focus for Manobra.");
   const replaced = target.cards[cardIndex]!;
   const cards = [...target.cards]; cards[cardIndex] = clone(round.cofre);
   const postSwap = handValue(cards);
@@ -220,9 +244,9 @@ export function maneuver(night: CofreFocoNight, handName: HandName, cardIndex: n
   const hands = { ...round.hands!, [handName]: { ...target, cards, openingNatural: false,
     maneuverTwentyOne, status: maneuverTwentyOne ? "stood" as const : target.status } };
   const swapped: CofreFocoRound = { ...round, hands, cofre: clone(replaced), maneuverDecisionMade: true,
-    maneuverUsed: true, focusSpent: { ...round.focusSpent, maneuver: night.rules.maneuverCost } };
-  const nextNight = { ...night, focusRemaining: night.focusRemaining - night.rules.maneuverCost,
-    focusSpent: { ...night.focusSpent, maneuver: night.focusSpent.maneuver + night.rules.maneuverCost } };
+    maneuverUsed: true, focusSpent: { ...round.focusSpent, maneuver: cost } };
+  const nextNight = { ...night, focusRemaining: night.focusRemaining - cost,
+    focusSpent: { ...night.focusSpent, maneuver: night.focusSpent.maneuver + cost } };
   return hasPendingHand(swapped) ? { ...nextNight, round: swapped } : { ...nextNight, round: { ...swapped, phase: "dealer" } };
 }
 
@@ -232,13 +256,15 @@ export function continueAfterAbilities(night: CofreFocoNight): CofreFocoNight {
   return hasPendingHand(round) ? advanceToPlayer(night, round) : { ...night, round: { ...round, phase: "dealer" } };
 }
 
-export function legalCofreFocoActions(night: CofreFocoNight, handName?: HandName): readonly Action[] {
+export function legalCofreFocoActions(night: CofreFocoNight, handName?: HandName, restrictions?: CofreFocoActionRestrictions): readonly Action[] {
   const round = night.round;
   if (!round || night.status !== "active" || round.phase !== "player" || !round.currentHand || !round.hands) return [];
   if (handName && round.currentHand !== handName) return [];
   const hand = round.hands[round.currentHand];
   if (hand.status !== "playing" || hand.openingNatural || hand.maneuverTwentyOne) return [];
-  return hand.cards.length === 2 ? ["hit", "stand", "double"] : ["hit", "stand"];
+  if (hand.cards.length !== 2) return ["hit", "stand"];
+  if (restrictions?.forbiddenDoubleHand === round.currentHand) return ["hit", "stand"];
+  return ["hit", "stand", "double"];
 }
 
 export type LegalCofreFocoFocusOptions = Readonly<{
@@ -249,14 +275,14 @@ export type LegalCofreFocoFocusOptions = Readonly<{
 }>;
 
 /** Legal Focus options for the current state; UI callers must not reimplement eligibility. */
-export function legalCofreFocoFocusOptions(night: CofreFocoNight): LegalCofreFocoFocusOptions {
+export function legalCofreFocoFocusOptions(night: CofreFocoNight, freeManeuver = false): LegalCofreFocoFocusOptions {
   const round = night.round;
   const inWindow = night.status === "active" && round?.phase === "focusWindow";
   const canDecideRead = Boolean(inWindow && !round!.readDecisionMade);
   const canRead = Boolean(inWindow && night.rules.readEnabled && !round!.readDecisionMade && !round!.readUsed
     && hasPendingHand(round!) && night.focusRemaining >= night.rules.readCost);
   const canDecideManeuver = Boolean(inWindow && round!.readDecisionMade && !round!.maneuverDecisionMade);
-  const canAffordManeuver = night.focusRemaining >= night.rules.maneuverCost;
+  const canAffordManeuver = freeManeuver || night.focusRemaining >= night.rules.maneuverCost;
   const maneuverTargets = canDecideManeuver && canAffordManeuver && night.rules.maneuverEnabled && night.rules.hasCofre
     ? handNames.flatMap(hand => {
       const target = round!.hands?.[hand];
@@ -266,8 +292,8 @@ export function legalCofreFocoFocusOptions(night: CofreFocoNight): LegalCofreFoc
   return structuredClone({ canRead, canDecideRead, canDecideManeuver, maneuverTargets });
 }
 
-export function applyCofreFocoAction(night: CofreFocoNight, action: Action, draw: CardSource): CofreFocoNight {
-  const allowed = legalCofreFocoActions(night);
+export function applyCofreFocoAction(night: CofreFocoNight, action: Action, draw: CardSource, restrictions?: CofreFocoActionRestrictions): CofreFocoNight {
+  const allowed = legalCofreFocoActions(night, undefined, restrictions);
   if (!allowed.includes(action)) throw new Error(`Illegal Duas Faces action: ${action}.`);
   const round = night.round!;
   const name = round.currentHand!;

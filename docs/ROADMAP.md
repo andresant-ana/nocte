@@ -118,3 +118,7 @@ Não há resultados humanos de P5. O viewport-fit requer playtest de clareza e a
 ### NOCTE-P5-A1a-E — Issue #38
 
 Implementação experimental em branch/PR próprio: modo local `BANKROLL-LAB-A1a-0.1`, aposta igual por rodada pré-distribuição, reserva `4s`, ticks de meia ficha e prática gratuita abaixo da aposta mínima coberta. O laboratório preserva A0.1, P2A, perfil e score do motor; testes automatizados cobrem a contabilidade, o fluxo de informação e a fase de aposta sem scroll. Este marco não inclui solver/simulação de política de stake nem playtest humano. Não inferir dominância, diversão, justiça, segurança ou calibragem. Ver [LAB-P5-A1A](LAB-P5-A1A.md).
+
+### NOCTE-P6-PAC-E — Issue #40
+
+N-057 autoriza somente o modo local isolado `PACT-LAB-0.1`: oferta antes da aposta e sorteio da rodada 4; Véu, Ferro ou recusa; Renúncia/Privilégio nas rodadas 4–7; regras A1a + Cofre/Foco normais nas demais rodadas. O contrato e as invariantes estão em [PACTOS-LAB-P6](PACTOS-LAB-P6.md). A entrega não estende o solver P2B-F nem afirma vantagem estratégica ou profundidade; uma comparação pareada justa e o playtest humano são gates seguintes. N-044 continua preservada em seu contexto histórico, e nenhum modo anterior é alterado.

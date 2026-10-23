@@ -67,6 +67,7 @@ export class BankrollA0SessionAdapter {
   }
 
   get focusOptions() { return this.#session.focusOptions; }
+  get focusOptionsWithPactPrivilege() { return this.#session.focusOptionsWithPactPrivilege; }
   get legalActions(): readonly Action[] { return this.#session.legalActions; }
 
   #applyCompleted(view: PublicCofreFocoNight): PublicCofreFocoNight {
