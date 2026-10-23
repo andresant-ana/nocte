@@ -4,7 +4,7 @@ import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-f
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
 import type { PublicBankrollA0 } from "./bankroll-a0-session";
 import type { PublicBankrollA1a } from "./bankroll-a1a-session";
-import { formatHalfChips } from "./bankroll-a1a";
+import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
 import { PlayingCard } from "./PlayingCard";
 
 type CofreSession = Pick<CofreFocoSessionAdapter,
@@ -152,7 +152,9 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
           <p className="table-profile">{cardIdentityMode ? "Laboratório P5 de cartas · " : ""}{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
         </div>
         <div className="table-hud">
-          <div className="hud-stat" aria-label="Placar da Noite"><span>Pontos</span><strong aria-live="polite">{scoreText(night.totalScore)}</strong></div>
+          {bankroll && "version" in bankroll
+            ? <div className="hud-stat" aria-label="Lucro da Noite"><span>Lucro da Noite</span><strong aria-live="polite">{formatHalfChips(bankroll.balanceTicks - A1A_INITIAL_TICKS)} fichas</strong></div>
+            : <div className="hud-stat" aria-label="Placar da Noite"><span>Pontos</span><strong aria-live="polite">{scoreText(night.totalScore)}</strong></div>}
           <div className="hud-stat" aria-label="Foco restante"><span>Foco</span><strong aria-live="polite">{night.focusRemaining} de {rules.focusPerNight} restantes</strong></div>
           {bankroll && <div className="hud-stat bank-stat" role="region" aria-label={`Banca fictícia ${"version" in bankroll ? "A1a" : "A0.1"}`}>
             <span>Banca · {bankroll.status === "practice" || ("pendingKind" in bankroll && bankroll.pendingKind === "practice") ? "prática" : "financiada"}</span>

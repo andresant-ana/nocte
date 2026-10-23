@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { PublicBankrollA1a } from "./bankroll-a1a-session";
+import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
 
 type Props = {
   bankroll: PublicBankrollA1a;
@@ -43,7 +44,7 @@ export function BankrollA1aBettingTable({ bankroll, error, onConfirm, onPractice
       </div>
       <div className="table-hud">
         <div className="hud-stat" aria-label="Banca A1a"><span>Banca</span><strong>{bankroll.balance} fichas</strong></div>
-        <div className="hud-stat" aria-label="Placar da Noite"><span>Pontos</span><strong>{bankroll.totalScore < 0 ? `−${Math.abs(bankroll.totalScore)}` : bankroll.totalScore}</strong></div>
+        <div className="hud-stat" aria-label="Lucro da Noite"><span>Lucro da Noite</span><strong>{formatHalfChips(bankroll.balanceTicks - A1A_INITIAL_TICKS)} fichas</strong></div>
         <div className="hud-stat" aria-label="Foco restante"><span>Foco</span><strong>{bankroll.focusRemaining} de {bankroll.focusTotal}</strong></div>
         <div className="hud-stat" aria-label="Rodadas financiadas e prática"><span>Rodadas</span><strong>{bankroll.fundedRounds} + {bankroll.practiceRounds} prática</strong></div>
         <button type="button" className="hud-button secondary-action" onClick={() => { if (window.confirm(`Encerrar esta Noite A1a? As ${bankroll.balance} fichas fictícias expirarão, sem reembolso ou persistência.`)) onAbandon(); }}>Encerrar Noite</button>

@@ -450,6 +450,7 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   await expect(dealer.getByRole("img", { name: /Carta lida do dealer|Compra do dealer/ })).toHaveCount(0);
 
   const bank = page.getByRole("region", { name: "Banca fictícia A1a" });
+  const profit = page.getByLabel("Lucro da Noite");
   const finishLossRound = async () => {
     await page.getByRole("button", { name: "Confirmar composição" }).click();
     const conserve = page.getByRole("button", { name: "Conservar Foco" });
@@ -462,10 +463,11 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   };
 
   await expect(bank).toContainText("150 fichas");
+  await expect(profit.locator("strong")).toHaveText("0 fichas");
   await expect(bank).toContainText("5 por mão · reserva 20");
   await finishLossRound();
   await expect(bank).toContainText("130 fichas");
-  await expect(page.getByLabel("Placar da Noite").locator("strong")).toHaveText("−40");
+  await expect(profit.locator("strong")).toHaveText("−20 fichas");
   await page.getByRole("button", { name: "Próxima rodada" }).click();
   await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
   await expect(page.getByText(/Escolha entre 1 e 32 fichas por mão/)).toBeVisible();
@@ -476,7 +478,7 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
   await finishLossRound();
   await expect(bank).toContainText("22 fichas");
-  await expect(page.getByLabel("Placar da Noite").locator("strong")).toHaveText("−80");
+  await expect(profit.locator("strong")).toHaveText("−128 fichas");
   await page.getByRole("button", { name: "Próxima rodada" }).click();
   await expect(page.getByText(/Escolha entre 1 e 5 fichas por mão/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Repetir aposta" })).toBeDisabled();
@@ -484,16 +486,17 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
   await finishLossRound();
   await expect(bank).toContainText("2 fichas");
+  await expect(profit.locator("strong")).toHaveText("−148 fichas");
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toContainText("Pontuação acumulada: −120 · Foco");
   await expect(page.getByRole("button", { name: "Próxima rodada" })).toBeEnabled();
   await page.getByRole("button", { name: "Próxima rodada" }).click();
   await expect(page.getByText(/Prática gratuita: a banca está congelada/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Iniciar rodada gratuita" })).toBeVisible();
-  const scoreBeforePractice = await page.getByLabel("Placar da Noite").locator("strong").textContent();
   const focusBeforePractice = await page.getByLabel("Foco restante").locator("strong").textContent();
   await page.getByRole("button", { name: "Iniciar rodada gratuita" }).click();
   await finishLossRound();
-  const scoreAfterPractice = await page.getByLabel("Placar da Noite").locator("strong").textContent();
-  expect(scoreAfterPractice).not.toBe(scoreBeforePractice);
+  await expect(profit.locator("strong")).toHaveText("−148 fichas");
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toContainText("Pontuação acumulada: −160 · Foco");
   await expect(page.getByLabel("Foco restante").locator("strong")).toContainText(focusBeforePractice!);
   await expect(bank).toContainText("2 fichas");
   await expect(bank).toContainText("Saldo congelado até o fim da Noite");
