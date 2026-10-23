@@ -476,10 +476,12 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   await expect(page.getByText(/Prática gratuita: a banca está congelada/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Iniciar rodada gratuita" })).toBeVisible();
   const scoreBeforePractice = await page.getByLabel("Placar da Noite").locator("strong").textContent();
+  const focusBeforePractice = await page.getByLabel("Foco restante").locator("strong").textContent();
   await page.getByRole("button", { name: "Iniciar rodada gratuita" }).click();
   await finishLossRound();
   const scoreAfterPractice = await page.getByLabel("Placar da Noite").locator("strong").textContent();
   expect(scoreAfterPractice).not.toBe(scoreBeforePractice);
+  await expect(page.getByLabel("Foco restante").locator("strong")).toContainText(focusBeforePractice!);
   await expect(bank).toContainText("2 fichas");
   await expect(bank).toContainText("Saldo congelado até o fim da Noite");
 });
