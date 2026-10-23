@@ -137,3 +137,73 @@ button:disabled { opacity: .55; cursor: not-allowed; }
 .text-button { display: block; margin: 1rem 0 0 auto; color: #ddd4c0; border-color: #77633a; background: transparent; }
 @media (max-width: 480px) { .landing-shell { margin: 1rem auto; } .landing-actions { flex-direction: column; } .landing-actions button { width: 100%; } }
 @media (max-width: 600px) { .hands-grid { grid-template-columns: 1fr; } .table-heading { flex-direction: column; } .scoreboard { text-align: left; } .app-shell { margin: .75rem auto; } .focus-resource { align-items: flex-start; flex-direction: column; } .focus-breakdown { gap: .6rem .9rem; } .bankroll-heading { align-items: flex-start; flex-direction: column; } .initial-and-cofre { grid-template-columns: 1fr; } .focus-choices { grid-template-columns: 1fr; } .ability-confirmation .landing-actions { flex-direction: column; } }
+
+/* P5 AV 0.1 is an isolated presentation layer; earlier modes retain their table styling. */
+.p5-landing {
+  position: relative; overflow: hidden; border: 1px solid #b99756;
+  background: radial-gradient(ellipse at 50% 0, #234a40 0, #151c19 48%, #100f0e 100%);
+  box-shadow: inset 0 0 0 7px #11130f, inset 0 0 0 8px #75613c, 0 1.6rem 4rem #000b;
+}
+.p5-landing::before { content: ""; position: absolute; inset: 1rem; border: 1px solid #8d7242; pointer-events: none; opacity: .55; }
+.p5-landing h1 { color: #e1c47d; text-shadow: 0 0 1.5rem #ab813f66; }
+.p5-experience { max-width: 78rem; }
+.p5-table {
+  position: relative; overflow: hidden; border: 2px solid #a9864e; border-radius: 2rem; padding: clamp(1rem, 3vw, 2.75rem);
+  background: radial-gradient(ellipse at 50% 30%, #1d493e 0%, #12352e 38%, #0b211e 76%), #0c211d;
+  box-shadow: inset 0 0 0 .45rem #101310, inset 0 0 0 .52rem #80633a, inset 0 0 3.5rem #020806, 0 1.5rem 4rem #000a;
+}
+.p5-table::before { content: ""; position: absolute; inset: .9rem; border: 1px solid #a9864e88; border-radius: 1.35rem; pointer-events: none; }
+.p5-table > * { position: relative; z-index: 1; }
+.p5-table .table-heading { border-bottom-color: #a9864e88; }
+.p5-table .table-heading h2, .p5-table h3, .p5-table h4 { color: #e1c47d; }
+.p5-bankroll-status { color: #bfc5b7; font: .72rem/1.4 system-ui, sans-serif; }
+.p5-table .dealer-area, .p5-table .hand-panel, .p5-table .focus-resource, .p5-table .bankroll-resource,
+.p5-table .cofre-card, .p5-table .focus-window, .p5-table .round-summary {
+  border-color: #a9864e99; background: linear-gradient(145deg, #101c18ee, #111411cc); box-shadow: inset 0 1px #e0c57c18, 0 .6rem 1.4rem #0003;
+}
+.p5-table .hand-panel { transition: border-color .28s ease, box-shadow .28s ease, transform .28s ease; }
+.p5-table .hand-panel.active-hand { border-color: #e1c47d; box-shadow: inset 0 0 0 1px #e1c47d, 0 .5rem 1.8rem #d1a84b1c; transform: translateY(-2px); }
+.p5-table .phase-status { border-left-color: #c59b56; background: #090e0cbb; }
+.p5-table .card-row { align-items: center; min-height: 7.5rem; }
+.p5-table .playing-card.p5-playing-card {
+  position: relative; display: grid; grid-template-rows: auto 1fr auto; justify-items: center;
+  width: clamp(4rem, 8vw, 5.15rem); height: clamp(5.8rem, 12vw, 7.4rem); padding: .35rem; overflow: hidden;
+  border: 1px solid #8d7348; border-radius: .42rem; color: #18221e; background: linear-gradient(135deg, #f2ebdb, #d9d0bc);
+  box-shadow: 0 .45rem .8rem #0008, inset 0 0 0 2px #f9f3e4; font: 700 1rem Georgia, serif;
+  animation: p5-card-deal .38s cubic-bezier(.2,.75,.2,1) both; transition: transform .22s ease, box-shadow .22s ease;
+}
+.p5-table .playing-card.p5-playing-card:hover { transform: translateY(-.25rem) rotate(-1deg); box-shadow: 0 .8rem 1.25rem #0009, inset 0 0 0 2px #f9f3e4; }
+.p5-table .card-index { display: flex; flex-direction: column; align-items: center; justify-self: start; font: 700 .82rem/1 Georgia, serif; }
+.p5-table .card-index small { font-size: .85rem; }
+.p5-table .card-index-bottom { align-self: end; justify-self: end; transform: rotate(180deg); }
+.p5-table .card-center { align-self: center; color: #1c493d; font-size: 2.45rem; }
+.p5-table .red-suit .card-index, .p5-table .red-suit .card-center { color: #963f3e; }
+.p5-table .face-portrait { width: 100%; max-height: 4.65rem; align-self: center; }
+.p5-table .p5-card-back { padding: .2rem; background: #102a25; }
+.p5-table .p5-card-back svg { width: 100%; height: 100%; }
+.sound-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .55rem 1rem; margin: 1rem 0; padding: .8rem 1rem; border: 1px solid #a9864e88; background: #101411cc; color: #eee8d8; font: .85rem/1.4 system-ui, sans-serif; }
+.sound-controls legend { padding: 0 .4rem; color: #e1c47d; }
+.sound-controls label { display: inline-flex; align-items: center; gap: .45rem; }
+.sound-controls input[type="range"] { width: min(11rem, 35vw); accent-color: #d0b36b; }
+.sound-controls input[type="checkbox"] { width: 1.1rem; height: 1.1rem; accent-color: #d0b36b; }
+.p5-table button { border-radius: .25rem; background: linear-gradient(#e1ca8b, #c3a25c); box-shadow: 0 2px 0 #77603b; }
+.p5-table button.secondary-action { background: #12201b; box-shadow: none; }
+@keyframes p5-card-deal { from { opacity: 0; transform: translateY(-1.2rem) rotate(5deg) scale(.94); } to { opacity: 1; transform: translateY(0) rotate(0) scale(1); } }
+@keyframes p5-settle { from { transform: scale(.985); filter: brightness(1.12); } to { transform: scale(1); filter: brightness(1); } }
+.p5-table:has(.round-summary) .round-summary { animation: p5-settle .35s ease-out both; }
+@media (max-width: 600px) {
+  .p5-table { border-radius: 1.1rem; padding: 1.15rem; }
+  .p5-table::before { inset: .55rem; border-radius: .7rem; }
+  .p5-table .card-row { gap: .35rem; min-height: 6.1rem; }
+  .p5-table .playing-card.p5-playing-card { width: 3.6rem; height: 5.3rem; padding: .28rem; }
+  .p5-table .face-portrait { max-height: 3.3rem; }
+  .p5-table .card-center { font-size: 1.9rem; }
+  .sound-controls { align-items: flex-start; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p5-experience *, .p5-experience *::before, .p5-experience *::after,
+  .p5-landing *, .p5-landing *::before, .p5-landing *::after {
+    scroll-behavior: auto !important; animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+  }
+}

@@ -59,6 +59,7 @@
 | N-053 | EXPERIMENTAL (A0 contract resolved) | Fundador aprovou **somente o laboratório local A0.1**: B₀=150, H=10, banca reiniciada, exposição fixa 10+10, reserva de pior caso 40, double legal preservado, prática gratuita nas rodadas restantes se B<40, saldo expira ao final ou abandono, liquidação idempotente uma vez pelo `round.score`. **Não aprova A1, B/C, economy final nem monetização.** | [BANKROLL-A0-CONTRACT](BANKROLL-A0-CONTRACT.md) |
 | N-054 | EXPERIMENTAL | Fundador autorizou a configuração **BANKROLL-LAB-A0-0.1** para execução isolada por Codex: banca inicial 150 fictícias/Noite, H=10, 10 por mão, cobertura reservada 40, prática sem movimentar saldo abaixo de 40, reset/expiração e separação de Foco, rating e `match_points`. Testes exigidos, PR sem auto-merge. **Não é balanço ou produto ratificado.** | [BANKROLL-A0-CONTRACT](BANKROLL-A0-CONTRACT.md) |
 | N-055 | CANDIDATE | RFC propõe avaliar stake pré-deal limitada e igual para Luz/Sombra como futuro experimento A1, mantendo A0.1 como controle. Recomenda A1a por rodada para pesquisa; bandas 5/10/20 e reserva 4s são apenas ilustrações. Não autoriza código A1, não muda A0.1 nem seleciona ranking/solver. | [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md) |
+| N-056 | RATIFIED (direção) / EXPERIMENTAL (laboratórios) | Aprovação expressa P5 (Issue #35): identidade audiovisual Art Déco/noir; autorização de apresentação isolada `P5-AV-0.1` que conserva o sorteio matemático legado e acrescenta figuras/naipes por fluxo derivado separado; e autorização para laboratório solo A1a futuro, com stake inteira igual por mão escolhida pré-deal, B₀=150, H=10, s mínimo 1, máximo elegível floor(B/4), reserva 4s e prática se nenhuma aposta mínima couber. Liquidação exata em meia-ficha; score/Foco/rating e A0.1 permanecem independentes. A identidade de carta e os parâmetros de A1a são apenas experimentais; sem regra final, saldo persistente, compra, monetização ou multiplayer. Esta PR entrega somente P5-AV-0.1; A1a exige PR separado. | [Issue #35](https://github.com/andresant-ana/nocte/issues/35), [EXPERIENCE](EXPERIENCE.md), [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md) |
 
 ## Decisions not to infer
 
@@ -70,7 +71,7 @@
 
 ## New entries
 
-Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-056 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
+Use [DECISION-TEMPLATE.md](DECISION-TEMPLATE.md). Append N-057 onward and update the linked document. Never silently overwrite an existing decision's historical basis.
 
 ## P1B evidence addendum — 2026-10-18
 

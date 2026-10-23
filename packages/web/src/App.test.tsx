@@ -92,6 +92,22 @@ describe("solo prototype landing", () => {
     expect(screen.getByText(/cobertura reservada 40 · disponível 110/i)).toBeInTheDocument();
   });
 
+  it("offers the P5 AV mode as an isolated presentation profile with audio off by default", async () => {
+    vi.stubGlobal("crypto", webcrypto as Crypto);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "p5-audiovisual");
+    expect(screen.getByText(/primeiro laboratório audiovisual/i)).toBeInTheDocument();
+    expect(screen.getByText(/primeiro laboratório audiovisual, sem apostas ou banca/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Jogar livre" }));
+    expect(await screen.findByRole("heading", { name: /Duas Faces · Cofre \+ Foco/i })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /Ativar efeitos sonoros/i })).not.toBeChecked();
+    expect(screen.getByRole("slider", { name: "Volume dos efeitos sonoros" })).toBeDisabled();
+    expect(screen.getByText(/Banca · prática sem aposta nesta fatia/i)).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Carta do dealer fechada" })).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "Modo de jogo" })).not.toBeInTheDocument();
+  });
+
   it("shows the study consent briefing before logging and returns to unrecorded free play when declined", async () => {
     vi.stubGlobal("crypto", webcrypto as Crypto);
     const user = userEvent.setup();

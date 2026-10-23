@@ -39,3 +39,15 @@ React/Vite UI with CSS+SVG; Motion / Web Animations API for transitions, Howler.
 ## Avoid compulsion patterns
 
 No pressured countdowns for daily claims, sold mystery bonuses, artificial near-misses, notifications to induce repeated betting or purchases to recover from losses. Reward meaningful strategic mastery and social fun; ability to leave/rejoin is normal.
+
+## P5 audiovisual lab — Issue #35, Marco 1 (2026-10-23)
+
+N-056 records the founder-approved creative direction and authorizes the isolated **P5-AV-0.1** presentation experiment. The browser's new P5 solo mode uses original inline SVG court figures, four suit symbols, an NOCTE geometric back, a layered emerald/bronze table, restrained state-transition animation, and synthesized local Web Audio cues. Audio starts disabled; the player explicitly activates it and may change volume. Reduced-motion preference shortens animation. Earlier modes and the P2A study remain available with their existing layouts and protocols. This first visual slice is explicitly no-stakes practice; A1a bankroll play belongs to the separate Marco 2 implementation.
+
+The underlying engine card continues to carry only its aggregated mathematical rank (10 represents 10/J/Q/K); optional art.faceRank and art.suit are display metadata. P5 presentation metadata is derived from a separately versioned SHA-256 counter stream (sha256-counter-p5-art-v1) namespaced by seed/index/draw lane. The existing sha256-counter-rejection-v1 rank stream and its calls do not change. In the 13-bucket model, each rank bucket retains probability 1/13, four ten-value buckets retain total probability 4/13, and the separate uniform face/suit mapping gives 1/52 per displayed rank/suit identity. This remains an infinite-with-replacement value model, not a finite physical shoe. No human usability, audio, aesthetic, balance, or enjoyment result is claimed.
+
+P5 visuals render only projected cards. The dealer hole card remains omitted from public projections until legal Leitura or terminal reveal; future dealer draws remain unavailable until completion. The browser mode remains a local experimental prototype and is not server-authoritative. A1a stake play, goals/acts, cosmetic unlocks, persistent balance, purchase/store and multiplayer are outside this first PR.
+
+Playwright visual evidence, 390 × 844 viewport, deterministic local fixture and reduced-motion preference:
+
+![P5 AV 0.1 mobile table screenshot](evidence/p5-av-0.1-mobile.png)

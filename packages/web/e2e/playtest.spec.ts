@@ -122,6 +122,73 @@ test("Cofre + Foco shows all abilities together, cancels direct Manobra safely, 
   await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toHaveCount(0);
 });
 
+test("P5 audiovisual lab uses illustrated cards without exposing the dealer hole before Leitura", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    Object.defineProperty(Object.getPrototypeOf(globalThis.crypto), "getRandomValues", {
+      configurable: true,
+      value<T extends ArrayBufferView | null>(array: T): T {
+        if (array) new Uint8Array(array.buffer, array.byteOffset, array.byteLength).fill(0);
+        return array;
+      },
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("p5-audiovisual");
+  await expect(page.getByText(/primeiro laboratório audiovisual/i)).toBeVisible();
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  await expect(page.getByRole("heading", { name: /Duas Faces · Cofre \+ Foco/i })).toBeVisible();
+  await expect(page.getByRole("checkbox", { name: /Ativar efeitos sonoros/i })).not.toBeChecked();
+  await expect(page.getByRole("slider", { name: "Volume dos efeitos sonoros" })).toBeDisabled();
+  await page.getByRole("checkbox", { name: /Ativar efeitos sonoros/i }).check();
+  await expect(page.getByRole("slider", { name: "Volume dos efeitos sonoros" })).toBeEnabled();
+  await page.getByRole("checkbox", { name: /Ativar efeitos sonoros/i }).uncheck();
+  await expect(page.getByRole("slider", { name: "Volume dos efeitos sonoros" })).toBeDisabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/p5-av-0.1-mobile.png", fullPage: true });
+
+  const dealer = page.getByRole("list", { name: "Cartas visíveis do dealer" });
+  await expect(page.getByText(/P5-AV-0.1 · DF-CF-0.1-lab/i)).toBeVisible();
+  const reducedDuration = await page.locator(".p5-playing-card").first().evaluate((element) => Number.parseFloat(getComputedStyle(element).animationDuration));
+  expect(reducedDuration).toBeLessThan(0.001);
+  await expect(dealer.getByRole("img", { name: "Carta do dealer fechada" })).toBeVisible();
+  await expect(dealer.getByRole("img", { name: /Carta lida do dealer/ })).toHaveCount(0);
+  await expect(dealer.getByRole("img", { name: /Compra do dealer/ })).toHaveCount(0);
+
+  let focusWindowFound = false;
+  for (let attempt = 0; attempt < 5 && !focusWindowFound; attempt += 1) {
+    const compose = page.getByRole("button", { name: "Confirmar composição" });
+    if (await compose.count()) await compose.click();
+    if (await page.getByRole("heading", { name: "Janela de Foco" }).count()) { focusWindowFound = true; break; }
+    if (await page.getByRole("region", { name: "Resultado da rodada" }).count()) {
+      await page.getByRole("button", { name: "Próxima rodada" }).click();
+      await page.getByRole("button", { name: "Confirmar composição" }).waitFor();
+    }
+  }
+  expect(focusWindowFound).toBe(true);
+  await expect(dealer.getByRole("img", { name: "Carta do dealer fechada" })).toBeVisible();
+  await expect(dealer.getByRole("img", { name: /Carta lida do dealer/ })).toHaveCount(0);
+  await page.getByRole("button", { name: "Escolher Leitura · 2 Focos" }).click();
+  await page.getByRole("button", { name: "Confirmar gasto" }).click();
+  await expect(dealer.getByRole("img", { name: /Carta lida do dealer/ })).toHaveCount(1);
+  await expect(dealer.getByRole("img", { name: /Compra do dealer/ })).toHaveCount(0);
+
+  await page.getByRole("button", { name: /Conservar Foco e continuar/i }).click();
+  for (let action = 0; action < 5; action += 1) {
+    const stand = page.getByRole("button", { name: "Parar" });
+    if (await stand.count()) await stand.click();
+  }
+  const resolve = page.getByRole("button", { name: "Resolver dealer" });
+  if (await resolve.count()) await resolve.click();
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+  await expect(dealer.getByRole("img", { name: "Carta do dealer fechada" })).toHaveCount(0);
+  await expect(page.getByText(/Total final: \d+\./)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
 test("A0.1 settles one motor round, begins round two, and expires on abandonment", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");

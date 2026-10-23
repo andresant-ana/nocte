@@ -102,3 +102,15 @@ Issue #30 adiciona [LAB-P4-A0-V](LAB-P4-A0-V.md): 1.000 Noites pareadas para cad
 ## NOCTE-P4-A1-D — proposta documental, não autorizada para código (2026-10-20)
 
 Issue #32 produz [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md): compara exposição A1a selecionada por rodada, A1b selecionada uma vez por Noite e A1c (A0.1 sem variabilidade). A1a é uma hipótese candidata para um futuro estudo, não uma regra aprovada. O RFC preserva B₀=150, H=10, stake 10 e reserva 40 do A0.1 como controle; exemplos 5/10/20 e reserva `4s` exigem decisão. A1 só pode chegar a simulação/implementação após gate documental do fundador e avaliação humana de A0; nenhum resultado de A0-V mede a resposta a stakes variáveis.
+
+## NOCTE-P5 — fatias experimentais autorizadas (2026-10-23)
+
+Issue #35 / **N-056** aprova a direção criativa P5 e autoriza laboratórios solo separados. Essa autorização não ratifica regra final, saldo persistente, compra, monetização, ranking por banca nem multiplayer. O P5-A audiovisual deve preceder a economia e manter os motores e estudos antigos como baseline.
+
+- **Marco 1 — P5-AV-0.1 (esta fatia):** apresentação de figuras/naipes/verso e experiência audiovisual opcional, com fluxo de arte separado do RNG matemático. O motor Cofre + Foco e a projeção pública continuam como fonte de regra e privacidade. A1a ainda não é jogável nesta entrega.
+- **Marco 2 — BANKROLL-LAB-A1a-0.1 (PR separado, autorizado experimentalmente por N-056):** aposta inteira e igual por mão antes de cada rodada, B₀=150, H=10, mínimo s=1, máximo elegível floor(B/4), cobertura 4s, liquidação exata em meios de ficha e prática quando a mínima não couber. Precisa preservar A0.1, pontuação, Foco e perfil CF, além de verificar solver/simulação e interface. Estes parâmetros são do laboratório, não regras finais.
+- **Marco 3 — atos/metas (PR separado):** objetivos transparentes, estado de progressão sem manipular chance/payout/Foco, métricas separadas e auditoria de dominância da aposta máxima.
+- **Marco 4 — coleções cosméticas (PR separado):** preview e seleção local; sem loja ativa, compras ou conversão; cosméticos não alteram o motor.
+- **Marco 5 — backlog social (documentação):** servidor autoritativo e revisão de infraestrutura antes de banco persistente/salas/duelos; sem carteira de browser.
+
+Não há resultados humanos de P5. O laboratório audiovisual requer avaliação de acessibilidade, clareza e resposta sensorial; os resultados anteriores de P1–P4 não demonstram esses atributos.

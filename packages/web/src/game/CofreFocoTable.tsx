@@ -3,6 +3,8 @@ import { handValue, partitions, type Action, type Card, type HandName, type Part
 import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
 import type { PublicBankrollA0 } from "./bankroll-a0-session";
+import { CardBack, PlayingCard } from "./PlayingCard";
+import { activateNocteAudio, deactivateNocteAudio, playNocteCue } from "./nocte-audio";
 
 type CofreSession = Pick<CofreFocoSessionAdapter,
   "current" | "focusOptions" | "legalActions" | "compose" | "skipRead" | "readDealerHole" |
@@ -17,6 +19,7 @@ type Props = {
   onNightChange: (night: PublicCofreFocoNight) => void;
   onNextRound: () => void;
   onReturnToSetup: () => void;
+  audiovisual?: boolean;
 };
 
 const actionLabels: Record<Action, string> = { hit: "Comprar", stand: "Parar", double: "Dobrar" };
@@ -26,11 +29,14 @@ const scoreText = (score: number) => score < 0 ? `−${Math.abs(score)}` : `${sc
 
 function Cards({ cards, label }: { cards: readonly Card[]; label: string }) {
   return <div className="card-row" role="list" aria-label={label}>
-    {cards.map((card, index) => <span className="playing-card" role="listitem" key={`${card.rank}-${index}`} aria-label={`Carta ${card.rank}`}>{card.rank}</span>)}
+    {cards.map((card, index) => card.art
+      ? <div role="listitem" key={`${card.rank}-${card.art.faceRank}-${card.art.suit}-${index}`}><PlayingCard card={card} /></div>
+      : <span className="playing-card" role="listitem" key={`${card.rank}-${index}`} aria-label={`Carta ${card.rank}`}>{card.rank}</span>)}
   </div>;
 }
 
-function ClosedCard() {
+function ClosedCard({ audiovisual }: { audiovisual: boolean }) {
+  if (audiovisual) return <CardBack />;
   return <span className="playing-card card-closed" role="img" aria-label="Carta do dealer fechada">?</span>;
 }
 
@@ -44,7 +50,7 @@ function phaseLabel(night: PublicCofreFocoNight): string {
   return "Rodada concluída.";
 }
 
-export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup }: Props) {
+export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, audiovisual = false }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
@@ -55,11 +61,37 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
   const confirmButton = useRef<HTMLButtonElement>(null);
   const focusWindowTitle = useRef<HTMLHeadingElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const [audioEnabled, setAudioEnabled] = useState(false);
+  const [volume, setVolume] = useState(0.55);
+  const lastAudioState = useRef<Readonly<{ roundNumber: number; phase: string; cards: number; doubles: number; maneuvers: number }> | null>(null);
   useEffect(() => {
     if (confirmation) confirmButton.current?.focus();
     else if (returnFocus.current?.isConnected) returnFocus.current.focus();
     else focusWindowTitle.current?.focus();
   }, [confirmation]);
+
+  useEffect(() => {
+    if (!audiovisual || !round) return;
+    const cardCount = round.originalCards.length + (round.hands ? round.hands.luz.cards.length + round.hands.sombra.cards.length : 0)
+      + (round.phase === "complete" ? 2 + (round.dealerDraws?.length ?? 0) : 1);
+    const doubles = round.hands ? Number(round.hands.luz.status === "doubled") + Number(round.hands.sombra.status === "doubled") : 0;
+    const maneuvers = Number(round.maneuverUsed);
+    const current = { roundNumber: round.roundNumber, phase: round.phase, cards: cardCount, doubles, maneuvers };
+    const previous = lastAudioState.current;
+    if (audioEnabled && previous) {
+      if (current.roundNumber !== previous.roundNumber) playNocteCue("deal", volume);
+      else if (current.phase === "complete" && previous.phase !== "complete") playNocteCue("reveal", volume);
+      else if (current.cards > previous.cards) playNocteCue("deal", volume);
+      if (current.doubles > previous.doubles || current.maneuvers > previous.maneuvers) playNocteCue("chip", volume);
+    }
+    lastAudioState.current = current;
+  }, [audiovisual, audioEnabled, night, round, volume]);
+
+  const toggleAudio = async (enabled: boolean) => {
+    if (enabled && !(await activateNocteAudio())) return;
+    if (!enabled) await deactivateNocteAudio();
+    setAudioEnabled(enabled);
+  };
   useEffect(() => {
     if (!confirmation) return;
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -137,18 +169,28 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
   if (!round) return <section className="game-table"><p role="alert">A Noite não possui uma rodada visível.</p></section>;
 
   return (
-    <section className="game-table cofre-foco-table" aria-labelledby="cofre-table-title">
+    <section className={`game-table cofre-foco-table${audiovisual ? " p5-table" : ""}`} aria-labelledby="cofre-table-title">
       <header className="table-heading">
         <div>
           <p className="eyebrow">NOITE · RODADA {round.roundNumber} DE {night.horizon}</p>
           <h2 id="cofre-table-title">Duas Faces · Cofre + Foco</h2>
-          <p className="table-profile">{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
+          <p className="table-profile">{audiovisual ? "P5-AV-0.1 · " : ""}{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
         </div>
         <div className="scoreboard" aria-label="Placar da Noite">
           <span>Pontuação acumulada</span>
           <strong aria-live="polite">{scoreText(night.totalScore)}</strong>
+          {audiovisual && <small className="p5-bankroll-status">Banca · prática sem aposta nesta fatia</small>}
         </div>
       </header>
+
+      {audiovisual && <fieldset className="sound-controls" aria-label="Controles de som">
+        <legend>Som · opcional</legend>
+        <label><input type="checkbox" checked={audioEnabled} onChange={(event) => void toggleAudio(event.target.checked)} /> Ativar efeitos sonoros</label>
+        <label htmlFor="p5-volume">Volume</label>
+        <input id="p5-volume" aria-label="Volume dos efeitos sonoros" type="range" min="0" max="1" step="0.05" value={volume}
+          disabled={!audioEnabled} onChange={(event) => setVolume(Number(event.target.value))} />
+        <span className="muted">Sons sintetizados localmente; sem reprodução automática.</span>
+      </fieldset>}
 
       <section className="focus-resource" aria-label="Recursos da Noite">
         <div>
@@ -208,11 +250,21 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
       <section className="dealer-area" aria-labelledby="cf-dealer-title">
         <h3 id="cf-dealer-title">Dealer</h3>
         <div className="card-row" role="list" aria-label="Cartas visíveis do dealer">
-          <span className="playing-card" role="listitem" aria-label={`Carta ${round.dealerUp.rank}`}>{round.dealerUp.rank}</span>
-          {round.dealerHole ? <span className="playing-card" role="listitem" aria-label={`Carta lida ${round.dealerHole.rank}`}>{round.dealerHole.rank}</span> : round.phase !== "complete" ? <ClosedCard /> : null}
-          {round.phase === "complete" && (round.dealerDraws ?? []).map((card, index) => <span className="playing-card" role="listitem" aria-label={`Compra do dealer ${card.rank}`} key={`${card.rank}-${index}`}>{card.rank}</span>)}
+          {round.dealerUp.art
+            ? <div role="listitem"><PlayingCard card={round.dealerUp} label="Carta aberta do dealer" /></div>
+            : <span className="playing-card" role="listitem" aria-label={`Carta ${round.dealerUp.rank}`}>{round.dealerUp.rank}</span>}
+          {round.dealerHole
+            ? round.dealerHole.art
+              ? <div role="listitem"><PlayingCard card={round.dealerHole} label={`Carta lida do dealer: ${round.dealerHole.art.faceRank}`} /></div>
+              : <span className="playing-card" role="listitem" aria-label={`Carta lida ${round.dealerHole.rank}`}>{round.dealerHole.rank}</span>
+            : round.phase !== "complete"
+              ? audiovisual ? <div role="listitem"><ClosedCard audiovisual /></div> : <ClosedCard audiovisual={false} />
+              : null}
+          {round.phase === "complete" && (round.dealerDraws ?? []).map((card, index) => card.art
+            ? <div role="listitem" key={`${card.rank}-${card.art.faceRank}-${card.art.suit}-${index}`}><PlayingCard card={card} label={`Compra do dealer: ${card.art.faceRank}`} /></div>
+            : <span className="playing-card" role="listitem" aria-label={`Compra do dealer ${card.rank}`} key={`${card.rank}-${index}`}>{card.rank}</span>)}
         </div>
-        {round.phase === "complete" && dealerValue && <p>Cartas do dealer: {dealerCards.map(card => card.rank).join(" + ")}. Total final: {dealerValue.total}.</p>}
+        {round.phase === "complete" && dealerValue && <p>Cartas do dealer: {dealerCards.map(card => card.art?.faceRank ?? card.rank).join(" + ")}. Total final: {dealerValue.total}.</p>}
         {round.dealerHole && round.phase !== "complete" && <p role="status">Leitura privada usada: a hole é {round.dealerHole.rank}. Compras futuras continuam ocultas.</p>}
         {!round.dealerHole && round.phase !== "complete" && <p className="muted">Uma carta permanece fechada até Leitura legal ou fim da rodada.</p>}
         {round.naturalPeek === true && <p>Natural do dealer: a rodada terminou pelo peek; nenhuma habilidade foi oferecida.</p>}

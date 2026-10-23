@@ -1,5 +1,9 @@
 export type Rank = "A" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
-export type Card = Readonly<{ rank: Rank }>;
+export type FaceRank = Rank | "J" | "Q" | "K";
+export type Suit = "spades" | "hearts" | "diamonds" | "clubs";
+/** Presentation-only identity. `rank` remains the immutable mathematical value consumed by every ruleset and solver. */
+export type CardArt = Readonly<{ faceRank: FaceRank; suit: Suit }>;
+export type Card = Readonly<{ rank: Rank; art?: CardArt }>;
 export type HandName = "luz" | "sombra";
 export type Action = "hit" | "stand" | "double";
 export type NaturalPayout = "3:2" | "1:1";
