@@ -1,8 +1,8 @@
 # NOCTE-P5-A1a-E — laboratório de apostas livres
 
-**Versão:** `BANKROLL-LAB-A1a-0.1`  
-**Issue:** [#38](https://github.com/andresant-ana/nocte/issues/38)  
-**Decisão de autoridade:** N-056, direção RATIFIED / laboratório EXPERIMENTAL. Esta entrega não cria decisão nem promove N-055, que continua CANDIDATE.  
+**Versão:** `BANKROLL-LAB-A1a-0.1`
+**Issue:** [#38](https://github.com/andresant-ana/nocte/issues/38)
+**Decisão de autoridade:** N-056, direção RATIFIED / laboratório EXPERIMENTAL. Esta entrega não cria decisão nem promove N-055, que continua CANDIDATE.
 **Estado:** interface local e ledger implementados em branch/PR próprios; não são regras finais, carteira, jogo de dinheiro real ou resultado validado com pessoas.
 
 ## Escopo e isolamento
