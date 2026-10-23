@@ -61,12 +61,12 @@ describe("A0.1 bankroll table practice state", () => {
     }
     render(<Harness />);
     expect(screen.getByRole("region", { name: "Banca fictícia A0.1" })).toHaveTextContent("30 fichas");
-    expect(within(screen.getByRole("region", { name: "Banca fictícia A0.1" })).getByRole("status")).toHaveTextContent("Prática gratuita — banca congelada até o fim da Noite");
+    expect(within(screen.getByRole("region", { name: "Banca fictícia A0.1" })).getByText("Saldo congelado até o fim da Noite")).toBeInTheDocument();
     expect(screen.getByText("−120")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Confirmar composição" })).toBeEnabled();
 
     await user.click(screen.getByRole("button", { name: "Confirmar composição" }));
-    await user.click(screen.getByRole("button", { name: "Conservar Foco e continuar" }));
+    await user.click(screen.getByRole("button", { name: "Conservar Foco" }));
     await user.click(screen.getAllByRole("button", { name: "Dobrar" })[0]!);
     await user.click(screen.getAllByRole("button", { name: "Dobrar" })[0]!);
     await user.click(screen.getByRole("button", { name: "Resolver dealer" }));

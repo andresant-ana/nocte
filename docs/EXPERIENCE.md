@@ -39,3 +39,19 @@ React/Vite UI with CSS+SVG; Motion / Web Animations API for transitions, Howler.
 ## Avoid compulsion patterns
 
 No pressured countdowns for daily claims, sold mystery bonuses, artificial near-misses, notifications to induce repeated betting or purchases to recover from losses. Reward meaningful strategic mastery and social fun; ability to leave/rejoin is normal.
+
+## P5 gameplay-first interface — Issue #37 (2026-10-23)
+
+The Art Déco/noir direction in N-004 remains the long-term creative goal. The founder rejected the audiovisual presentation introduced in the initial PR #36 diff and deferred sound, illustrated portraits, table ornament and production animation until the gameplay layout is validated and a new authorization is recorded. The current P5 slice is a functional laboratory table: compact viewport HUD, spatial dealer/Cofre/hands, phase-specific controls, and accessible secondary dialogs for extended rules and bank detail. Ordinary supported viewports fit without document scrolling; unusually small or zoomed contexts retain an accessible scrolling fallback.
+
+P5's simple card identity adapter remains experimental and display-only: 10/J/Q/K map to the existing ten-value rank and suits are visible glyphs. Mathematical rank RNG and scoring are unchanged; no finite physical shoe or suit-dependent rule is implied. The existing public projection still controls hidden dealer information. P2A remains on its original study flow and protocol. No human usability, visual quality, enjoyment or accessibility outcome is claimed by automated checks.
+
+The corrected PR #36 provides deterministic screenshots for compose, Foco, player actions, dealer and settlement phases at desktop 1366 × 768 and mobile 390 × 844. Geometry and clickability are checked at 1280 × 720, 1366 × 768, 1920 × 1080, 390 × 844 and 360 × 640. These are technical viewport checks, not human validation.
+
+| Phase | 1280 × 720 | 1366 × 768 | 1920 × 1080 | Mobile 390 × 844 |
+| --- | --- | --- | --- | --- |
+| Composição | [PNG](evidence/p5-ux-fit/compose-1280x720.png) | [PNG](evidence/p5-ux-fit/compose-1366x768.png) | [PNG](evidence/p5-ux-fit/compose-1920x1080.png) | [PNG](evidence/p5-ux-fit/compose-390x844.png) |
+| Foco | [PNG](evidence/p5-ux-fit/focus-1280x720.png) | [PNG](evidence/p5-ux-fit/focus-1366x768.png) | [PNG](evidence/p5-ux-fit/focus-1920x1080.png) | [PNG](evidence/p5-ux-fit/focus-390x844.png) |
+| Ações do jogador | [PNG](evidence/p5-ux-fit/player-1280x720.png) | [PNG](evidence/p5-ux-fit/player-1366x768.png) | [PNG](evidence/p5-ux-fit/player-1920x1080.png) | [PNG](evidence/p5-ux-fit/player-390x844.png) |
+| Dealer | [PNG](evidence/p5-ux-fit/dealer-1280x720.png) | [PNG](evidence/p5-ux-fit/dealer-1366x768.png) | [PNG](evidence/p5-ux-fit/dealer-1920x1080.png) | [PNG](evidence/p5-ux-fit/dealer-390x844.png) |
+| Liquidação | [PNG](evidence/p5-ux-fit/result-1280x720.png) | [PNG](evidence/p5-ux-fit/result-1366x768.png) | [PNG](evidence/p5-ux-fit/result-1920x1080.png) | [PNG](evidence/p5-ux-fit/result-390x844.png) |

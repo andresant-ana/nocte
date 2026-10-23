@@ -68,3 +68,11 @@ Do not finalize these without [OPEN-QUESTIONS](OPEN-QUESTIONS.md) and new decisi
 ## Mandatory unit and property tests
 
 Ace examples: A+6=soft17; A+A+9=21; A+9+9=19. S17 behavior; natural against natural; constructed 21 vs ordinary 21; bust even when dealer busts; double only from 2 cards and exactly 1 additional draw; legal action lists; no stale/duplicate actions; server-only hidden information; deterministic seed/replay; settlement conserved; simulation probabilities sum to 1 and expected-value programs satisfy basic sanity tests.
+
+## P5 display identity adapter — experimental, not a rule change
+
+Issue #35 / N-056 introduces an experimental P5 card identity adapter; Issue #37 defers its audiovisual production. The browser currently displays plain rank and suit glyphs. The rules engine and solver continue to consume `Card.rank` over `A,2..10`; for a P5 card with mathematical rank `10`, optional card identity metadata selects `10/J/Q/K` and one of spades/hearts/diamonds/clubs. `handValue` deliberately ignores display metadata. Thus Ace + any displayed ten-value face remains a 21/natural by the same existing tests, and a post-Manobra Ace + face remains an ordinary 21 under N-047.
+
+The rank draw lane is unchanged and continues to draw one of 13 mathematical rank buckets with replacement; zero-based bucket indices 9–12 map to mathematical `10`, preserving 4/13 ten-value mass. Display metadata comes from independently namespaced `sha256-counter-p5-art-v1` streams and does not consume or shift the legacy rank stream. Suit and face identity therefore do not imply physical shoe depletion, card counting, or a new solver state. The older DF-SYM/P2A/CF modes still prepare rank-only cards. Public projection remains the sole UI boundary for hidden state; the P5 display layer cannot read the internal hole/draw arrays directly.
+
+The displayed identities are a visual partition of the infinite rank model, not a decision that the product uses a 52-card finite deck. Suit-dependent mechanics, finite-shoe probabilities, and physical-card conservation remain OPEN. N-019/N-020 and all P2A/P2B rule profiles remain unchanged and EXPERIMENTAL as recorded. Art Déco/noir is a future creative goal; production assets and audiovisual effects are deferred by Issue #37.
