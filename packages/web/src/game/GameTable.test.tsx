@@ -37,10 +37,10 @@ describe("solo game table", () => {
     const user = userEvent.setup();
     const { render: renderTable, onUpdate, onNextRound } = setup();
     renderTable();
-    expect(screen.getByText(/Escolha quais cartas formam Luz e Sombra/i)).toBeInTheDocument();
+    expect(screen.getByText(/Quatro cartas · componha as mãos/i)).toBeInTheDocument();
     expect(screen.getByRole("group", { name: /composições disponíveis/i })).toBeInTheDocument();
     expect(screen.getAllByRole("radio")).toHaveLength(partitions([card("5"), card("6"), card("8"), card("9")]).length);
-    await user.click(screen.getByRole("radio", { name: /Composição 1/i }));
+    await user.click(screen.getAllByRole("radio")[0]!);
     await user.click(screen.getByRole("button", { name: /Confirmar composição/i }));
     const changed = onUpdate.mock.calls.at(-1)?.[0];
     expect(changed.phase).toBe("player");
@@ -71,10 +71,10 @@ describe("solo game table", () => {
     expect(complete.phase).toBe("complete");
     expect(complete.dealerDraws).toEqual([card("5")]);
     expect(screen.getByText(/Rodada concluída/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cartas do dealer: 6 \+ 10 \+ 5\. Total final: 21\./i)).toBeInTheDocument();
+    expect(screen.getByText(/Total 21 · 6 \+ 10 \+ 5/i)).toBeInTheDocument();
     expect(screen.getByLabelText("Cartas visíveis do dealer").children).toHaveLength(3);
     expect(screen.getByText(/Derrota/i)).toBeInTheDocument();
-    expect(screen.getByText(/Pontuação da rodada: −10/i)).toBeInTheDocument();
+    expect(screen.getByText(/Rodada · −10 pontos/i)).toBeInTheDocument();
     expect(screen.getByLabelText("Placar da Noite")).toHaveTextContent("0");
     await user.click(screen.getByRole("button", { name: "Próxima rodada" }));
     expect(onNextRound).toHaveBeenCalledOnce();
@@ -91,8 +91,7 @@ describe("solo game table", () => {
     expect(screen.getByRole("region", { name: "Guia rápido" })).toBeInTheDocument();
     expect(screen.getByText(/quatro cartas iniciais.*Luz e Sombra/i)).toBeInTheDocument();
     expect(screen.getByText(/Ás vale 1 ou 11/i)).toBeInTheDocument();
-    expect(screen.getByText(/O dealer compra até atingir 17/i)).toBeInTheDocument();
-    expect(screen.getByText(/Empate.*devolve/i)).toBeInTheDocument();
+    expect(screen.getByText(/O dealer compra até 17 e para em qualquer 17/i)).toBeInTheDocument();
     expect(screen.queryByText(/estratégia ótima|valor esperado|arrependimento/i)).not.toBeInTheDocument();
   });
 
@@ -100,14 +99,15 @@ describe("solo game table", () => {
     const user = userEvent.setup();
     const { render: renderTable, onUpdate } = setup([card("5"), card("6"), card("8"), card("9"), card("A"), card("10")], [], []);
     renderTable();
-    const firstChoice = screen.getByRole("radio", { name: /Composição 1/i });
+    const firstChoice = screen.getAllByRole("radio")[0]!;
     firstChoice.focus();
     await user.keyboard(" ");
     await user.keyboard("{Tab}");
     await user.keyboard("{Enter}");
     expect(onUpdate.mock.calls.at(-1)?.[0].phase).toBe("complete");
     expect(screen.getByText(/natural do dealer/i)).toBeInTheDocument();
-    expect(screen.getByText(/Dealer.*10/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Cartas visíveis do dealer").children).toHaveLength(2);
+    expect(screen.getByText(/Total 21 · A \+ 10/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Comprar" })).not.toBeInTheDocument();
   });
 

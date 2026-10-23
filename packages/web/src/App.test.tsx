@@ -60,9 +60,8 @@ describe("solo prototype landing", () => {
     expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
     expect(screen.queryByRole("combobox", { name: "Modo de jogo" })).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Encerrar Noite" }));
-    expect(await screen.findByRole("heading", { name: "Noite encerrada" })).toBeInTheDocument();
-    expect(screen.getByText(/Foco restante \(3\) expirou/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Encerrar" }));
+    expect(await screen.findByText(/Noite encerrada · recursos expirados/i)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Voltar à configuração" }));
     expect(screen.getByRole("combobox", { name: "Modo de jogo" })).toHaveValue("cofre-foco");
     await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "basic");
@@ -80,30 +79,29 @@ describe("solo prototype landing", () => {
     await user.click(screen.getByRole("button", { name: "Jogar livre" }));
     expect(await screen.findByRole("region", { name: "Banca fictícia A0.1" })).toBeInTheDocument();
     expect(screen.getByText("150 fichas")).toBeInTheDocument();
-    expect(screen.getByText(/exposição fixa 10 \+ 10 · cobertura reservada 40 · disponível 110/i)).toBeInTheDocument();
+    expect(screen.getByText(/10\+10 · reserva 40 · disponível 110/i)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Encerrar Noite" }));
+    await user.click(screen.getByRole("button", { name: "Encerrar" }));
     expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining("saldo remanescente de 150 fichas fictícias"));
     expect(await screen.findByText(/Banca A0.1 expirada: 150 fichas fictícias/i)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Voltar à configuração" }));
     expect(screen.getByRole("combobox", { name: "Modo de jogo" })).toHaveValue("bankroll-a0");
     await user.click(screen.getByRole("button", { name: "Jogar livre" }));
     expect(await screen.findByText("150 fichas")).toBeInTheDocument();
-    expect(screen.getByText(/cobertura reservada 40 · disponível 110/i)).toBeInTheDocument();
+    expect(screen.getByText(/10\+10 · reserva 40 · disponível 110/i)).toBeInTheDocument();
   });
 
-  it("offers the P5 AV mode as an isolated presentation profile with audio off by default", async () => {
+  it("offers the P5 card identity laboratory without audiovisual controls", async () => {
     vi.stubGlobal("crypto", webcrypto as Crypto);
     const user = userEvent.setup();
     render(<App />);
-    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "p5-audiovisual");
-    expect(screen.getByText(/primeiro laboratório audiovisual/i)).toBeInTheDocument();
-    expect(screen.getByText(/primeiro laboratório audiovisual, sem apostas ou banca/i)).toBeInTheDocument();
+    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "p5-cards");
+    expect(screen.getByText(/Laboratório de cartas sem apostas ou banca/i)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Jogar livre" }));
     expect(await screen.findByRole("heading", { name: /Duas Faces · Cofre \+ Foco/i })).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /Ativar efeitos sonoros/i })).not.toBeChecked();
-    expect(screen.getByRole("slider", { name: "Volume dos efeitos sonoros" })).toBeDisabled();
-    expect(screen.getByText(/Banca · prática sem aposta nesta fatia/i)).toBeInTheDocument();
+    expect(screen.getByText(/Laboratório P5 de cartas · DF-CF-0.1-lab/i)).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox", { name: /som/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("slider")).not.toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Carta do dealer fechada" })).toBeInTheDocument();
     expect(screen.queryByRole("combobox", { name: "Modo de jogo" })).not.toBeInTheDocument();
   });

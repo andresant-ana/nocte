@@ -40,14 +40,18 @@ React/Vite UI with CSS+SVG; Motion / Web Animations API for transitions, Howler.
 
 No pressured countdowns for daily claims, sold mystery bonuses, artificial near-misses, notifications to induce repeated betting or purchases to recover from losses. Reward meaningful strategic mastery and social fun; ability to leave/rejoin is normal.
 
-## P5 audiovisual lab — Issue #35, Marco 1 (2026-10-23)
+## P5 gameplay-first interface — Issue #37 (2026-10-23)
 
-N-056 records the founder-approved creative direction and authorizes the isolated **P5-AV-0.1** presentation experiment. The browser's new P5 solo mode uses original inline SVG court figures, four suit symbols, an NOCTE geometric back, a layered emerald/bronze table, restrained state-transition animation, and synthesized local Web Audio cues. Audio starts disabled; the player explicitly activates it and may change volume. Reduced-motion preference shortens animation. Earlier modes and the P2A study remain available with their existing layouts and protocols. This first visual slice is explicitly no-stakes practice; A1a bankroll play belongs to the separate Marco 2 implementation.
+The Art Déco/noir direction in N-004 remains the long-term creative goal. The founder rejected the audiovisual presentation introduced in the initial PR #36 diff and deferred sound, illustrated portraits, table ornament and production animation until the gameplay layout is validated and a new authorization is recorded. The current P5 slice is a functional laboratory table: compact viewport HUD, spatial dealer/Cofre/hands, phase-specific controls, and accessible secondary dialogs for extended rules and bank detail. Ordinary supported viewports fit without document scrolling; unusually small or zoomed contexts retain an accessible scrolling fallback.
 
-The underlying engine card continues to carry only its aggregated mathematical rank (10 represents 10/J/Q/K); optional art.faceRank and art.suit are display metadata. P5 presentation metadata is derived from a separately versioned SHA-256 counter stream (sha256-counter-p5-art-v1) namespaced by seed/index/draw lane. The existing sha256-counter-rejection-v1 rank stream and its calls do not change. In the 13-bucket model, each rank bucket retains probability 1/13, four ten-value buckets retain total probability 4/13, and the separate uniform face/suit mapping gives 1/52 per displayed rank/suit identity. This remains an infinite-with-replacement value model, not a finite physical shoe. No human usability, audio, aesthetic, balance, or enjoyment result is claimed.
+P5's simple card identity adapter remains experimental and display-only: 10/J/Q/K map to the existing ten-value rank and suits are visible glyphs. Mathematical rank RNG and scoring are unchanged; no finite physical shoe or suit-dependent rule is implied. The existing public projection still controls hidden dealer information. P2A remains on its original study flow and protocol. No human usability, visual quality, enjoyment or accessibility outcome is claimed by automated checks.
 
-P5 visuals render only projected cards. The dealer hole card remains omitted from public projections until legal Leitura or terminal reveal; future dealer draws remain unavailable until completion. The browser mode remains a local experimental prototype and is not server-authoritative. A1a stake play, goals/acts, cosmetic unlocks, persistent balance, purchase/store and multiplayer are outside this first PR.
+The corrected PR #36 provides deterministic screenshots for compose, Foco, player actions, dealer and settlement phases at desktop 1366 × 768 and mobile 390 × 844. Geometry and clickability are checked at 1280 × 720, 1366 × 768, 1920 × 1080, 390 × 844 and 360 × 640. These are technical viewport checks, not human validation.
 
-Playwright visual evidence, 390 × 844 viewport, deterministic local fixture and reduced-motion preference:
-
-![P5 AV 0.1 mobile table screenshot](evidence/p5-av-0.1-mobile.png)
+| Phase | 1280 × 720 | 1366 × 768 | 1920 × 1080 | Mobile 390 × 844 |
+| --- | --- | --- | --- | --- |
+| Composição | [PNG](evidence/p5-ux-fit/compose-1280x720.png) | [PNG](evidence/p5-ux-fit/compose-1366x768.png) | [PNG](evidence/p5-ux-fit/compose-1920x1080.png) | [PNG](evidence/p5-ux-fit/compose-390x844.png) |
+| Foco | [PNG](evidence/p5-ux-fit/focus-1280x720.png) | [PNG](evidence/p5-ux-fit/focus-1366x768.png) | [PNG](evidence/p5-ux-fit/focus-1920x1080.png) | [PNG](evidence/p5-ux-fit/focus-390x844.png) |
+| Ações do jogador | [PNG](evidence/p5-ux-fit/player-1280x720.png) | [PNG](evidence/p5-ux-fit/player-1366x768.png) | [PNG](evidence/p5-ux-fit/player-1920x1080.png) | [PNG](evidence/p5-ux-fit/player-390x844.png) |
+| Dealer | [PNG](evidence/p5-ux-fit/dealer-1280x720.png) | [PNG](evidence/p5-ux-fit/dealer-1366x768.png) | [PNG](evidence/p5-ux-fit/dealer-1920x1080.png) | [PNG](evidence/p5-ux-fit/dealer-390x844.png) |
+| Liquidação | [PNG](evidence/p5-ux-fit/result-1280x720.png) | [PNG](evidence/p5-ux-fit/result-1366x768.png) | [PNG](evidence/p5-ux-fit/result-1920x1080.png) | [PNG](evidence/p5-ux-fit/result-390x844.png) |

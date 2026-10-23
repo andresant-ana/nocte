@@ -48,7 +48,7 @@ describe("Cofre + Foco solo table", () => {
     expect(screen.getByRole("list", { name: "Quatro cartas iniciais" }).children).toHaveLength(4);
     expect(screen.getByRole("list", { name: "Carta do Cofre" })).toHaveTextContent("10");
     await user.click(screen.getByRole("button", { name: "Confirmar composição" }));
-    expect(screen.getByRole("heading", { name: "Janela de Foco" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Janela de Foco/ })).toBeInTheDocument();
     expect(screen.getByLabelText("Cartas visíveis do dealer").querySelectorAll("[aria-label^='Carta']")).toHaveLength(2);
     expect(screen.queryByLabelText(/Carta lida/)).not.toBeInTheDocument();
 
@@ -72,8 +72,8 @@ describe("Cofre + Foco solo table", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar gasto" }));
     expect(screen.getByText("1 de 3 restantes")).toBeInTheDocument();
     expect(screen.getByLabelText("Cartas visíveis do dealer").querySelectorAll("[aria-label^='Compra do dealer']")).toHaveLength(0);
-    expect(screen.getByText(/Leitura privada usada: a hole é 10/i)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Conservar Foco e continuar" }));
+    expect(screen.getByLabelText("Cartas visíveis do dealer")).toHaveTextContent("10");
+    await user.click(screen.getByRole("button", { name: "Conservar Foco" }));
     expect(screen.getByRole("button", { name: "Comprar" })).toBeInTheDocument();
   });
 
@@ -84,16 +84,15 @@ describe("Cofre + Foco solo table", () => {
     await user.click(screen.getByRole("button", { name: "Confirmar composição" }));
     expect(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Escolher Manobra · 1 Foco" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Conservar Foco e continuar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Conservar Foco" })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Escolher Manobra · 1 Foco" }));
     await user.click(screen.getByRole("button", { name: "Luz · carta 2 (6)" }));
-    expect(screen.getByText(/Luz: 6 → 10; Cofre receberá 6/i)).toBeInTheDocument();
-    expect(screen.getByText(/21 comum.*para automaticamente/i)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: /Pré-visualizar Manobra/i }));
+    expect(screen.getByText(/Troca: Luz recebe 10; Cofre recebe 6/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Confirmar alvo" }));
     expect(screen.getByRole("dialog", { name: "Confirmar Manobra" })).toBeInTheDocument();
     expect(screen.getByText(/Leitura pendente será pulada na mesma transição/i)).toBeInTheDocument();
-    expect(screen.getByText(/Antes: Luz · carta 2 6; Cofre 10. Depois: mão 10; Cofre 6/i)).toBeInTheDocument();
+    expect(screen.getByText(/Luz: 6 ↔ Cofre 10/i)).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Cancelar · manter Foco" }));
     expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Escolher Leitura · 2 Focos" })).toBeInTheDocument();
@@ -104,13 +103,13 @@ describe("Cofre + Foco solo table", () => {
     expect(screen.getByText("1 de 3 restantes")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Escolher Manobra · 1 Foco" }));
     await user.click(screen.getByRole("button", { name: "Luz · carta 2 (6)" }));
-    await user.click(screen.getByRole("button", { name: /Pré-visualizar Manobra/i }));
+    await user.click(screen.getByRole("button", { name: "Confirmar alvo" }));
     await user.click(screen.getByRole("button", { name: "Confirmar gasto" }));
     expect(screen.getByText("0 de 3 restantes")).toBeInTheDocument();
     expect(screen.getByRole("list", { name: "Carta do Cofre" })).toHaveTextContent("6");
     expect(screen.getByText(/21 comum por Manobra/i)).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Continuar às mãos" }));
-    expect(screen.getByRole("heading", { name: "Luz" }).parentElement).toHaveTextContent("Estado: parou");
+    await user.click(screen.getByRole("button", { name: "Continuar" }));
+    expect(screen.getByRole("heading", { name: "Luz" }).parentElement).toHaveTextContent("parou");
     expect(screen.getByRole("group", { name: "Ações para Sombra" })).toBeInTheDocument();
   });
 
@@ -118,17 +117,15 @@ describe("Cofre + Foco solo table", () => {
     const user = userEvent.setup();
     const { render: renderTable } = setupRound({ dealer: [card("A"), card("10")] });
     renderTable();
-    const guide = screen.getByText("Guia rápido · regras Cofre + Foco (experimentais)");
-    guide.focus();
-    await user.keyboard("{Enter}");
-    expect(screen.getByRole("region", { name: "Guia rápido Cofre + Foco" })).toBeInTheDocument();
-    expect(screen.getByText(/quinta carta fica aberta e separada no Cofre/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Guia e dados" }));
+    expect(screen.getByRole("dialog", { name: "Guia e dados da Noite" })).toBeInTheDocument();
+    expect(screen.getByText(/quinta carta permanece no Cofre/i)).toBeInTheDocument();
     expect(screen.queryByText(/jogada ótima|valor esperado|arrependimento/i)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Confirmar composição" }));
-    expect(screen.queryByRole("heading", { name: "Janela de Foco" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /Escolher Leitura|Pré-visualizar Manobra/i })).not.toBeInTheDocument();
-    expect(screen.getByText(/Natural do dealer: a rodada terminou pelo peek/i)).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Janela de Foco/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Escolher Leitura|Confirmar alvo/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/Natural do dealer · liquidado pelo peek/i)).toBeInTheDocument();
     expect(screen.getByText("3 de 3 restantes")).toBeInTheDocument();
   });
 });

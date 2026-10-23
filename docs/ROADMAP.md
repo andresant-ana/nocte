@@ -105,12 +105,12 @@ Issue #32 produz [BANKROLL-A1-RFC](BANKROLL-A1-RFC.md): compara exposição A1a 
 
 ## NOCTE-P5 — fatias experimentais autorizadas (2026-10-23)
 
-Issue #35 / **N-056** aprova a direção criativa P5 e autoriza laboratórios solo separados. Essa autorização não ratifica regra final, saldo persistente, compra, monetização, ranking por banca nem multiplayer. O P5-A audiovisual deve preceder a economia e manter os motores e estudos antigos como baseline.
+Issue #35 / **N-056** aprova a direção criativa P5 e autoriza laboratórios solo separados. Issue #37 altera a prioridade de execução: primeiro uma mesa de gameplay que caiba no viewport, sem scroll ordinário, mantendo motores e estudos como baseline. A direção Art Déco/noir continua RATIFIED como objetivo futuro, mas áudio, retratos e produção visual estão DEFERRED até validar o gameplay e registrar nova autorização. Nenhuma destas aprovações ratifica regra final, saldo persistente, compra, monetização, ranking por banca ou multiplayer.
 
-- **Marco 1 — P5-AV-0.1 (esta fatia):** apresentação de figuras/naipes/verso e experiência audiovisual opcional, com fluxo de arte separado do RNG matemático. O motor Cofre + Foco e a projeção pública continuam como fonte de regra e privacidade. A1a ainda não é jogável nesta entrega.
+- **Marco 1 — Issue #37 UX-fit (correção do PR #36):** conservar J/Q/K e naipes como identidade display-only, remover áudio/retratos/ornamentos e organizar HUD, mesa e dock por fase no espaço disponível. A verificação técnica cobre telas desktop e mobile; a interface não altera motor, projeção pública, P2A nem A0.1. A1a ainda é entrega separada.
 - **Marco 2 — BANKROLL-LAB-A1a-0.1 (PR separado, autorizado experimentalmente por N-056):** aposta inteira e igual por mão antes de cada rodada, B₀=150, H=10, mínimo s=1, máximo elegível floor(B/4), cobertura 4s, liquidação exata em meios de ficha e prática quando a mínima não couber. Precisa preservar A0.1, pontuação, Foco e perfil CF, além de verificar solver/simulação e interface. Estes parâmetros são do laboratório, não regras finais.
 - **Marco 3 — atos/metas (PR separado):** objetivos transparentes, estado de progressão sem manipular chance/payout/Foco, métricas separadas e auditoria de dominância da aposta máxima.
 - **Marco 4 — coleções cosméticas (PR separado):** preview e seleção local; sem loja ativa, compras ou conversão; cosméticos não alteram o motor.
 - **Marco 5 — backlog social (documentação):** servidor autoritativo e revisão de infraestrutura antes de banco persistente/salas/duelos; sem carteira de browser.
 
-Não há resultados humanos de P5. O laboratório audiovisual requer avaliação de acessibilidade, clareza e resposta sensorial; os resultados anteriores de P1–P4 não demonstram esses atributos.
+Não há resultados humanos de P5. O viewport-fit requer playtest de clareza e aprendizado; produção audiovisual futura exigirá avaliação independente de acessibilidade e resposta sensorial. Resultados de P1–P4 não demonstram esses atributos.

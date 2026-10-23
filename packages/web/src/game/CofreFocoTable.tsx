@@ -3,8 +3,7 @@ import { handValue, partitions, type Action, type Card, type HandName, type Part
 import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { CofreFocoSessionAdapter } from "./cofre-foco-session";
 import type { PublicBankrollA0 } from "./bankroll-a0-session";
-import { CardBack, PlayingCard } from "./PlayingCard";
-import { activateNocteAudio, deactivateNocteAudio, playNocteCue } from "./nocte-audio";
+import { PlayingCard } from "./PlayingCard";
 
 type CofreSession = Pick<CofreFocoSessionAdapter,
   "current" | "focusOptions" | "legalActions" | "compose" | "skipRead" | "readDealerHole" |
@@ -19,13 +18,14 @@ type Props = {
   onNightChange: (night: PublicCofreFocoNight) => void;
   onNextRound: () => void;
   onReturnToSetup: () => void;
-  audiovisual?: boolean;
+  cardIdentityMode?: boolean;
 };
 
 const actionLabels: Record<Action, string> = { hit: "Comprar", stand: "Parar", double: "Dobrar" };
 const outcomes = { win: "Vitória", loss: "Derrota", push: "Empate" } as const;
 const statuses = { playing: "em jogo", stood: "parou", busted: "estourou", doubled: "dobrou" } as const;
 const scoreText = (score: number) => score < 0 ? `−${Math.abs(score)}` : `${score}`;
+const faceLabel = (card: Card) => card.art?.faceRank ?? card.rank;
 
 function Cards({ cards, label }: { cards: readonly Card[]; label: string }) {
   return <div className="card-row" role="list" aria-label={label}>
@@ -35,89 +35,59 @@ function Cards({ cards, label }: { cards: readonly Card[]; label: string }) {
   </div>;
 }
 
-function ClosedCard({ audiovisual }: { audiovisual: boolean }) {
-  if (audiovisual) return <CardBack />;
+function ClosedCard() {
   return <span className="playing-card card-closed" role="img" aria-label="Carta do dealer fechada">?</span>;
 }
 
 function phaseLabel(night: PublicCofreFocoNight): string {
   const round = night.round;
   if (!round) return "A Noite ainda não tem rodada ativa.";
-  if (round.phase === "compose") return "Composição · distribua as quatro cartas iniciais entre Luz e Sombra.";
-  if (round.phase === "focusWindow") return "Janela de Foco · o dealer não tem natural. Você pode conservar ou usar habilidades.";
-  if (round.phase === "player") return `Ações · vez de ${round.currentHand === "luz" ? "Luz" : "Sombra"}.`;
-  if (round.phase === "dealer") return "Dealer · resolva as cartas restantes.";
+  if (round.phase === "compose") return "Componha Luz e Sombra.";
+  if (round.phase === "focusWindow") return "Janela de Foco: escolha uma habilidade ou conserve.";
+  if (round.phase === "player") return `Vez de ${round.currentHand === "luz" ? "Luz" : "Sombra"}.`;
+  if (round.phase === "dealer") return "Ações encerradas. Resolva o dealer.";
   return "Rodada concluída.";
 }
 
-export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, audiovisual = false }: Props) {
+export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, cardIdentityMode = false }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
   const [maneuverChooserOpen, setManeuverChooserOpen] = useState(false);
   const [confirmation, setConfirmation] = useState<"read" | "maneuver" | null>(null);
+  const [showInfo, setShowInfo] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const busy = useRef(false);
   const confirmButton = useRef<HTMLButtonElement>(null);
-  const focusWindowTitle = useRef<HTMLHeadingElement>(null);
+  const infoCloseButton = useRef<HTMLButtonElement>(null);
+  const infoTrigger = useRef<HTMLElement | null>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
-  const [audioEnabled, setAudioEnabled] = useState(false);
-  const [volume, setVolume] = useState(0.55);
-  const lastAudioState = useRef<Readonly<{ roundNumber: number; phase: string; cards: number; doubles: number; maneuvers: number }> | null>(null);
+
   useEffect(() => {
     if (confirmation) confirmButton.current?.focus();
+    else if (showInfo) infoCloseButton.current?.focus();
     else if (returnFocus.current?.isConnected) returnFocus.current.focus();
-    else focusWindowTitle.current?.focus();
-  }, [confirmation]);
+  }, [confirmation, showInfo]);
 
   useEffect(() => {
-    if (!audiovisual || !round) return;
-    const cardCount = round.originalCards.length + (round.hands ? round.hands.luz.cards.length + round.hands.sombra.cards.length : 0)
-      + (round.phase === "complete" ? 2 + (round.dealerDraws?.length ?? 0) : 1);
-    const doubles = round.hands ? Number(round.hands.luz.status === "doubled") + Number(round.hands.sombra.status === "doubled") : 0;
-    const maneuvers = Number(round.maneuverUsed);
-    const current = { roundNumber: round.roundNumber, phase: round.phase, cards: cardCount, doubles, maneuvers };
-    const previous = lastAudioState.current;
-    if (audioEnabled && previous) {
-      if (current.roundNumber !== previous.roundNumber) playNocteCue("deal", volume);
-      else if (current.phase === "complete" && previous.phase !== "complete") playNocteCue("reveal", volume);
-      else if (current.cards > previous.cards) playNocteCue("deal", volume);
-      if (current.doubles > previous.doubles || current.maneuvers > previous.maneuvers) playNocteCue("chip", volume);
-    }
-    lastAudioState.current = current;
-  }, [audiovisual, audioEnabled, night, round, volume]);
-
-  const toggleAudio = async (enabled: boolean) => {
-    if (enabled && !(await activateNocteAudio())) return;
-    if (!enabled) await deactivateNocteAudio();
-    setAudioEnabled(enabled);
-  };
-  useEffect(() => {
-    if (!confirmation) return;
+    if (!confirmation && !showInfo) return;
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setConfirmation(null);
+      if (event.key !== "Escape") return;
+      if (confirmation) setConfirmation(null);
+      else setShowInfo(false);
     };
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [confirmation]);
+  }, [confirmation, showInfo]);
 
-  const requestConfirmation = (kind: "read" | "maneuver", trigger: HTMLElement) => {
-    returnFocus.current = trigger;
-    setConfirmation(kind);
-  };
-  const trapConfirmationFocus = (event: ReactKeyboardEvent<HTMLElement>) => {
+  const trapDialogFocus = (event: ReactKeyboardEvent<HTMLElement>) => {
     if (event.key !== "Tab") return;
-    const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>("button:not(:disabled)");
-    const first = buttons.item(0);
-    const last = buttons.item(buttons.length - 1);
+    const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("button:not(:disabled), input:not(:disabled), [href], [tabindex]:not([tabindex='-1'])"));
+    const first = controls[0];
+    const last = controls[controls.length - 1];
     if (!first || !last) return;
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   };
 
   const update = (operation: () => PublicCofreFocoNight): boolean => {
@@ -132,17 +102,19 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
       succeeded = true;
     } catch (cause) {
       setLocalError(cause instanceof Error ? cause.message : "Ação indisponível. Confira o estado da rodada.");
-    } finally {
-      busy.current = false;
-    }
+    } finally { busy.current = false; }
     return succeeded;
   };
 
+  const requestConfirmation = (kind: "read" | "maneuver", trigger: HTMLElement) => {
+    returnFocus.current = trigger;
+    setConfirmation(kind);
+  };
   const confirmRead = () => { if (update(() => session.readDealerHole())) setConfirmation(null); };
   const confirmManeuver = () => { if (update(() => {
     if (!selectedSwap) throw new Error("Selecione uma carta elegível para Manobra.");
     return session.maneuverDirect(selectedSwap.hand, selectedSwap.cardIndex);
-  })) setConfirmation(null); };
+  })) { setConfirmation(null); setManeuverChooserOpen(false); setSelectedSwap(null); } };
   const continueWithoutMoreAbilities = () => update(() => {
     let next = session.current;
     if (next.round && !next.round.readDecisionMade) next = session.skipRead();
@@ -153,9 +125,10 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
     const prompt = bankroll
       ? `Encerrar esta Noite? O saldo remanescente de ${bankroll.bankroll} fichas fictícias e a reserva expirarão. Não há reembolso nem persistência.`
       : "Encerrar esta Noite? O Foco restante expirará.";
-    if (!window.confirm(prompt)) return;
-    update(() => session.abandonNight());
+    if (window.confirm(prompt)) update(() => session.abandonNight());
   };
+  const openInfo = (trigger: HTMLElement) => { infoTrigger.current = trigger; setShowInfo(true); };
+  const closeInfo = () => { setShowInfo(false); window.setTimeout(() => infoTrigger.current?.focus(), 0); };
 
   const partitionsForRound = round?.phase === "compose" ? partitions(round.originalCards) : [];
   const focusOptions = session.focusOptions;
@@ -164,267 +137,203 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
     ? [round.dealerUp, round.dealerHole, ...(round.dealerDraws ?? [])]
     : [round?.dealerUp, ...(round?.dealerHole ? [round.dealerHole] : [])].filter((card): card is Card => Boolean(card));
   const dealerValue = dealerCards.length > 1 ? handValue(dealerCards) : null;
-  const ended = night.status === "complete" || night.status === "abandoned";
 
-  if (!round) return <section className="game-table"><p role="alert">A Noite não possui uma rodada visível.</p></section>;
+  if (!round) return <section className="game-table viewport-table"><p role="alert">A Noite não possui uma rodada visível.</p></section>;
 
   return (
-    <section className={`game-table cofre-foco-table${audiovisual ? " p5-table" : ""}`} aria-labelledby="cofre-table-title">
+    <section className={`game-table viewport-table cofre-foco-table${cardIdentityMode ? " card-lab-table" : ""}`} aria-labelledby="cofre-table-title" data-game-phase={round.phase}>
       <header className="table-heading">
-        <div>
+        <div className="table-title-block">
           <p className="eyebrow">NOITE · RODADA {round.roundNumber} DE {night.horizon}</p>
           <h2 id="cofre-table-title">Duas Faces · Cofre + Foco</h2>
-          <p className="table-profile">{audiovisual ? "P5-AV-0.1 · " : ""}{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
+          <p className="table-profile">{cardIdentityMode ? "Laboratório P5 de cartas · " : ""}{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
         </div>
-        <div className="scoreboard" aria-label="Placar da Noite">
-          <span>Pontuação acumulada</span>
-          <strong aria-live="polite">{scoreText(night.totalScore)}</strong>
-          {audiovisual && <small className="p5-bankroll-status">Banca · prática sem aposta nesta fatia</small>}
+        <div className="table-hud">
+          <div className="hud-stat" aria-label="Placar da Noite"><span>Pontos</span><strong aria-live="polite">{scoreText(night.totalScore)}</strong></div>
+          <div className="hud-stat" aria-label="Foco restante"><span>Foco</span><strong aria-live="polite">{night.focusRemaining} de {rules.focusPerNight} restantes</strong></div>
+          {bankroll && <div className="hud-stat bank-stat" role="region" aria-label="Banca fictícia A0.1">
+            <span>Banca · {bankroll.pendingKind === "practice" || bankroll.status === "practice" ? "prática" : "financiada"}</span>
+            <strong aria-live="polite">{bankroll.bankroll} fichas</strong>
+            {bankroll.pendingKind === "funded" && <small>10+10 · reserva {bankroll.escrow} · disponível {bankroll.available}</small>}
+            {(bankroll.pendingKind === "practice" || bankroll.status === "practice") && <small>Saldo congelado até o fim da Noite</small>}
+          </div>}
+          <button type="button" className="hud-button secondary-action" onClick={(event) => openInfo(event.currentTarget)}>Guia e dados</button>
+          {night.status === "active" && <button type="button" className="hud-button secondary-action" onClick={abandon}>Encerrar</button>}
         </div>
       </header>
 
-      {audiovisual && <fieldset className="sound-controls" aria-label="Controles de som">
-        <legend>Som · opcional</legend>
-        <label><input type="checkbox" checked={audioEnabled} onChange={(event) => void toggleAudio(event.target.checked)} /> Ativar efeitos sonoros</label>
-        <label htmlFor="p5-volume">Volume</label>
-        <input id="p5-volume" aria-label="Volume dos efeitos sonoros" type="range" min="0" max="1" step="0.05" value={volume}
-          disabled={!audioEnabled} onChange={(event) => setVolume(Number(event.target.value))} />
-        <span className="muted">Sons sintetizados localmente; sem reprodução automática.</span>
-      </fieldset>}
+      <div className="table-status-row">
+        <p className="phase-status" role="status" aria-live="polite">{phaseLabel(night)}</p>
+        {(error || localError) && <p className="recoverable-error" role="alert">{localError ?? error}</p>}
+      </div>
 
-      <section className="focus-resource" aria-label="Recursos da Noite">
-        <div>
-          <p className="eyebrow">RECURSO COMPARTILHADO</p>
-          <h3>Foco</h3>
-          <p className="focus-count" aria-live="polite">{night.focusRemaining} de {rules.focusPerNight} restantes</p>
-        </div>
-        <dl className="focus-breakdown">
-          <div><dt>Leitura usada</dt><dd>{night.focusSpent.read}</dd></div>
-          <div><dt>Manobra usada</dt><dd>{night.focusSpent.maneuver}</dd></div>
-          <div><dt>Rodadas</dt><dd>{night.completedRounds}/{night.horizon}</dd></div>
-        </dl>
-      </section>
-
-      {bankroll && <section className="bankroll-resource" aria-label="Banca fictícia A0.1">
-        <div className="bankroll-heading">
-          <div>
-            <p className="eyebrow">LABORATÓRIO LOCAL · EXPERIMENTAL</p>
-            <h3>Banca desta Noite</h3>
+      <section className="table-board" aria-label="Mesa de jogo">
+        <section className="dealer-area table-zone" aria-labelledby="cf-dealer-title">
+          <h3 id="cf-dealer-title">Dealer</h3>
+          <div className="card-row" role="list" aria-label="Cartas visíveis do dealer">
+            {round.dealerUp.art
+              ? <div role="listitem"><PlayingCard card={round.dealerUp} label="Carta aberta do dealer" /></div>
+              : <span className="playing-card" role="listitem" aria-label={`Carta ${round.dealerUp.rank}`}>{round.dealerUp.rank}</span>}
+            {round.dealerHole
+              ? round.dealerHole.art
+                ? <div role="listitem"><PlayingCard card={round.dealerHole} label={`Carta lida do dealer: ${faceLabel(round.dealerHole)}`} /></div>
+                : <span className="playing-card" role="listitem" aria-label={`Carta lida ${round.dealerHole.rank}`}>{round.dealerHole.rank}</span>
+              : round.phase !== "complete" ? <div role="listitem"><ClosedCard /></div> : null}
+            {round.phase === "complete" && (round.dealerDraws ?? []).map((card, index) => card.art
+              ? <div role="listitem" key={`${card.rank}-${card.art.faceRank}-${card.art.suit}-${index}`}><PlayingCard card={card} label={`Compra do dealer: ${faceLabel(card)}`} /></div>
+              : <span className="playing-card" role="listitem" aria-label={`Compra do dealer ${card.rank}`} key={`${card.rank}-${index}`}>{card.rank}</span>)}
           </div>
-          <strong aria-live="polite">{bankroll.bankroll} fichas</strong>
-        </div>
-        {bankroll.pendingKind === "funded" && <>
-          <p role="status">Rodada financiada · exposição fixa 10 + 10 · cobertura reservada {bankroll.escrow} · disponível {bankroll.available}.</p>
-          <p className="muted">A reserva cobre os dois doubles possíveis; não é debitada. O saldo só muda pelo score final do motor.</p>
-        </>}
-        {bankroll.pendingKind === "practice" && <p className="practice-notice" role="status">Prática gratuita — banca congelada até o fim da Noite. O jogo e a pontuação continuam normalmente.</p>}
-        {!bankroll.pendingKind && bankroll.status === "active" && <p className="muted">Rodada concluída · saldo atualizado pelo motor. A elegibilidade da próxima rodada será verificada ao iniciá-la.</p>}
-        {!bankroll.pendingKind && bankroll.status === "practice" && <p className="practice-notice" role="status">Prática gratuita — banca congelada em {bankroll.bankroll} até o fim da Noite.</p>}
-        {(bankroll.status === "complete" || bankroll.status === "abandoned") && <p className="muted">Banca expirada ao {bankroll.status === "complete" ? "concluir" : "abandonar"} a Noite: {bankroll.expiredBalance ?? bankroll.bankroll} fichas fictícias. Nada é transferido ou salvo.</p>}
-        <dl className="bankroll-breakdown">
-          <div><dt>Rodadas financiadas</dt><dd>{bankroll.fundedRounds}</dd></div>
-          <div><dt>Rodadas de prática</dt><dd>{bankroll.practiceRounds}</dd></div>
-          <div><dt>Reserva atual</dt><dd>{bankroll.escrow}</dd></div>
-        </dl>
-      </section>}
-
-      <p className="phase-status" role="status" aria-live="polite">{phaseLabel(night)}</p>
-      {(error || localError) && <p className="recoverable-error" role="alert">{localError ?? error}</p>}
-
-      <details className="quick-rules">
-        <summary>Guia rápido · regras Cofre + Foco (experimentais)</summary>
-        <section aria-label="Guia rápido Cofre + Foco">
-          <ul>
-            <li>Componha Luz e Sombra com as quatro cartas iniciais; a quinta carta fica aberta e separada no Cofre.</li>
-            <li>A Noite tem {rules.focusPerNight} Focos compartilhados, sem renovação. O saldo não é pontuação e expira ao fim ou abandono da Noite.</li>
-            <li>Após o peek confirmar que o dealer não tem natural, você pode conservar Foco, fazer uma Leitura por 2 Focos ou uma Manobra por 1 Foco; cada habilidade pode ser usada uma vez na rodada.</li>
-            <li>Leitura revela somente a carta fechada existente do dealer. Não revela compras futuras, sementes ou resultados.</li>
-            <li>Manobra troca uma carta de uma mão ativa de duas cartas pelo Cofre; a carta retirada passa ao Cofre. Naturais iniciais e mãos encerradas não podem ser alterados.</li>
-            <li>Ás + 10 criado por Manobra vale 21 comum, para automaticamente e não recebe bônus de natural.</li>
-            <li>Comprar, Parar e Dobrar seguem Duas Faces básico. O dealer para em qualquer 17, incluindo 17 suave; o pagamento de natural segue o perfil experimental indicado.</li>
-          </ul>
-          <p>Este guia explica regras e custos, sem recomendar ações. Os valores e a variante permanecem EXPERIMENTAIS.</p>
+          {round.phase === "complete" && dealerValue && <span className="dealer-note">Total {dealerValue.total} · {dealerCards.map(faceLabel).join(" + ")}</span>}
+          {round.dealerHole && round.phase !== "complete" && <span role="status" className="dealer-note">Leitura privada usada. Compras futuras continuam ocultas.</span>}
+          {!round.dealerHole && round.phase !== "complete" && <span className="dealer-note">Carta fechada</span>}
+          {round.naturalPeek === true && <span className="dealer-note">Natural do dealer · liquidado pelo peek.</span>}
         </section>
-      </details>
 
-      <section className="dealer-area" aria-labelledby="cf-dealer-title">
-        <h3 id="cf-dealer-title">Dealer</h3>
-        <div className="card-row" role="list" aria-label="Cartas visíveis do dealer">
-          {round.dealerUp.art
-            ? <div role="listitem"><PlayingCard card={round.dealerUp} label="Carta aberta do dealer" /></div>
-            : <span className="playing-card" role="listitem" aria-label={`Carta ${round.dealerUp.rank}`}>{round.dealerUp.rank}</span>}
-          {round.dealerHole
-            ? round.dealerHole.art
-              ? <div role="listitem"><PlayingCard card={round.dealerHole} label={`Carta lida do dealer: ${round.dealerHole.art.faceRank}`} /></div>
-              : <span className="playing-card" role="listitem" aria-label={`Carta lida ${round.dealerHole.rank}`}>{round.dealerHole.rank}</span>
-            : round.phase !== "complete"
-              ? audiovisual ? <div role="listitem"><ClosedCard audiovisual /></div> : <ClosedCard audiovisual={false} />
-              : null}
-          {round.phase === "complete" && (round.dealerDraws ?? []).map((card, index) => card.art
-            ? <div role="listitem" key={`${card.rank}-${card.art.faceRank}-${card.art.suit}-${index}`}><PlayingCard card={card} label={`Compra do dealer: ${card.art.faceRank}`} /></div>
-            : <span className="playing-card" role="listitem" aria-label={`Compra do dealer ${card.rank}`} key={`${card.rank}-${index}`}>{card.rank}</span>)}
+        {round.cofre && <section className="cofre-card cofre-card-persistent table-zone" aria-labelledby="cf-cofre-title">
+          <h3 id="cf-cofre-title">Cofre</h3><Cards cards={[round.cofre]} label="Carta do Cofre" />
+        </section>}
+
+        <div className="table-play-area">
+          {night.status === "active" && round.phase === "compose" && <section className="compose-area table-zone" aria-labelledby="cf-compose-title">
+            <div className="compose-copy"><h3 id="cf-compose-title">Quatro cartas · componha as mãos</h3><span className="dealer-note">Escolha a divisão abaixo.</span></div>
+            <Cards cards={round.originalCards} label="Quatro cartas iniciais" />
+          </section>}
+
+          {round.hands && <div className="hands-grid" aria-label="Mãos da rodada">
+            {handNames.map(name => {
+              const hand = round.hands![name];
+              const settlement = round.settlement?.[name];
+              const value = handValue(hand.cards);
+              const title = name === "luz" ? "Luz" : "Sombra";
+              return <section className={`hand-panel table-zone ${round.currentHand === name ? "active-hand" : ""}`} key={name} aria-labelledby={`cf-${name}-title`}>
+                <h3 id={`cf-${name}-title`}>{title}{round.currentHand === name && round.phase === "player" ? " · sua vez" : ""}</h3>
+                <Cards cards={hand.cards} label={`Cartas da mão ${title}`} />
+                <p className="hand-meta">Total {value.total}{value.soft ? " suave" : ""}{hand.openingNatural ? " · natural" : hand.maneuverTwentyOne ? " · 21 comum por Manobra" : value.bust ? " · estourou" : ""}</p>
+                <p className="hand-meta">Exposição {hand.exposure} · {statuses[hand.status]}</p>
+                {settlement && <p className="hand-result hand-meta">{outcomes[settlement.outcome]} · {scoreText(settlement.score)} pontos</p>}
+              </section>;
+            })}
+          </div>}
         </div>
-        {round.phase === "complete" && dealerValue && <p>Cartas do dealer: {dealerCards.map(card => card.art?.faceRank ?? card.rank).join(" + ")}. Total final: {dealerValue.total}.</p>}
-        {round.dealerHole && round.phase !== "complete" && <p role="status">Leitura privada usada: a hole é {round.dealerHole.rank}. Compras futuras continuam ocultas.</p>}
-        {!round.dealerHole && round.phase !== "complete" && <p className="muted">Uma carta permanece fechada até Leitura legal ou fim da rodada.</p>}
-        {round.naturalPeek === true && <p>Natural do dealer: a rodada terminou pelo peek; nenhuma habilidade foi oferecida.</p>}
       </section>
 
-      {round.cofre && <section className="cofre-card cofre-card-persistent" aria-labelledby="cf-cofre-title">
-        <h3 id="cf-cofre-title">Cofre · carta aberta</h3>
-        <Cards cards={[round.cofre]} label="Carta do Cofre" />
-      </section>}
-
-      {night.status === "active" && round.phase === "compose" && (
-        <section aria-labelledby="cf-compose-title">
-          <h3 id="cf-compose-title">Composição inicial</h3>
-          <p>Escolha como dividir as quatro cartas. O Cofre é uma quinta carta separada nesta variante.</p>
-          <div className="initial-and-cofre">
-            <div><h4>Quatro cartas iniciais</h4><Cards cards={round.originalCards} label="Quatro cartas iniciais" /></div>
-          </div>
+      <section className="table-action-dock" aria-label="Ações da rodada">
+        {night.status === "active" && round.phase === "compose" && <>
+          <h3>Composição</h3>
           <fieldset className="composition-options">
-            <legend>Composições disponíveis</legend>
-            {partitionsForRound.map((partition, index) => {
-              const luz = partition.luz.map(cardIndex => round.originalCards[cardIndex]!.rank).join(" + ");
-              const sombra = partition.sombra.map(cardIndex => round.originalCards[cardIndex]!.rank).join(" + ");
+            <legend className="visually-hidden">Composições disponíveis</legend>
+            {partitionsForRound.map((partition: Partition, index) => {
+              const luz = partition.luz.map(cardIndex => faceLabel(round.originalCards[cardIndex]!)).join("+");
+              const sombra = partition.sombra.map(cardIndex => faceLabel(round.originalCards[cardIndex]!)).join("+");
               return <label className="composition-choice" key={index}>
                 <input type="radio" name="cofre-composition" value={index} checked={selectedPartition === index} onChange={() => setSelectedPartition(index)} />
-                <span><strong>Composição {index + 1}</strong><br />Luz: {luz} · Sombra: {sombra}</span>
+                <span>Luz {luz} <span aria-hidden="true">·</span> Sombra {sombra}</span>
               </label>;
             })}
           </fieldset>
           <button type="button" onClick={() => update(() => session.compose(partitionsForRound[selectedPartition]!))}>Confirmar composição</button>
-        </section>
-      )}
+        </>}
 
-      {round.hands && (
-        <div className="hands-grid">
-          {handNames.map(name => {
-            const hand = round.hands![name];
-            const settlement = round.settlement?.[name];
-            const value = handValue(hand.cards);
-            const title = name === "luz" ? "Luz" : "Sombra";
-            return <section className={`hand-panel ${round.currentHand === name ? "active-hand" : ""}`} key={name} aria-labelledby={`cf-${name}-title`}>
-              <h3 id={`cf-${name}-title`}>{title}</h3>
-              <Cards cards={hand.cards} label={`Cartas da mão ${title}`} />
-              <p>Total: {value.total}{value.soft ? " suave" : ""}{hand.openingNatural ? " · natural de abertura" : hand.maneuverTwentyOne ? " · 21 comum por Manobra" : value.bust ? " · estouro" : ""}</p>
-              <p>Exposição: {hand.exposure} · Estado: {statuses[hand.status]}</p>
-              {settlement && <p className="hand-result">{outcomes[settlement.outcome]} · {scoreText(settlement.score)} pontos</p>}
-            </section>;
-          })}
-        </div>
-      )}
-
-      {night.status === "active" && round.phase === "focusWindow" && (
-        <section className="focus-window" aria-labelledby="focus-window-title">
-          <h3 ref={focusWindowTitle} id="focus-window-title" tabIndex={-1}>Janela de Foco</h3>
-          <p>Leitura e Manobra estão disponíveis nesta janela. Você pode escolher uma, usar ambas na ordem permitida ou conservar o Foco.</p>
-          <div className="focus-choices">
+        {night.status === "active" && round.phase === "focusWindow" && <>
+          <h3>Janela de Foco · {night.focusRemaining} restante{night.focusRemaining === 1 ? "" : "s"}</h3>
+          <div className="focus-dock">
             <section className="ability-panel" aria-labelledby="read-choice-title">
-              <h4 id="read-choice-title">Leitura · custo {rules.readCost} Focos</h4>
-              <p>Revela somente a carta fechada atual do dealer, em privado.</p>
-              {round.readUsed
-                ? <p className="ability-status" role="status">Leitura já usada nesta rodada · {rules.readCost} Focos gastos.</p>
+              <h4 id="read-choice-title">Leitura · {rules.readCost} Focos</h4>
+              {round.readUsed ? <p className="ability-status" role="status">Usada nesta rodada</p>
                 : !round.readDecisionMade && focusOptions.canRead
                   ? <button type="button" onClick={(event) => requestConfirmation("read", event.currentTarget)}>Escolher Leitura · {rules.readCost} Focos</button>
-                  : round.readDecisionMade
-                    ? <p className="ability-status" role="status">Leitura não foi usada e não pode ser iniciada depois de decidir pela Manobra ou pela conservação.</p>
-                    : <p className="ability-status" role="status">Leitura indisponível: saldo insuficiente ou nenhuma decisão de mão pendente.</p>}
+                  : <p className="ability-status" role="status">{round.readDecisionMade ? "Decisão de Leitura encerrada" : "Indisponível"}</p>}
             </section>
-
             <section className="ability-panel" aria-labelledby="maneuver-choice-title">
-              <h4 id="maneuver-choice-title">Manobra · custo {rules.maneuverCost} Foco</h4>
-              <p>Troca uma carta de mão elegível pelo Cofre. A carta retirada passa ao Cofre.</p>
-              {round.maneuverUsed || round.maneuverDecisionMade
-                ? <p className="ability-status" role="status">Manobra já decidida nesta rodada.</p>
+              <h4 id="maneuver-choice-title">Manobra · {rules.maneuverCost} Foco</h4>
+              {round.maneuverUsed || round.maneuverDecisionMade ? <p className="ability-status" role="status">Decidida nesta rodada</p>
                 : <>
-                    <button type="button" disabled={focusOptions.maneuverTargets.length === 0}
-                      onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(true); }}>
-                      Escolher Manobra · {rules.maneuverCost} Foco
-                    </button>
-                    {focusOptions.maneuverTargets.length === 0 && <p className="ability-status" role="status">
-                      {focusOptions.canDecideManeuver && night.focusRemaining < rules.maneuverCost
-                        ? "Foco insuficiente para Manobra. Você pode continuar sem gastar."
-                        : "Manobra indisponível: nenhuma mão ativa elegível nesta janela."}
-                    </p>}
-                    {maneuverChooserOpen && focusOptions.maneuverTargets.length > 0 && <div className="maneuver-picker">
-                      <div className="maneuver-targets" role="group" aria-label="Cartas elegíveis para Manobra">
-                        {focusOptions.maneuverTargets.map(target => {
-                          const hand = round.hands![target.hand];
-                          const handLabel = target.hand === "luz" ? "Luz" : "Sombra";
-                          const rank = hand.cards[target.cardIndex]!.rank;
-                          return <button type="button" className={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex ? "target-selected" : "secondary-action"}
-                            key={`${target.hand}-${target.cardIndex}`} aria-pressed={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex}
-                            onClick={() => setSelectedSwap(target)}>
-                            {handLabel} · carta {target.cardIndex + 1} ({rank})
-                          </button>;
-                        })}
-                      </div>
-                      {selectedSwap && focusOptions.maneuverTargets.some(target => target.hand === selectedSwap.hand && target.cardIndex === selectedSwap.cardIndex) && (
-                        <div className="swap-preview" aria-live="polite">
-                          <p>Prévia · {selectedSwap.hand === "luz" ? "Luz" : "Sombra"}: {round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank} → {round.cofre?.rank}; Cofre receberá {round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}.</p>
-                          {round.cofre?.rank === "10" && round.hands![selectedSwap.hand].cards[1 - selectedSwap.cardIndex]?.rank === "A" && <p>Esta troca forma Ás + 10: 21 comum, sem bônus de natural e com parada automática.</p>}
-                          <button type="button" onClick={(event) => requestConfirmation("maneuver", event.currentTarget)}>Pré-visualizar Manobra · gastar {rules.maneuverCost} Foco</button>
-                        </div>
-                      )}
-                      <button type="button" className="secondary-action" onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(false); }}>Cancelar escolha</button>
-                    </div>}
+                    <button type="button" disabled={focusOptions.maneuverTargets.length === 0} onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(true); }}>Escolher Manobra · {rules.maneuverCost} Foco</button>
+                    {focusOptions.maneuverTargets.length === 0 && <p className="ability-status" role="status">Indisponível nesta mão</p>}
                   </>}
             </section>
+            <button type="button" className="secondary-action conserve-action" onClick={continueWithoutMoreAbilities}>
+              {round.readDecisionMade && round.maneuverDecisionMade ? "Continuar" : "Conservar Foco"}
+            </button>
+            {maneuverChooserOpen && focusOptions.maneuverTargets.length > 0 && <div className="maneuver-picker">
+              <div className="maneuver-targets" role="group" aria-label="Cartas elegíveis para Manobra">
+                {focusOptions.maneuverTargets.map(target => {
+                  const hand = round.hands![target.hand];
+                  const handLabel = target.hand === "luz" ? "Luz" : "Sombra";
+                  const rank = faceLabel(hand.cards[target.cardIndex]!);
+                  return <button type="button" className={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex ? "target-selected" : "secondary-action"}
+                    key={`${target.hand}-${target.cardIndex}`} aria-pressed={selectedSwap?.hand === target.hand && selectedSwap.cardIndex === target.cardIndex}
+                    onClick={() => setSelectedSwap(target)}>{handLabel} · carta {target.cardIndex + 1} ({rank})</button>;
+                })}
+              </div>
+              {selectedSwap && focusOptions.maneuverTargets.some(target => target.hand === selectedSwap.hand && target.cardIndex === selectedSwap.cardIndex) && <div className="swap-preview" aria-live="polite">
+                <p>Troca: {selectedSwap.hand === "luz" ? "Luz" : "Sombra"} recebe {faceLabel(round.cofre!)}; Cofre recebe {faceLabel(round.hands![selectedSwap.hand].cards[selectedSwap.cardIndex]!)}.</p>
+                <button type="button" onClick={(event) => requestConfirmation("maneuver", event.currentTarget)}>Confirmar alvo</button>
+              </div>}
+              <button type="button" className="secondary-action" onClick={() => { setSelectedSwap(null); setManeuverChooserOpen(false); }}>Cancelar escolha</button>
+            </div>}
           </div>
-          <button type="button" className="secondary-action conserve-action" onClick={continueWithoutMoreAbilities}>
-            {round.readDecisionMade && round.maneuverDecisionMade ? "Continuar às mãos" : "Conservar Foco e continuar"}
-          </button>
-        </section>
-      )}
+        </>}
 
-      {night.status === "active" && round.phase === "player" && <div className="action-row" role="group" aria-label={`Ações para ${round.currentHand === "luz" ? "Luz" : "Sombra"}`}>
-        {session.legalActions.map(action => <button type="button" key={action} onClick={() => update(() => session.act(action))}>{actionLabels[action]}</button>)}
-      </div>}
-      {night.status === "active" && round.phase === "dealer" && <button type="button" onClick={() => update(() => session.resolveDealer())}>Resolver dealer</button>}
+        {night.status === "active" && round.phase === "player" && <div className="action-row" role="group" aria-label={`Ações para ${round.currentHand === "luz" ? "Luz" : "Sombra"}`}>
+          {session.legalActions.map(action => <button type="button" key={action} onClick={() => update(() => session.act(action))}>{actionLabels[action]}</button>)}
+        </div>}
+        {night.status === "active" && round.phase === "dealer" && <button type="button" onClick={() => update(() => session.resolveDealer())}>Resolver dealer</button>}
 
-      {round.phase === "complete" && (
-        <section className="round-summary" aria-label="Resultado da rodada">
+        {round.phase === "complete" && <section className="round-summary" aria-label="Resultado da rodada">
           <h3>{night.status === "complete" ? "Noite concluída" : night.status === "abandoned" ? "Noite encerrada" : "Rodada concluída"}</h3>
           <p>Pontuação desta rodada: {round.score === undefined ? "—" : scoreText(round.score)} pontos.</p>
-          <p>Pontuação acumulada: {scoreText(night.totalScore)} pontos. Foco restante: {night.focusRemaining}.</p>
-          {bankroll && <p>Score do motor: {scoreText(round.score ?? 0)} · variação da banca nesta rodada: {bankroll.lastBankDelta === null ? "aguardando settlement" : scoreText(bankroll.lastBankDelta)} fichas{bankroll.lastRoundKind === "practice" ? " (banca congelada em prática)" : ""}.</p>}
-          {bankroll && night.status === "complete" && <p>Resumo A0.1 · banca inicial 150 · banca final/expirada {bankroll.expiredBalance ?? bankroll.bankroll} · saldo líquido {scoreText((bankroll.expiredBalance ?? bankroll.bankroll) - 150)} · financiadas {bankroll.fundedRounds} · prática {bankroll.practiceRounds}. Esta banca não mede habilidade.</p>}
-          {night.status === "complete" && <p>Foco não usado expirou ao fim da Noite.</p>}
+          <p>Pontuação acumulada: {scoreText(night.totalScore)} · Foco {night.focusRemaining}.</p>
+          {bankroll && <p>Variação da banca nesta rodada: {bankroll.lastBankDelta === null ? "aguardando settlement" : `${scoreText(bankroll.lastBankDelta)} fichas`}{bankroll.lastRoundKind === "practice" ? " (banca congelada em prática)" : ""}.</p>}
+          {bankroll && night.status === "abandoned" && <p>Banca A0.1 expirada: {bankroll.bankroll} fichas fictícias.</p>}
           <div className="landing-actions">
             {night.status === "active" && <button type="button" onClick={onNextRound}>Próxima rodada</button>}
             {(night.status === "complete" || night.status === "abandoned") && <button type="button" onClick={onReturnToSetup}>Voltar à configuração</button>}
           </div>
-        </section>
-      )}
+        </section>}
+        {night.status === "abandoned" && round.phase !== "complete" && <div className="round-summary" aria-label="Noite encerrada"><strong>Noite encerrada · recursos expirados</strong>{bankroll && <p>Banca A0.1 expirada: {bankroll.bankroll} fichas fictícias.</p>}<button type="button" onClick={onReturnToSetup}>Voltar à configuração</button></div>}
+      </section>
 
-      {night.status === "active" && (round.phase !== "complete" || round.roundNumber < night.horizon) && (
-        <button type="button" className="text-button" onClick={abandon}>Encerrar Noite</button>
-      )}
-      {ended && night.status === "abandoned" && round.phase !== "complete" && (
-        <section className="round-summary" aria-label="Noite encerrada">
-          <h3>Noite encerrada</h3>
-          <p>O Foco restante ({night.expiredFocus}) expirou. Pontuação acumulada até aqui: {scoreText(night.totalScore)}.</p>
-          {bankroll && <p>Banca A0.1 expirada: {bankroll.expiredBalance ?? bankroll.bankroll} fichas fictícias. Não houve settlement da rodada inacabada.</p>}
-          <button type="button" onClick={onReturnToSetup}>Voltar à configuração</button>
-        </section>
-      )}
-
-      {confirmation && (
-        <div className="confirmation-backdrop">
-          <section className="ability-confirmation" role="dialog" aria-modal="true" aria-labelledby="ability-confirmation-title" onKeyDown={trapConfirmationFocus}>
-            <h3 id="ability-confirmation-title">Confirmar {confirmation === "read" ? "Leitura" : "Manobra"}</h3>
-            {confirmation === "read" ? <p>Revelar a carta fechada atual do dealer por {rules.readCost} Focos? A informação não inclui compras futuras.</p> : <>
-              <p>Confirmar a troca abaixo e gastar {rules.maneuverCost} Foco?{!round.readDecisionMade && " A Leitura pendente será pulada na mesma transição."}</p>
-              {selectedSwap && round.hands && <p>Antes: {selectedSwap.hand === "luz" ? "Luz" : "Sombra"} · carta {selectedSwap.cardIndex + 1} {round.hands[selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}; Cofre {round.cofre?.rank}. Depois: mão {round.cofre?.rank}; Cofre {round.hands[selectedSwap.hand].cards[selectedSwap.cardIndex]!.rank}.</p>}
+      {showInfo && <div className="info-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) closeInfo(); }}>
+        <section className="info-dialog" role="dialog" aria-modal="true" aria-labelledby="table-info-title" onKeyDown={trapDialogFocus}>
+          <h2 id="table-info-title">Guia e dados da Noite</h2>
+          <p>Este é um laboratório local. As regras indicadas são experimentais; este guia descreve o funcionamento, sem recomendar jogadas.</p>
+          <ul>
+            <li>Divida as quatro cartas iniciais entre Luz e Sombra; a quinta carta permanece no Cofre.</li>
+            <li>Há {rules.focusPerNight} Focos compartilhados pela Noite. Depois do peek sem natural, você pode conservar, usar Leitura ({rules.readCost}) ou Manobra ({rules.maneuverCost}); cada habilidade pode ser usada uma vez por rodada.</li>
+            <li>Leitura revela em privado somente a carta fechada atual do dealer. Não expõe compras futuras, semente ou resultado.</li>
+            <li>Manobra troca uma carta de uma mão elegível pelo Cofre. Ás + 10 criado assim é 21 comum e para automaticamente.</li>
+            <li>Comprar, Parar e Dobrar seguem o perfil experimental. O dealer para em qualquer 17; natural usa o pagamento selecionado.</li>
+            <li>Naipes e J/Q/K são somente identidades visuais; J/Q/K têm valor 10. Não existe baralho físico finito nesta simulação.</li>
+          </ul>
+          <dl>
+            <div><dt>Perfil</dt><dd>{night.rulesId} · natural {rules.naturalPayout}</dd></div>
+            <div><dt>Rodada</dt><dd>{round.roundNumber}/{night.horizon} · concluídas {night.completedRounds}</dd></div>
+            <div><dt>Foco usado</dt><dd>Leitura {night.focusSpent.read} · Manobra {night.focusSpent.maneuver}</dd></div>
+            <div><dt>Pontuação</dt><dd>{scoreText(night.totalScore)}</dd></div>
+            {bankroll && <>
+              <div><dt>Banca A0.1</dt><dd>{bankroll.bankroll} · {bankroll.pendingKind === "practice" || bankroll.status === "practice" ? "prática" : "financiada"}</dd></div>
+              <div><dt>Cobertura / disponível</dt><dd>{bankroll.escrow} / {bankroll.available}</dd></div>
+              <div><dt>Financiadas / prática</dt><dd>{bankroll.fundedRounds} / {bankroll.practiceRounds}</dd></div>
             </>}
-            <div className="landing-actions">
-              <button ref={confirmButton} type="button" onClick={confirmation === "read" ? confirmRead : confirmManeuver}>Confirmar gasto</button>
-              <button type="button" className="secondary-action" onClick={() => setConfirmation(null)}>{confirmation === "maneuver" ? "Cancelar · manter Foco" : "Cancelar"}</button>
-            </div>
-          </section>
-        </div>
-      )}
+          </dl>
+          <button ref={infoCloseButton} className="dialog-close" type="button" onClick={closeInfo}>Fechar</button>
+        </section>
+      </div>}
+
+      {confirmation && <div className="confirmation-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setConfirmation(null); }}>
+        <section className="ability-confirmation" role="dialog" aria-modal="true" aria-labelledby="ability-confirmation-title" onKeyDown={trapDialogFocus}>
+          <h3 id="ability-confirmation-title">Confirmar {confirmation === "read" ? "Leitura" : "Manobra"}</h3>
+          {confirmation === "read" ? <p>Revelar somente a carta fechada atual do dealer por {rules.readCost} Focos?</p> : <>
+            <p>Confirmar a troca e gastar {rules.maneuverCost} Foco?{!round.readDecisionMade && " A Leitura pendente será pulada na mesma transição."}</p>
+            {selectedSwap && round.hands && <p>{selectedSwap.hand === "luz" ? "Luz" : "Sombra"}: {faceLabel(round.hands[selectedSwap.hand].cards[selectedSwap.cardIndex]!)} ↔ Cofre {faceLabel(round.cofre!)}.</p>}
+          </>}
+          <div className="landing-actions">
+            <button ref={confirmButton} type="button" onClick={confirmation === "read" ? confirmRead : confirmManeuver}>Confirmar gasto</button>
+            <button type="button" className="secondary-action" onClick={() => setConfirmation(null)}>{confirmation === "maneuver" ? "Cancelar · manter Foco" : "Cancelar"}</button>
+          </div>
+        </section>
+      </div>}
     </section>
   );
 }

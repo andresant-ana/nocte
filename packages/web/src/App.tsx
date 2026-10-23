@@ -15,9 +15,9 @@ import { prepareCofreFocoRound, prepareP5CofreFocoRound, prepareRound } from "./
 import { StudyFlow } from "./study/StudyFlow";
 
 type ProfileId = RuleProfile["id"];
-type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-audiovisual";
+type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards";
 type ActiveBasic = { mode: "basic"; controller: SoloRoundController; view: PublicRound; profile: RuleProfile; roundNumber: number };
-type ActiveCofreFoco = { mode: "cofre-foco" | "p5-audiovisual"; audiovisual: boolean; controller: CofreFocoSessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; horizon: number; seed: string };
+type ActiveCofreFoco = { mode: "cofre-foco" | "p5-cards"; cardIdentityMode: boolean; controller: CofreFocoSessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; horizon: number; seed: string };
 type ActiveBankrollA0 = { mode: "bankroll-a0"; controller: BankrollA0SessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; seed: string };
 type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0;
 const getProfile = (id: ProfileId): RuleProfile => id === DF_SYM_01_1_TO_1.id ? DF_SYM_01_1_TO_1 : DF_SYM_01_3_TO_2;
@@ -66,13 +66,13 @@ export function App() {
       setNightScore(0);
       setRoundNumber(0);
       scoreApplied.current = false;
-      setActive({ mode: "cofre-foco", audiovisual: false, controller, view: controller.current, rules, horizon, seed });
+      setActive({ mode: "cofre-foco", cardIdentityMode: false, controller, view: controller.current, rules, horizon, seed });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Não foi possível preparar a Noite experimental.");
     }
   };
 
-  const startP5Night = async () => {
+  const startP5CardNight = async () => {
     setError(null);
     try {
       const seed = localSeed();
@@ -82,9 +82,9 @@ export function App() {
       setNightScore(0);
       setRoundNumber(0);
       scoreApplied.current = false;
-      setActive({ mode: "p5-audiovisual", audiovisual: true, controller, view: controller.current, rules, horizon: 10, seed });
+      setActive({ mode: "p5-cards", cardIdentityMode: true, controller, view: controller.current, rules, horizon: 10, seed });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Não foi possível iniciar a Noite audiovisual experimental.");
+      setError(cause instanceof Error ? cause.message : "Não foi possível iniciar o laboratório de cartas.");
     }
   };
 
@@ -108,7 +108,7 @@ export function App() {
     if (mode === "basic") void startBasicNight();
     else if (mode === "cofre-foco") void startCofreFocoNight();
     else if (mode === "bankroll-a0") void startBankrollA0Night();
-    else void startP5Night();
+    else void startP5CardNight();
   };
 
   const nextBasicRound = async () => {
@@ -127,11 +127,11 @@ export function App() {
   };
 
   const nextCofreFocoRound = async () => {
-    if (!active || (active.mode !== "cofre-foco" && active.mode !== "p5-audiovisual")) return;
+    if (!active || (active.mode !== "cofre-foco" && active.mode !== "p5-cards")) return;
     setError(null);
     try {
       const nextIndex = active.view.completedRounds;
-      const prepared = active.audiovisual
+      const prepared = active.cardIdentityMode
         ? await prepareP5CofreFocoRound(active.seed, nextIndex)
         : await prepareCofreFocoRound(active.seed, nextIndex);
       const view = active.controller.nextRound(prepared);
@@ -163,7 +163,7 @@ export function App() {
   };
 
   const onCofreFocoNightChange = (view: PublicCofreFocoNight) => {
-    setActive((current) => current && (current.mode === "cofre-foco" || current.mode === "p5-audiovisual") ? { ...current, view } : current);
+    setActive((current) => current && (current.mode === "cofre-foco" || current.mode === "p5-cards") ? { ...current, view } : current);
   };
 
   const onBankrollA0NightChange = (view: PublicCofreFocoNight) => {
@@ -186,7 +186,7 @@ export function App() {
 
   if (active?.mode === "basic") {
     return (
-      <main className="app-shell">
+      <main className="game-session-shell">
         <GameTable
           key={`free-round-${active.roundNumber}`}
           session={active.controller}
@@ -198,16 +198,16 @@ export function App() {
           {...(active.view.phase === "complete" ? { roundScore: active.controller.score() } : {})}
           onNextRound={() => void nextBasicRound()}
           onNewNight={returnToSetup}
+          viewportFit
         />
-        {error && <p role="alert" className="recoverable-error">{error}</p>}
-        <button className="text-button" type="button" onClick={returnToSetup}>Encerrar Noite</button>
+        {error && <p role="alert" className="recoverable-error error-overlay">{error}</p>}
       </main>
     );
   }
 
-  if (active?.mode === "cofre-foco" || active?.mode === "p5-audiovisual") {
+  if (active?.mode === "cofre-foco" || active?.mode === "p5-cards") {
     return (
-      <main className={`app-shell${active.audiovisual ? " p5-experience" : ""}`}>
+      <main className="game-session-shell">
         <CofreFocoTable
           key={`cofre-foco-round-${active.view.roundNumber}`}
           session={active.controller}
@@ -217,7 +217,7 @@ export function App() {
           onNightChange={onCofreFocoNightChange}
           onNextRound={() => void nextCofreFocoRound()}
           onReturnToSetup={returnToSetup}
-          audiovisual={active.audiovisual}
+          cardIdentityMode={active.cardIdentityMode}
         />
       </main>
     );
@@ -225,7 +225,7 @@ export function App() {
 
   if (active?.mode === "bankroll-a0") {
     return (
-      <main className="app-shell">
+      <main className="game-session-shell">
         <CofreFocoTable
           key={`bankroll-a0-round-${active.view.roundNumber}`}
           session={active.controller}
@@ -242,7 +242,7 @@ export function App() {
   }
 
   return (
-    <main className={`landing-shell${mode === "p5-audiovisual" ? " p5-landing" : ""}`}>
+    <main className="landing-shell">
       <p className="eyebrow">PROTÓTIPO SOLO · LABORATÓRIO LOCAL</p>
       <h1>NOCTE</h1>
       <p className="subtitle">Duas Faces</p>
@@ -254,7 +254,7 @@ export function App() {
           <option value="basic">Duas Faces básico · DF-SYM-0.1 · EXPERIMENTAL</option>
           <option value="cofre-foco">Cofre + Foco solo · DF-CF-0.1-lab · EXPERIMENTAL</option>
           <option value="bankroll-a0">Cofre + Foco · banca fictícia A0.1 · EXPERIMENTAL</option>
-          <option value="p5-audiovisual">NOCTE P5 · experiência audiovisual · EXPERIMENTAL</option>
+          <option value="p5-cards">Laboratório P5 · cartas com naipes · EXPERIMENTAL</option>
         </select>
         <p className="mode-explanation">
           {mode === "basic"
@@ -263,7 +263,7 @@ export function App() {
               ? "Quinta carta aberta no Cofre e 3 Focos compartilhados por Noite. Leitura e Manobra são opcionais; esta configuração continua experimental."
               : mode === "bankroll-a0"
                 ? "Variação local e temporária sobre Cofre + Foco, com banca fictícia isolada e sem persistência. As regras experimentais do motor permanecem as mesmas."
-                : "Primeiro laboratório audiovisual, sem apostas ou banca. Cartas ilustradas e naipes usam o motor Cofre + Foco existente sem alterar valores, probabilidades, score ou resultados; A1a virá no Marco 2 e o áudio começa desligado."
+                : "Laboratório de cartas sem apostas ou banca. J/Q/K mantêm valor 10; naipes e identidades são apenas visuais e usam o motor Cofre + Foco sem alterar regras ou resultados."
           }
         </p>
 

@@ -2,24 +2,26 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { CardBack, PlayingCard } from "./PlayingCard";
+import { PlayingCard } from "./PlayingCard";
 
-describe("original P5 playing-card artwork", () => {
+describe("plain card identity display", () => {
   afterEach(cleanup);
 
-  it("renders distinct authored SVG portraits for Jack, Queen and King with suit-aware accessible labels", () => {
+  it("shows J/Q/K and four suits as readable, accessible identity without decorative artwork", () => {
     const { container, rerender } = render(<PlayingCard card={{ rank: "10", art: { faceRank: "J", suit: "hearts" } }} />);
     expect(screen.getByRole("img", { name: "Carta Valete de copas" })).toBeInTheDocument();
-    expect(container.querySelector("svg.face-j")).toBeInTheDocument();
-    rerender(<PlayingCard card={{ rank: "10", art: { faceRank: "Q", suit: "diamonds" } }} />);
-    expect(container.querySelector("svg.face-q")).toBeInTheDocument();
-    rerender(<PlayingCard card={{ rank: "10", art: { faceRank: "K", suit: "clubs" } }} />);
-    expect(container.querySelector("svg.face-k")).toBeInTheDocument();
-  });
+    expect(screen.getByText("J")).toBeInTheDocument();
+    expect(screen.getByText("♥")).toBeInTheDocument();
+    expect(container.querySelector("svg")).toBeNull();
 
-  it("renders the NOCTE back as a decorative but named image", () => {
-    const { container } = render(<CardBack />);
-    expect(screen.getByRole("img", { name: "Carta do dealer fechada" })).toBeInTheDocument();
-    expect(container.querySelector("svg text")?.textContent).toBe("N");
+    rerender(<PlayingCard card={{ rank: "10", art: { faceRank: "Q", suit: "diamonds" } }} />);
+    expect(screen.getByRole("img", { name: "Carta Dama de ouros" })).toBeInTheDocument();
+    expect(screen.getByText("♦")).toBeInTheDocument();
+    rerender(<PlayingCard card={{ rank: "10", art: { faceRank: "K", suit: "clubs" } }} />);
+    expect(screen.getByRole("img", { name: "Carta Rei de paus" })).toBeInTheDocument();
+    expect(screen.getByText("♣")).toBeInTheDocument();
+    rerender(<PlayingCard card={{ rank: "A", art: { faceRank: "A", suit: "spades" } }} />);
+    expect(screen.getByRole("img", { name: "Carta Ás de espadas" })).toBeInTheDocument();
+    expect(screen.getByText("♠")).toBeInTheDocument();
   });
 });
