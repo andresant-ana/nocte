@@ -1,4 +1,62 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function fixedPactDraws(page: Page) {
+  await page.addInitScript(() => {
+    (window as unknown as { __pactDigestCalls: number }).__pactDigestCalls = 0;
+    Object.defineProperty(Object.getPrototypeOf(globalThis.crypto), "getRandomValues", {
+      configurable: true, value<T extends ArrayBufferView | null>(array: T): T {
+        if (array) new Uint8Array(array.buffer, array.byteOffset, array.byteLength).fill(0);
+        return array;
+      },
+    });
+    Object.defineProperty(Object.getPrototypeOf(globalThis.crypto.subtle), "digest", {
+      configurable: true, value: async (_algorithm: AlgorithmIdentifier, input: BufferSource) => {
+        (window as unknown as { __pactDigestCalls: number }).__pactDigestCalls += 1;
+        const bytes = input instanceof ArrayBuffer ? new Uint8Array(input) : new Uint8Array(input.buffer, input.byteOffset, input.byteLength);
+        const [version, , , lane, counter] = JSON.parse(new TextDecoder().decode(bytes)) as [string, string, number, string, number];
+        let words: number[];
+        if (version === "sha256-counter-p5-art-v1") words = Array(8).fill(0);
+        else if (lane === "initial") words = counter === 0 ? [7, 7, 8, 8, 5, 9, 0, 0] : Array(8).fill(0);
+        else if (lane === "luz" || lane === "sombra" || lane === "dealer") words = Array(8).fill(9);
+        else if (lane === "cofre") words = Array(8).fill(4);
+        else words = Array(8).fill(0);
+        const block = new Uint8Array(32); const view = new DataView(block.buffer);
+        words.forEach((word, index) => view.setUint32(index * 4, word, true));
+        return block.buffer;
+      },
+    });
+  });
+}
+
+async function startPactLab(page: Page) {
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("pact-a1a");
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+}
+
+async function finishPactRound(page: Page) {
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  const conserve = page.getByRole("button", { name: "Conservar Foco" });
+  if (await conserve.count()) await conserve.click();
+  for (let hand = 0; hand < 2; hand += 1) {
+    const double = page.getByRole("button", { name: "Dobrar" });
+    if (await double.count()) await double.click();
+  }
+  const resolve = page.getByRole("button", { name: "Resolver dealer" });
+  if (await resolve.count()) await resolve.click();
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+}
+
+async function advancePactToOffer(page: Page) {
+  await startPactLab(page);
+  for (let round = 1; round <= 3; round += 1) {
+    await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+    await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+    await finishPactRound(page);
+    await page.getByRole("button", { name: "Próxima rodada" }).click();
+  }
+  await expect(page.getByRole("heading", { name: "Escolha um Pacto ou recuse" })).toBeVisible();
+}
 
 test("local study round reveals, exports, and clears only completed data", async ({ page }) => {
   await page.goto("/");
@@ -217,7 +275,7 @@ test("P5 card lab keeps every gameplay phase inside target viewports and preserv
   await page.getByRole("button", { name: "Confirmar gasto" }).click();
   await expect(dealer.getByRole("img", { name: /Carta lida do dealer/ })).toHaveCount(1);
   await expect(dealer.getByRole("img", { name: /Compra do dealer/ })).toHaveCount(0);
-  await page.getByRole("button", { name: "Conservar Foco" }).click();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
 
   await checkPhase("player", ["Parar"], ["Cartas da mão Luz", "Cartas da mão Sombra", "Carta do Cofre", "Cartas visíveis do dealer"], "player");
   await page.setViewportSize({ width: 1366, height: 768 });
@@ -506,4 +564,75 @@ test("A1a confirms the stake before any random draw, keeps the whole stake equal
   await expect(page.getByLabel("Foco restante").locator("strong")).toContainText(focusBeforePractice!);
   await expect(bank).toContainText("2 fichas");
   await expect(bank).toContainText("Saldo congelado até o fim da Noite");
+});
+
+test("PACT-LAB-0.1 offers Véu before round-four stake/deal and redacts the real upcard until composition", async ({ page }) => {
+  await fixedPactDraws(page);
+  await advancePactToOffer(page);
+  const offer = page.locator('.viewport-table[data-game-phase="pact-offer"]');
+  await expect(offer).toBeVisible();
+  await expect(offer).toContainText("Renúncia");
+  await expect(offer).toContainText("Privilégio");
+  await page.getByRole("radio", { name: "Luz" }).check();
+  for (const viewport of [{ width: 1280, height: 720 }, { width: 1366, height: 768 }, { width: 1920, height: 1080 }, { width: 390, height: 844 }, { width: 360, height: 640 }]) {
+    await page.setViewportSize(viewport);
+    const metrics = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight,
+      innerWidth, innerHeight }));
+    expect(metrics.width, `Pact offer horizontal scroll ${viewport.width}x${viewport.height}`).toBeLessThanOrEqual(metrics.innerWidth + 1);
+    expect(metrics.height, `Pact offer vertical scroll ${viewport.width}x${viewport.height}`).toBeLessThanOrEqual(metrics.innerHeight + 1);
+    for (const name of ["Assinar Véu", "Assinar Ferro", "Recusar Pactos"]) {
+      const button = page.getByRole("button", { name });
+      await expect(button).toBeVisible(); await expect(button).toBeEnabled(); await expect(button).toBeInViewport();
+    }
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  const digestCallsBeforeSignature = await page.evaluate(() => (window as unknown as { __pactDigestCalls: number }).__pactDigestCalls);
+  await page.getByRole("button", { name: "Assinar Véu" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1)).toBe(true);
+  expect(await page.evaluate(() => (window as unknown as { __pactDigestCalls: number }).__pactDigestCalls)).toBe(digestCallsBeforeSignature);
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+  const dealer = page.getByRole("list", { name: "Cartas visíveis do dealer" });
+  await expect(page.locator('.viewport-table[data-game-phase="compose"]')).toBeVisible();
+  await expect(dealer.getByRole("img", { name: /oculta pelo Pacto do Véu durante composição/ })).toBeVisible();
+  await expect(dealer.getByRole("img", { name: "Carta do dealer fechada" })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await expect(dealer.getByRole("img", { name: "Carta aberta do dealer" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Usar Privilégio de Leitura · gratuito" })).toBeVisible();
+  await page.getByRole("button", { name: "Usar Privilégio de Leitura · gratuito" }).click();
+  await expect(page.getByRole("dialog", { name: "Confirmar Leitura" })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar Privilégio" }).click();
+  await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+  await expect(page.getByText("Privilégio: Leitura · Consumido")).toBeVisible();
+  await expect(dealer.getByRole("img", { name: /Carta lida do dealer/ })).toHaveCount(1);
+  await expect(dealer.getByRole("img", { name: /Compra do dealer/ })).toHaveCount(0);
+});
+
+test("PACT-LAB-0.1 enforces Iron on the chosen Face, supports free Manobra, and allows refusal", async ({ page }) => {
+  await fixedPactDraws(page);
+  await advancePactToOffer(page);
+  await page.getByRole("radio", { name: "Sombra" }).check();
+  await page.getByRole("button", { name: "Assinar Ferro" }).click();
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await expect(page.getByRole("button", { name: "Usar Privilégio de Manobra · gratuito" })).toBeEnabled();
+  await page.getByRole("button", { name: "Usar Privilégio de Manobra · gratuito" }).click();
+  await page.getByRole("group", { name: "Cartas elegíveis para Manobra" }).getByRole("button").first().click();
+  await page.getByRole("button", { name: "Confirmar alvo" }).click();
+  await page.getByRole("button", { name: "Confirmar Privilégio" }).click();
+  await expect(page.getByText("3 de 3 restantes")).toBeVisible();
+  await expect(page.getByText("Privilégio: Manobra · Consumido")).toBeVisible();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+  await page.getByRole("button", { name: "Dobrar" }).click(); // Luz retains its normal action.
+  await expect(page.getByRole("group", { name: "Ações para Sombra" }).getByRole("button", { name: "Dobrar" })).toHaveCount(0);
+  await expect(page.getByRole("group", { name: "Ações para Sombra" }).getByRole("button", { name: "Comprar" })).toBeVisible();
+
+  await page.reload();
+  await advancePactToOffer(page);
+  await page.getByRole("button", { name: "Recusar Pactos" }).click();
+  await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="compose"]')).toBeVisible();
+  const dealer = page.getByRole("list", { name: "Cartas visíveis do dealer" });
+  await expect(dealer.getByRole("img", { name: "Carta aberta do dealer" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Confirmar composição" })).toBeVisible();
 });

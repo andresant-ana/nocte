@@ -1,5 +1,5 @@
 import type { Action, HandName, Partition } from "@nocte/engine";
-import type { CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
+import type { CofreFocoActionRestrictions, CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { PreparedCofreFocoRound } from "./random";
 import { CofreFocoSessionAdapter } from "./cofre-foco-session";
 import {
@@ -35,13 +35,17 @@ export class BankrollA1aSessionAdapter {
   #session: CofreFocoSessionAdapter | null = null;
   #betting = true;
   #roundId: string | null = null;
+  #actionRestrictions: ((roundNumber: number) => CofreFocoActionRestrictions | undefined) | undefined;
 
-  private constructor(rules: CofreFocoRules) {
+  private constructor(rules: CofreFocoRules, actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined) {
     this.#rules = rules;
+    this.#actionRestrictions = actionRestrictions;
     this.#ledger = createA1aBankroll(`a1a-local-night-${++localNightSequence}`);
   }
 
-  static start(rules: CofreFocoRules): BankrollA1aSessionAdapter { return new BankrollA1aSessionAdapter(rules); }
+  static start(rules: CofreFocoRules, actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined): BankrollA1aSessionAdapter {
+    return new BankrollA1aSessionAdapter(rules, actionRestrictions);
+  }
 
   get current(): PublicCofreFocoNight {
     if (this.#betting || !this.#session) throw new Error("A rodada ainda aguarda a aposta.");
@@ -67,6 +71,7 @@ export class BankrollA1aSessionAdapter {
   }
 
   get focusOptions() { if (!this.#session || this.#betting) throw new Error("A rodada ainda aguarda a aposta."); return this.#session.focusOptions; }
+  get focusOptionsWithPactPrivilege() { if (!this.#session || this.#betting) throw new Error("A rodada ainda aguarda a aposta."); return this.#session.focusOptionsWithPactPrivilege; }
   get legalActions(): readonly Action[] { if (!this.#session || this.#betting) return []; return this.#session.legalActions; }
 
   enterBetting(): void {
@@ -82,7 +87,7 @@ export class BankrollA1aSessionAdapter {
     const nextLedger = beginA1aRound(this.#ledger, roundId, stake);
     const nextSession = this.#session
       ? (() => { this.#session!.nextRound(prepared); return this.#session!; })()
-      : CofreFocoSessionAdapter.start(prepared, this.#rules, A1A_HORIZON);
+      : CofreFocoSessionAdapter.start(prepared, this.#rules, A1A_HORIZON, this.#actionRestrictions);
     this.#ledger = nextLedger;
     this.#session = nextSession;
     this.#roundId = roundId;
@@ -105,8 +110,10 @@ export class BankrollA1aSessionAdapter {
   compose(partition: Partition) { return this.#transition(() => this.#session!.compose(partition)); }
   skipRead() { return this.#transition(() => this.#session!.skipRead()); }
   readDealerHole() { return this.#transition(() => this.#session!.readDealerHole()); }
+  readDealerHoleWithPactPrivilege() { return this.#transition(() => this.#session!.readDealerHoleWithPactPrivilege()); }
   skipManeuver() { return this.#transition(() => this.#session!.skipManeuver()); }
   maneuverDirect(hand: HandName, cardIndex: number) { return this.#transition(() => this.#session!.maneuverDirect(hand, cardIndex)); }
+  maneuverDirectWithPactPrivilege(hand: HandName, cardIndex: number) { return this.#transition(() => this.#session!.maneuverDirectWithPactPrivilege(hand, cardIndex)); }
   continueAfterAbilities() { return this.#transition(() => this.#session!.continueAfterAbilities()); }
   act(action: Action) { return this.#transition(() => this.#session!.act(action)); }
   resolveDealer() { return this.#transition(() => this.#session!.resolveDealer()); }

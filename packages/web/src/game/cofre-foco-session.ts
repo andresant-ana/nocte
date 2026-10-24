@@ -9,13 +9,16 @@ import {
   legalCofreFocoActions,
   legalCofreFocoFocusOptions,
   maneuver,
+  maneuverWithPactPrivilege,
   playCofreFocoDealer,
   projectCofreFoco,
   readDealerHole,
+  readDealerHoleWithPactPrivilege,
   skipManeuver,
   skipRead,
   type CofreFocoNight,
   type CofreFocoRules,
+  type CofreFocoActionRestrictions,
   type PublicCofreFocoNight,
 } from "@nocte/engine/cofre-foco";
 import type { PreparedCofreFocoRound } from "./random";
@@ -24,14 +27,18 @@ import type { PreparedCofreFocoRound } from "./random";
 export class CofreFocoSessionAdapter {
   #night: CofreFocoNight;
   #prepared: PreparedCofreFocoRound;
+  #actionRestrictions: ((roundNumber: number) => CofreFocoActionRestrictions | undefined) | undefined;
 
-  private constructor(prepared: PreparedCofreFocoRound, rules: CofreFocoRules, horizon: number) {
+  private constructor(prepared: PreparedCofreFocoRound, rules: CofreFocoRules, horizon: number,
+    actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined) {
     this.#prepared = prepared;
+    this.#actionRestrictions = actionRestrictions;
     this.#night = beginRound(createNight(rules, horizon), prepared.draws);
   }
 
-  static start(prepared: PreparedCofreFocoRound, rules: CofreFocoRules, horizon = 10): CofreFocoSessionAdapter {
-    return new CofreFocoSessionAdapter(prepared, rules, horizon);
+  static start(prepared: PreparedCofreFocoRound, rules: CofreFocoRules, horizon = 10,
+    actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined): CofreFocoSessionAdapter {
+    return new CofreFocoSessionAdapter(prepared, rules, horizon, actionRestrictions);
   }
 
   get current(): PublicCofreFocoNight {
@@ -53,7 +60,14 @@ export class CofreFocoSessionAdapter {
   }
 
   get legalActions(): readonly Action[] {
-    return legalCofreFocoActions(this.#night);
+    return legalCofreFocoActions(this.#night, undefined, this.#actionRestrictions?.(this.#night.roundNumber));
+  }
+
+  get focusOptionsWithPactPrivilege() {
+    const current = legalCofreFocoFocusOptions(this.#night, true);
+    if (!current.canDecideRead || current.canDecideManeuver) return current;
+    const afterReadSkip = legalCofreFocoFocusOptions(skipRead(this.#night), true);
+    return { ...current, canDecideManeuver: afterReadSkip.canDecideManeuver, maneuverTargets: afterReadSkip.maneuverTargets };
   }
 
   compose(partition: Partition): PublicCofreFocoNight {
@@ -68,6 +82,11 @@ export class CofreFocoSessionAdapter {
 
   readDealerHole(): PublicCofreFocoNight {
     this.#night = readDealerHole(this.#night);
+    return this.current;
+  }
+
+  readDealerHoleWithPactPrivilege(): PublicCofreFocoNight {
+    this.#night = readDealerHoleWithPactPrivilege(this.#night);
     return this.current;
   }
 
@@ -89,6 +108,12 @@ export class CofreFocoSessionAdapter {
     return this.current;
   }
 
+  maneuverDirectWithPactPrivilege(hand: HandName, cardIndex: number): PublicCofreFocoNight {
+    const afterReadDecision = this.#night.round?.readDecisionMade ? this.#night : skipRead(this.#night);
+    this.#night = maneuverWithPactPrivilege(afterReadDecision, hand, cardIndex);
+    return this.current;
+  }
+
   continueAfterAbilities(): PublicCofreFocoNight {
     this.#night = continueAfterAbilities(this.#night);
     return this.current;
@@ -97,7 +122,7 @@ export class CofreFocoSessionAdapter {
   act(action: Action): PublicCofreFocoNight {
     const hand = this.#night.round?.currentHand;
     if (!hand) throw new Error("Não há mão ativa para receber a ação.");
-    this.#night = applyCofreFocoAction(this.#night, action, this.#prepared.draws[hand]);
+    this.#night = applyCofreFocoAction(this.#night, action, this.#prepared.draws[hand], this.#actionRestrictions?.(this.#night.roundNumber));
     return this.current;
   }
 

@@ -11,18 +11,21 @@ import { CofreFocoSessionAdapter } from "./game/cofre-foco-session";
 import { BankrollA0SessionAdapter } from "./game/bankroll-a0-session";
 import { BankrollA1aSessionAdapter } from "./game/bankroll-a1a-session";
 import { BankrollA1aBettingTable } from "./game/BankrollA1aBettingTable";
+import { PactOfferTable } from "./game/PactOfferTable";
+import { PactA1aSessionAdapter } from "./game/pact-a1a-session";
 import { GameTable } from "./game/GameTable";
 import { SoloRoundController } from "./game/controller";
 import { prepareCofreFocoRound, prepareP5CofreFocoRound, prepareRound } from "./game/random";
 import { StudyFlow } from "./study/StudyFlow";
 
 type ProfileId = RuleProfile["id"];
-type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards" | "bankroll-a1a";
+type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards" | "bankroll-a1a" | "pact-a1a";
 type ActiveBasic = { mode: "basic"; controller: SoloRoundController; view: PublicRound; profile: RuleProfile; roundNumber: number };
 type ActiveCofreFoco = { mode: "cofre-foco" | "p5-cards"; cardIdentityMode: boolean; controller: CofreFocoSessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; horizon: number; seed: string };
 type ActiveBankrollA0 = { mode: "bankroll-a0"; controller: BankrollA0SessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; seed: string };
 type ActiveBankrollA1a = { mode: "bankroll-a1a"; controller: BankrollA1aSessionAdapter; rules: CofreFocoRules; seed: string | null; revision: number };
-type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0 | ActiveBankrollA1a;
+type ActivePactA1a = { mode: "pact-a1a"; controller: PactA1aSessionAdapter; rules: CofreFocoRules; seed: string | null; revision: number };
+type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0 | ActiveBankrollA1a | ActivePactA1a;
 const getProfile = (id: ProfileId): RuleProfile => id === DF_SYM_01_1_TO_1.id ? DF_SYM_01_1_TO_1 : DF_SYM_01_3_TO_2;
 const getCofreFocoRules = (profile: ProfileId): CofreFocoRules => profile === DF_SYM_01_1_TO_1.id ? CF_LAB_01_1_TO_1 : CF_LAB_01_3_TO_2;
 
@@ -127,16 +130,34 @@ export function App() {
     }
   };
 
+  const startPactNight = () => {
+    a1aSessionGeneration.current += 1;
+    a1aStartPending.current = false;
+    setA1aPreparing(false);
+    setError(null);
+    try {
+      const rules = getCofreFocoRules(profile);
+      const controller = PactA1aSessionAdapter.start(rules);
+      setNightScore(0);
+      setRoundNumber(0);
+      scoreApplied.current = false;
+      setActive({ mode: "pact-a1a", controller, rules, seed: null, revision: 0 });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível iniciar o laboratório PACT-LAB.");
+    }
+  };
+
   const startSelectedNight = () => {
     if (mode === "basic") void startBasicNight();
     else if (mode === "cofre-foco") void startCofreFocoNight();
     else if (mode === "bankroll-a0") void startBankrollA0Night();
     else if (mode === "bankroll-a1a") startBankrollA1aNight();
+    else if (mode === "pact-a1a") startPactNight();
     else void startP5CardNight();
   };
 
   const startA1aRound = async (stake: number) => {
-    if (!active || active.mode !== "bankroll-a1a" || !active.controller.isBetting || a1aStartPending.current) return;
+    if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a") || !active.controller.isBetting || a1aStartPending.current) return;
     // Validate the wager before touching the RNG, including the practice-only case.
     const bank = active.controller.bankroll;
     const validStake = bank.status === "practice" ? stake === 0
@@ -157,7 +178,7 @@ export function App() {
       // Abandoning during asynchronous preparation must never resurrect the Night.
       if (generation !== a1aSessionGeneration.current) return;
       active.controller.startRound(prepared, stake);
-      setActive((current) => current?.mode === "bankroll-a1a" && current.controller === active.controller
+      setActive((current) => (current?.mode === "bankroll-a1a" || current?.mode === "pact-a1a") && current.controller === active.controller
         ? { ...current, seed, revision: current.revision + 1 } : current);
     } catch (cause) {
       if (generation === a1aSessionGeneration.current)
@@ -171,7 +192,7 @@ export function App() {
   };
 
   const nextA1aBetting = () => {
-    if (!active || active.mode !== "bankroll-a1a") return;
+    if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a")) return;
     try {
       active.controller.enterBetting();
       setActive({ ...active, revision: active.revision + 1 });
@@ -182,7 +203,19 @@ export function App() {
   };
 
   const onA1aNightChange = (_view: PublicCofreFocoNight) => {
-    setActive((current) => current?.mode === "bankroll-a1a" ? { ...current, revision: current.revision + 1 } : current);
+    setActive((current) => current && (current.mode === "bankroll-a1a" || current.mode === "pact-a1a") ? { ...current, revision: current.revision + 1 } : current);
+  };
+
+  const resolvePactOffer = (pact?: "veil" | "iron", ironFace?: "luz" | "sombra") => {
+    if (!active || active.mode !== "pact-a1a" || !active.controller.isPactOfferPending) return;
+    try {
+      if (pact) active.controller.sign(pact, ironFace);
+      else active.controller.refuse();
+      setActive({ ...active, revision: active.revision + 1 });
+      setError(null);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Não foi possível registrar a escolha de Pacto.");
+    }
   };
 
   const nextBasicRound = async () => {
@@ -240,9 +273,15 @@ export function App() {
     setActive((current) => current && (current.mode === "cofre-foco" || current.mode === "p5-cards") ? { ...current, view } : current);
   };
 
+  const onLegacyVisibleNightChange = (view: PublicCofreFocoNight) => {
+    if (view.round && !view.round.dealerUp) return;
+    onCofreFocoNightChange(view as PublicCofreFocoNight);
+  };
+
   const onBankrollA0NightChange = (view: PublicCofreFocoNight) => {
+    if (view.round && !view.round.dealerUp) return;
     setActive((current) => current?.mode === "bankroll-a0"
-      ? { ...current, view }
+      ? { ...current, view: view as PublicCofreFocoNight }
       : current);
   };
 
@@ -291,7 +330,7 @@ export function App() {
           night={active.view}
           rules={active.rules}
           error={error}
-          onNightChange={onCofreFocoNightChange}
+          onNightChange={onLegacyVisibleNightChange}
           onNextRound={() => void nextCofreFocoRound()}
           onReturnToSetup={returnToSetup}
           cardIdentityMode={active.cardIdentityMode}
@@ -318,11 +357,21 @@ export function App() {
     );
   }
 
-  if (active?.mode === "bankroll-a1a" && active.controller.isBetting) {
+  if (active?.mode === "pact-a1a" && active.controller.isPactOfferPending) {
+    return <main className="game-session-shell">
+      <PactOfferTable bankroll={active.controller.bankroll}
+        onSign={(pact, face) => resolvePactOffer(pact, face)} onRefuse={() => resolvePactOffer()}
+        onAbandon={() => { active.controller.abandonBeforeDeal(); returnToSetup(); }} />
+      {error && <p role="alert" className="recoverable-error error-overlay">{error}</p>}
+    </main>;
+  }
+
+  if ((active?.mode === "bankroll-a1a" || active?.mode === "pact-a1a") && active.controller.isBetting) {
     return <main className="game-session-shell">
       <BankrollA1aBettingTable
         key={`a1a-bet-${active.controller.bankroll.completedRounds}-${active.revision}`}
         bankroll={active.controller.bankroll}
+        {...(active.mode === "pact-a1a" ? { pact: { contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining } } : {})}
         error={error}
         preparing={a1aPreparing}
         onConfirm={(stake) => void startA1aRound(stake)}
@@ -349,6 +398,27 @@ export function App() {
     </main>;
   }
 
+  if (active?.mode === "pact-a1a" && !active.controller.isBetting) {
+    return <main className="game-session-shell">
+      <CofreFocoTable
+        key={`pact-a1a-round-${active.controller.bankroll.completedRounds}`}
+        session={active.controller}
+        night={active.controller.current}
+        rules={active.rules}
+        error={error}
+        bankroll={active.controller.bankroll}
+        onNightChange={onA1aNightChange}
+        onNextRound={nextA1aBetting}
+        onReturnToSetup={returnToSetup}
+        cardIdentityMode
+        pact={{ contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining,
+          canUseReadPrivilege: active.controller.canUseReadPrivilege, canUseManeuverPrivilege: active.controller.canUseManeuverPrivilege,
+          readPrivilege: () => active.controller.readDealerHoleWithPactPrivilege(),
+          maneuverPrivilege: (hand, cardIndex) => active.controller.maneuverDirectWithPactPrivilege(hand, cardIndex) }}
+      />
+    </main>;
+  }
+
   return (
     <main className="landing-shell">
       <p className="eyebrow">PROTÓTIPO SOLO · LABORATÓRIO LOCAL</p>
@@ -364,6 +434,7 @@ export function App() {
           <option value="bankroll-a0">Cofre + Foco · banca fictícia A0.1 · EXPERIMENTAL</option>
           <option value="p5-cards">Laboratório P5 · cartas com naipes · EXPERIMENTAL</option>
           <option value="bankroll-a1a">Apostas livres · fichas A1a · EXPERIMENTAL</option>
+          <option value="pact-a1a">Pactos por Ato · Véu/Ferro · EXPERIMENTAL</option>
         </select>
         <p className="mode-explanation">
           {mode === "basic"
@@ -374,7 +445,9 @@ export function App() {
                 ? "Variação local e temporária sobre Cofre + Foco, com banca fictícia isolada e sem persistência. As regras experimentais do motor permanecem as mesmas."
                 : mode === "p5-cards"
                 ? "Laboratório de cartas sem apostas ou banca. J/Q/K mantêm valor 10; naipes e identidades são apenas visuais e usam o motor Cofre + Foco sem alterar regras ou resultados."
-                : "Aposta inteira escolhida antes de cada distribuição, igual para Luz e Sombra, com cobertura 4s. Laboratório local separado da banca fixa A0.1; Foco e pontos não escalam com a aposta."
+                : mode === "bankroll-a1a"
+                  ? "Aposta inteira escolhida antes de cada distribuição, igual para Luz e Sombra, com cobertura 4s. Laboratório local separado da banca fixa A0.1; Foco e pontuação estratégica não escalam com a aposta."
+                  : "A1a + Cofre + Foco com escolha de Véu, Ferro ou recusa antes da rodada 4. Pactos e privilégios são experimentais, sem alterar os modos anteriores."
           }
         </p>
 
