@@ -4,7 +4,7 @@
 
 ## Escopo e cobertura
 
-O laboratório executa Noites completas de dez rodadas, com o motor puro `@nocte/engine` e suas transições Cofre + Foco e PactBook. Não há cópia do settlement do jogo. A1a é aplicada como overlay contábil em ticks de meia ficha, sem alimentar score, Foco ou decisões de jogo. São comparados os dois Pactos de cada família e a recusa; também há um seletor situacional heurístico. O segundo Ato recebe uma oferta real, determinística e sem reposição; nas células forçadas ele é recusado para isolar a família do Ato II.
+O laboratório executa Noites completas de dez rodadas pelo motor puro `@nocte/engine` e suas transições Cofre + Foco e PactBook. Resultados de mãos e score vêm do motor. A1a é um overlay contábil analítico em ticks de meia ficha, aplicando seu contrato documentado sem alimentar score, Foco ou decisões de jogo. São comparados os dois Pactos de cada família e a recusa; também há um seletor situacional heurístico. O segundo Ato recebe uma oferta real, determinística e sem reposição; nas células forçadas ele é recusado para isolar a família do Ato II.
 
 Cada família/Pacto foi avaliado nos cenários da matriz: três políticas × três políticas de stake × dois pagamentos naturais × 100 Noites pareadas. O relatório também traz o seletor situacional. Total: 648 células × 100 Noites = **64.800 Noites modelo**, 648.000 rodadas. A cobertura de aceitação por Pacto e os eventos de uso do Privilégio aparecem em `lab/results/p8-pact-depth-v1.json`; Privilégios sem evento observado são explicitamente listados. “Aceito/testado” não significa que toda condição de acionamento ocorreu em cada Noite.
 
