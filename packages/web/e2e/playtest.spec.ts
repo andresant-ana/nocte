@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
 
 async function fixedPactDraws(page: Page, seedHex = "00000000000000000000000000000000") {
   await page.addInitScript((seed) => {
@@ -46,6 +47,26 @@ async function finishPactRound(page: Page) {
   for (let hand = 0; hand < 2; hand += 1) {
     const double = page.getByRole("button", { name: "Dobrar" });
     if (await double.count()) await double.click();
+  }
+  const resolve = page.getByRole("button", { name: "Resolver dealer" });
+  if (await resolve.count()) await resolve.click();
+  await expect(page.getByRole("region", { name: "Resultado da rodada" })).toBeVisible();
+}
+
+async function finishBookRound(page: Page, options: { freeRead?: boolean; farol?: boolean } = {}) {
+  if (options.farol) await page.getByRole("button", { name: /Usar Privilégio do Farol/i }).click();
+  const compose = page.getByRole("button", { name: "Confirmar composição" });
+  if (await compose.count()) await compose.click();
+  if (options.freeRead) {
+    await page.getByRole("button", { name: "Usar Privilégio de Leitura · gratuito" }).click();
+    await page.getByRole("button", { name: "Confirmar Privilégio" }).click();
+  }
+  const conserve = page.getByRole("button", { name: /Conservar Foco|Continuar/ });
+  if (await conserve.count()) await conserve.click();
+  for (let action = 0; action < 6; action += 1) {
+    const stand = page.getByRole("button", { name: "Parar" });
+    if (!(await stand.count())) break;
+    await stand.click();
   }
   const resolve = page.getByRole("button", { name: "Resolver dealer" });
   if (await resolve.count()) await resolve.click();
@@ -829,4 +850,75 @@ test("P7-C Juramento consumes the category preview and commits to one Compra the
   await expect(page.getByRole("group", { name: "Ações para Luz" }).getByRole("button")).toHaveCount(1);
   await page.getByRole("button", { name: "Comprar" }).click();
   await expect(page.getByRole("list", { name: "Cartas da mão Luz" }).getByRole("listitem")).toHaveCount(3);
+});
+
+test("P9-H is opt-in, local, manually exportable, and clearable after abandonment", async ({ page }) => {
+  const externalRequests: string[] = [];
+  await page.goto("/");
+  page.on("request", request => {
+    if (new URL(request.url()).origin !== new URL(page.url()).origin) externalRequests.push(request.url());
+  });
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("pact-book-a1a");
+  const consent = page.getByRole("checkbox", { name: /participar do playtest local opcional/i });
+  await expect(consent).not.toBeChecked();
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  page.once("dialog", dialog => dialog.accept());
+  await page.getByRole("button", { name: /Encerrar Noite/i }).click();
+  await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toBeVisible();
+  await expect(page.getByTestId("pact-playtest-survey")).toHaveCount(0);
+
+  await consent.check();
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  page.once("dialog", dialog => dialog.accept());
+  await page.getByRole("button", { name: /Encerrar Noite/i }).click();
+  await expect(page.getByTestId("pact-playtest-survey")).toBeVisible();
+  await expect(page.getByText(/Noite abandonada · 0 eventos públicos registrados/i)).toBeVisible();
+  expect(await page.evaluate(() => ({ local: localStorage.length, session: sessionStorage.length }))).toEqual({ local: 0, session: 0 });
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Exportar JSON" }).click();
+  expect((await download).suggestedFilename()).toBe("nocte-pact-playtest.json");
+  expect(externalRequests).toEqual([]);
+  await page.getByRole("button", { name: "Limpar dados" }).click();
+  await expect(page.getByRole("combobox", { name: "Modo de jogo" })).toBeVisible();
+  await expect(page.getByTestId("pact-playtest-survey")).toHaveCount(0);
+});
+
+test("P9-H export contains both act offers and one confirmed privilege use per act without card data", async ({ page }) => {
+  await fixedPactDraws(page, "0000000000000000000000000000003e"); // focus at r4; revelation at r8
+  await page.goto("/");
+  await page.getByRole("combobox", { name: "Modo de jogo" }).selectOption("pact-book-a1a");
+  await page.getByRole("checkbox", { name: /participar do playtest local opcional/i }).check();
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+
+  for (let round = 1; round <= 10; round += 1) {
+    if (round === 4) {
+      await expect(page.locator('.pact-offer-table[data-pact-family="focus"]')).toBeVisible();
+      await page.getByRole("button", { name: "Assinar Fulgor" }).click();
+    }
+    if (round === 8) {
+      await expect(page.locator('.pact-offer-table[data-pact-family="revelation"]')).toBeVisible();
+      await page.getByRole("button", { name: "Assinar Farol" }).click();
+    }
+    await expect(page.locator('.a1a-bet-table[data-game-phase="betting"]')).toBeVisible();
+    await page.getByRole("button", { name: "Confirmar aposta e distribuir" }).click();
+    await finishBookRound(page, { freeRead: round === 4, farol: round === 8 });
+    if (round < 10) await page.getByRole("button", { name: "Próxima rodada" }).click();
+  }
+  await page.getByRole("button", { name: "Voltar à configuração" }).click();
+  await expect(page.getByTestId("pact-playtest-survey")).toBeVisible();
+  const download = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Exportar JSON" }).click();
+  const exportFile = await download;
+  const path = await exportFile.path();
+  expect(path).not.toBeNull();
+  const json = await readFile(path!, "utf8");
+  const data = JSON.parse(json) as { status: string; events: Array<{ type: string; round?: number; act?: number; family?: string; pact?: string; choice?: string }> };
+  expect(data.status).toBe("complete");
+  expect(data.events.filter(event => event.type === "offer").map(event => [event.round, event.family])).toEqual([[4, "focus"], [8, "revelation"]]);
+  expect(data.events.filter(event => event.type === "choice").map(event => event.choice)).toEqual(["flare", "lighthouse"]);
+  expect(data.events.filter(event => event.type === "privilege-consumed").map(event => [event.act, event.pact])).toEqual([[2, "flare"], [3, "lighthouse"]]);
+  const usesPerAct = data.events.filter(event => event.type === "privilege-consumed").map(event => event.act)
+    .reduce((counts, act) => counts.set(act!, (counts.get(act!) ?? 0) + 1), new Map<number, number>());
+  expect([...usesPerAct.values()]).toEqual([1, 1]);
+  expect(json).not.toMatch(/seed|dealerHole|dealerDraws|"cards"|"hands"|email|userAgent|timestamp/i);
 });

@@ -82,6 +82,8 @@ type Props = {
   onNightChange: (night: PublicCofreFocoNight) => void;
   onNextRound: () => void;
   onReturnToSetup: () => void;
+  onPlaytestTransition?: () => void;
+  onRenunciationBlocked?: () => void;
   cardIdentityMode?: boolean;
   pact?: PactActions;
 };
@@ -115,7 +117,7 @@ function phaseLabel(night: VisibleTableNight): string {
   return "Rodada concluída.";
 }
 
-export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, cardIdentityMode = false, pact }: Props) {
+export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, onPlaytestTransition, onRenunciationBlocked, cardIdentityMode = false, pact }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
   const [cisaoSingleIndex, setCisaoSingleIndex] = useState(3);
@@ -166,10 +168,13 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
       setLocalError(null);
       const next = operation();
       onNightChange(next as PublicCofreFocoNight);
+      onPlaytestTransition?.();
       if (next.round?.roundNumber !== round?.roundNumber) { setSelectedPartition(0); setCisaoSingleIndex(3); }
       succeeded = true;
     } catch (cause) {
-      setLocalError(cause instanceof Error ? cause.message : "Ação indisponível. Confira o estado da rodada.");
+      const message = cause instanceof Error ? cause.message : "Ação indisponível. Confira o estado da rodada.";
+      setLocalError(message);
+      if (/renúncia/i.test(message)) onRenunciationBlocked?.();
     } finally { busy.current = false; }
     return succeeded;
   };

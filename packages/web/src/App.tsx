@@ -19,6 +19,8 @@ import { GameTable } from "./game/GameTable";
 import { SoloRoundController } from "./game/controller";
 import { prepareCofreFocoRound, prepareP5CofreFocoRound, prepareRound } from "./game/random";
 import { StudyFlow } from "./study/StudyFlow";
+import { PactPlaytestSurvey } from "./study/PactPlaytestSurvey";
+import { pactPlaytestSnapshot, startPactPlaytest, type PactPlaytestExport, type PactPlaytestRecorder } from "./study/pact-playtest";
 
 type ProfileId = RuleProfile["id"];
 type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards" | "bankroll-a1a" | "pact-a1a" | "pact-book-a1a";
@@ -47,6 +49,9 @@ export function App() {
   const [roundNumber, setRoundNumber] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showStudy, setShowStudy] = useState(false);
+  const [pactPlaytestOptIn, setPactPlaytestOptIn] = useState(false);
+  const [pactPlaytestReview, setPactPlaytestReview] = useState<PactPlaytestExport | null>(null);
+  const pactPlaytest = useRef<PactPlaytestRecorder | null>(null);
   const scoreApplied = useRef(false);
   const a1aStartPending = useRef(false);
   const a1aSessionGeneration = useRef(0);
@@ -155,6 +160,8 @@ export function App() {
     try {
       const rules = getCofreFocoRules(profile);
       const controller = PactBookA1aSessionAdapter.start(rules);
+      pactPlaytest.current = pactPlaytestOptIn ? startPactPlaytest(rules.naturalPayout, globalThis.crypto.randomUUID()) : null;
+      setPactPlaytestReview(null);
       setNightScore(0); setRoundNumber(0); scoreApplied.current = false;
       setActive({ mode: "pact-book-a1a", controller, rules, seed: null, revision: 0 });
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Não foi possível iniciar o Livro dos Pactos."); }
@@ -192,6 +199,7 @@ export function App() {
       // Abandoning during asynchronous preparation must never resurrect the Night.
       if (generation !== a1aSessionGeneration.current) return;
       active.controller.startRound(prepared, stake);
+      if (active.mode === "pact-book-a1a" && pactPlaytest.current) pactPlaytest.current.observe(pactPlaytestSnapshot(active.controller));
       setActive((current) => (current?.mode === "bankroll-a1a" || current?.mode === "pact-a1a" || current?.mode === "pact-book-a1a") && current.controller === active.controller
         ? { ...current, seed, revision: current.revision + 1 } : current);
     } catch (cause) {
@@ -209,6 +217,7 @@ export function App() {
     if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a" && active.mode !== "pact-book-a1a")) return;
     try {
       active.controller.enterBetting();
+      if (active.mode === "pact-book-a1a" && pactPlaytest.current) pactPlaytest.current.observe(pactPlaytestSnapshot(active.controller));
       setActive({ ...active, revision: active.revision + 1 });
       setError(null);
     } catch (cause) {
@@ -216,7 +225,8 @@ export function App() {
     }
   };
 
-  const onA1aNightChange = (_view: PublicCofreFocoNight) => {
+  const onA1aNightChange = (view: PublicCofreFocoNight) => {
+    if (active?.mode === "pact-book-a1a" && pactPlaytest.current) pactPlaytest.current.observe(pactPlaytestSnapshot(active.controller, view));
     setActive((current) => current && (current.mode === "bankroll-a1a" || current.mode === "pact-a1a" || current.mode === "pact-book-a1a") ? { ...current, revision: current.revision + 1 } : current);
   };
 
@@ -229,6 +239,7 @@ export function App() {
           active.controller.sign(pact, ironFace);
         } else active.controller.sign(pact, ironFace);
       } else active.controller.refuse();
+      if (active.mode === "pact-book-a1a" && pactPlaytest.current) pactPlaytest.current.observe(pactPlaytestSnapshot(active.controller));
       setActive({ ...active, revision: active.revision + 1 });
       setError(null);
     } catch (cause) {
@@ -314,6 +325,21 @@ export function App() {
     setError(null);
   };
 
+  const finishPactBookPlaytest = (controller: PactBookA1aSessionAdapter) => {
+    const recorder = pactPlaytest.current;
+    if (recorder) {
+      const snapshot = pactPlaytestSnapshot(controller);
+      const status = controller.bankroll.status === "complete" ? "complete" : "abandoned";
+      setPactPlaytestReview(recorder.finish(status, snapshot));
+    }
+    returnToSetup();
+  };
+
+  if (pactPlaytestReview) return <PactPlaytestSurvey data={pactPlaytestReview}
+    onAnswers={(answers) => pactPlaytest.current?.setAnswers(answers)}
+    onClear={() => { pactPlaytest.current?.clear(); pactPlaytest.current = null; setPactPlaytestReview(null); setPactPlaytestOptIn(false); returnToSetup(); }}
+    onExit={() => { pactPlaytest.current = null; setPactPlaytestReview(null); setPactPlaytestOptIn(false); }} />;
+
   if (showStudy) {
     return <StudyFlow profile={getProfile(profile)} onDecline={() => { setShowStudy(false); void startBasicNight(profile); }} onExit={() => setShowStudy(false)} />;
   }
@@ -390,7 +416,7 @@ export function App() {
         family={active.controller.offerFamily}
         actLabel={active.controller.contract.actStartRound === 8 ? "ATO III · RODADAS 8–10" : "ATO II · RODADAS 4–7"}
         onSign={(pact, face) => resolvePactOffer(pact, face)} onRefuse={() => resolvePactOffer()}
-        onAbandon={() => { active.controller.abandonBeforeDeal(); returnToSetup(); }} />
+        onAbandon={() => { active.controller.abandonBeforeDeal(); finishPactBookPlaytest(active.controller); }} />
       {error && <p role="alert" className="recoverable-error error-overlay">{error}</p>}
     </main>;
   }
@@ -412,7 +438,7 @@ export function App() {
         preparing={a1aPreparing}
         onConfirm={(stake) => void startA1aRound(stake)}
         onPractice={() => void startA1aRound(0)}
-        onAbandon={() => { active.controller.abandonBeforeDeal(); returnToSetup(); }}
+        onAbandon={() => { active.controller.abandonBeforeDeal(); active.mode === "pact-book-a1a" ? finishPactBookPlaytest(active.controller) : returnToSetup(); }}
       />
     </main>;
   }
@@ -461,7 +487,14 @@ export function App() {
     return <main className="game-session-shell">
       <CofreFocoTable key={`pact-book-round-${active.controller.bankroll.completedRounds}`} session={active.controller}
         night={active.controller.current} rules={active.rules} error={error} bankroll={active.controller.bankroll}
-        onNightChange={onA1aNightChange} onNextRound={nextA1aBetting} onReturnToSetup={returnToSetup} cardIdentityMode
+        onNightChange={onA1aNightChange} onNextRound={nextA1aBetting} onReturnToSetup={() => finishPactBookPlaytest(active.controller)} cardIdentityMode
+        onPlaytestTransition={() => { if (pactPlaytest.current && !active.controller.isBetting) pactPlaytest.current.observe(pactPlaytestSnapshot(active.controller)); }}
+        onRenunciationBlocked={() => { if (pactPlaytest.current) {
+          let round: number | undefined;
+          try { round = active.controller.isBetting ? active.controller.bankroll.completedRounds + 1 : active.controller.current.round?.roundNumber; } catch { /* abandonment before first deal has no round */ }
+          const pact = active.controller.contract.pact;
+          if (round && pact) pactPlaytest.current.recordRenunciationBlocked(round, pact);
+        } }}
         pact={{ contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining,
           canUseReadPrivilege: active.controller.canUseReadPrivilege, canUseManeuverPrivilege: active.controller.canUseManeuverPrivilege,
           readPrivilege: () => active.controller.readPrivilege(), maneuverPrivilege: (hand, cardIndex) => active.controller.maneuverPrivilege(hand, cardIndex),
@@ -532,7 +565,14 @@ export function App() {
 
         {mode === "bankroll-a0" && <p className="mode-explanation">Banca fictícia reiniciada em 150 fichas por Noite, 10 rodadas e cobertura reservada de 40 por rodada financiada. Se o saldo ficar abaixo de 40 entre rodadas, a Noite continua em prática gratuita. Nada persiste após sair.</p>}
         {mode === "bankroll-a1a" && <p className="mode-explanation">Banca reiniciada em 150 fichas, 10 rodadas. Escolha s fichas por mão antes de cada distribuição; R=4s cobre ambos os doubles. O ledger aceita meios de ficha exatos. A prática gratuita começa quando nenhuma aposta mínima cabe. Perfil EXPERIMENTAL, sem persistência.</p>}
-        {mode === "pact-book-a1a" && <p className="mode-explanation">Ato I: rodadas 1–3 sem Pacto. Ofertas pareadas antes das rodadas 4 e 8, sem repetir família; o Pacto do Ato expira antes da oferta seguinte. Privilégio aparece primeiro, Renúncia logo abaixo. Recusar ambos não altera regras nem recursos.</p>}
+        {mode === "pact-book-a1a" && <>
+          <p className="mode-explanation">Ato I: rodadas 1–3 sem Pacto. Ofertas pareadas antes das rodadas 4 e 8, sem repetir família; o Pacto do Ato expira antes da oferta seguinte. Privilégio aparece primeiro, Renúncia logo abaixo. Recusar ambos não altera regras nem recursos.</p>
+          <label className="playtest-opt-in">
+            <input type="checkbox" checked={pactPlaytestOptIn} onChange={(event) => setPactPlaytestOptIn(event.target.checked)} />
+            Participar do playtest local opcional dos Pactos
+            <small>Desligado por padrão. Só com sua autorização, eventos públicos desta Noite ficam em memória nesta página. Nada é enviado nem salvo; você pode jogar normalmente sem participar.</small>
+          </label>
+        </>}
 
         {(mode === "cofre-foco") && <>
           <label className="profile-label" htmlFor="night-horizon">Duração da Noite experimental</label>

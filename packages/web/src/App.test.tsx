@@ -117,4 +117,31 @@ describe("solo prototype landing", () => {
     expect(await screen.findByRole("heading", { name: "Mesa Duas Faces" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Exportar JSON/i })).toBeNull();
   });
+
+  it("keeps P9-H opt-in off by default and opens the optional questionnaire after consenting and abandoning", async () => {
+    vi.stubGlobal("crypto", webcrypto as Crypto);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const user = userEvent.setup();
+    render(<App />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Modo de jogo" }), "pact-book-a1a");
+    const consent = screen.getByRole("checkbox", { name: /participar do playtest local opcional/i });
+    expect(consent).not.toBeChecked();
+
+    await user.click(screen.getByRole("button", { name: "Jogar livre" }));
+    expect(screen.getByRole("button", { name: /Encerrar Noite/i })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /Encerrar Noite/i }));
+    expect(await screen.findByRole("combobox", { name: "Modo de jogo" })).toBeInTheDocument();
+    expect(screen.queryByTestId("pact-playtest-survey")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox", { name: /participar do playtest local opcional/i }));
+    await user.click(screen.getByRole("button", { name: "Jogar livre" }));
+    await user.click(await screen.findByRole("button", { name: /Encerrar Noite/i }));
+    expect(await screen.findByTestId("pact-playtest-survey")).toBeInTheDocument();
+    expect(screen.getByText(/Noite abandonada · 0 eventos públicos registrados/i)).toBeInTheDocument();
+    expect(window.localStorage.length).toBe(0);
+    expect(window.sessionStorage.length).toBe(0);
+    await user.click(screen.getByRole("button", { name: "Limpar dados" }));
+    expect(await screen.findByRole("combobox", { name: "Modo de jogo" })).toBeInTheDocument();
+    expect(screen.queryByTestId("pact-playtest-survey")).not.toBeInTheDocument();
+  });
 });

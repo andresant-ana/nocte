@@ -22,6 +22,7 @@
 | [PACTOS-LAB-P6.md](PACTOS-LAB-P6.md) | Isolated PACT-LAB-0.1 contract, phase timing, Renúncias/Privilégios, invariants and validation limits (Issue #40; N-057) |
 | [PACTOS-LAB-P7.md](PACTOS-LAB-P7.md) | Versioned 18-Pacto experiment contract and P7-A/B/C implementation boundaries (Issues #42/#44/#46; N-058) |
 | [LAB-P8-PACT-DEPTH.md](LAB-P8-PACT-DEPTH.md) | Paired-seed strategic-depth audit of the 18 experimental Pactos, methods and limitations (Issue #48) |
+| [PLAYTEST-P9-PACTOS.md](PLAYTEST-P9-PACTOS.md) | Optional local consent, event scope and human protocol for PACT-BOOK-0.1 (Issue #50; N-059) |
 | [EXPERIENCE.md](EXPERIENCE.md) | Art Déco/noir UX, audio, accessibility and premium presentation goals |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Provisional stack, authority, persistence, realtime and zero-cost viability |
 | [VALIDATION.md](VALIDATION.md) | Mathematical evidence, examples, limitations and reproducibility |

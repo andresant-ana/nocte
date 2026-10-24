@@ -300,6 +300,16 @@ body { min-height: 100vh; min-height: 100dvh; }
 .info-dialog dl div { padding: .4rem; background: #0e1714; }
 .info-dialog dt { color: #c8bfa9; }
 .info-dialog dd { margin: .1rem 0 0; }
+
+.playtest-opt-in { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: .35rem .55rem; padding: .65rem; border: 1px solid #77633a; border-radius: .25rem; font: .9rem/1.35 system-ui, sans-serif; }
+.playtest-opt-in input { margin-top: .15rem; }
+.playtest-opt-in small { grid-column: 2; color: #c8bfa9; font: .78rem/1.4 system-ui, sans-serif; }
+.playtest-survey { width: min(100% - 1.2rem, 48rem); max-height: calc(100dvh - 1.2rem); overflow: auto; }
+.playtest-question { margin: .55rem 0; padding: .55rem .7rem; border: 1px solid #77633a; }
+.playtest-question legend { padding: 0 .25rem; font: .9rem/1.35 system-ui, sans-serif; }
+.playtest-scale { display: flex; flex-wrap: wrap; gap: .45rem .8rem; }
+.playtest-scale label { display: inline-flex; align-items: center; gap: .15rem; min-height: 2rem; font: .86rem/1.3 system-ui, sans-serif; }
+.playtest-actions { flex-wrap: wrap; }
 .a1a-bet-board { display: grid; grid-template-columns: minmax(12rem, .8fr) minmax(0, 1.2fr); gap: .55rem; min-height: 0; align-content: center; }
 .a1a-stake-summary { display: grid; grid-template-columns: 1fr auto; align-content: center; gap: .35rem .6rem; font: .82rem/1.25 system-ui, sans-serif; }
 .a1a-stake-summary strong { color: #f0d897; text-align: right; font-size: 1rem; }
