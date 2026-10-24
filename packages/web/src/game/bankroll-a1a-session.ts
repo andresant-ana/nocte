@@ -28,6 +28,13 @@ export type PublicBankrollA1a = Readonly<{
   lastSettlement: A1aBankroll["lastSettlement"];
 }>;
 
+export type A1aRoundTerms = Readonly<{ coveragePerStake?: number; stakeCap?: number }>;
+export type A1aPactHooks = Readonly<{
+  terms?: (balanceTicks: number, roundNumber: number) => A1aRoundTerms;
+  refundTicks?: (view: PublicCofreFocoNight, stake: number, roundNumber: number) => number;
+  practiceEligibility?: (balanceTicks: number, roundNumber: number, defaultEligible: number) => number;
+}>;
+
 /** Stake is committed before this adapter starts or advances the card engine. */
 export class BankrollA1aSessionAdapter {
   #rules: CofreFocoRules;
@@ -36,15 +43,26 @@ export class BankrollA1aSessionAdapter {
   #betting = true;
   #roundId: string | null = null;
   #actionRestrictions: ((roundNumber: number) => CofreFocoActionRestrictions | undefined) | undefined;
+  #pactHooks: A1aPactHooks;
 
-  private constructor(rules: CofreFocoRules, actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined) {
+  private constructor(rules: CofreFocoRules, actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined, pactHooks: A1aPactHooks = {}) {
     this.#rules = rules;
     this.#actionRestrictions = actionRestrictions;
+    this.#pactHooks = pactHooks;
     this.#ledger = createA1aBankroll(`a1a-local-night-${++localNightSequence}`);
   }
 
-  static start(rules: CofreFocoRules, actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined): BankrollA1aSessionAdapter {
-    return new BankrollA1aSessionAdapter(rules, actionRestrictions);
+  static start(rules: CofreFocoRules, actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined, pactHooks: A1aPactHooks = {}): BankrollA1aSessionAdapter {
+    return new BankrollA1aSessionAdapter(rules, actionRestrictions, pactHooks);
+  }
+  #terms(roundNumber = this.#ledger.completedRounds + 1): A1aRoundTerms { return this.#pactHooks.terms?.(this.#ledger.balanceTicks, roundNumber) ?? {}; }
+  #eligibleStake(roundNumber = this.#ledger.completedRounds + 1): number {
+    const terms = this.#terms(roundNumber);
+    return Math.min(maxA1aStake(this.#ledger.balanceTicks, terms.coveragePerStake ?? 4), terms.stakeCap ?? Number.MAX_SAFE_INTEGER);
+  }
+  #practiceEligibleStake(roundNumber = this.#ledger.completedRounds + 1): number {
+    const regular = this.#eligibleStake(roundNumber);
+    return this.#pactHooks.practiceEligibility?.(this.#ledger.balanceTicks, roundNumber, regular) ?? regular;
   }
 
   get current(): PublicCofreFocoNight {
@@ -58,11 +76,11 @@ export class BankrollA1aSessionAdapter {
       : this.#ledger.lastSettlement?.kind === "funded" ? this.#ledger.lastSettlement.stake : 0;
     return Object.freeze({ version: A1A_BANKROLL_VERSION, status: this.#ledger.status,
       balanceTicks: this.#ledger.balanceTicks, balance: formatHalfChips(this.#ledger.balanceTicks),
-      available: formatHalfChips(this.#ledger.balanceTicks - (round?.kind === "funded" ? 8 * round.stake : 0)),
-      maxStake: maxA1aStake(this.#ledger.balanceTicks), currentStake: round ? round.kind === "funded" ? round.stake : 0
+      available: formatHalfChips(this.#ledger.balanceTicks - (round?.kind === "funded" ? 2 * round.coveragePerStake * round.stake : 0)),
+      maxStake: this.#ledger.status === "practice" ? 0 : this.#eligibleStake(), currentStake: round ? round.kind === "funded" ? round.stake : 0
         : this.#ledger.lastSettlement?.kind === "funded" ? this.#ledger.lastSettlement.stake : null,
       lastStake: this.#ledger.lastStake,
-      coverage: 4 * stake, fundedRounds: this.#ledger.fundedRounds,
+      coverage: (round?.coveragePerStake ?? 4) * stake, fundedRounds: this.#ledger.fundedRounds,
       practiceRounds: this.#ledger.practiceRounds, completedRounds: this.#ledger.completedRounds,
       totalScore: this.#session?.current.totalScore ?? 0,
       focusRemaining: this.#session?.current.focusRemaining ?? this.#rules.focusPerNight,
@@ -77,14 +95,14 @@ export class BankrollA1aSessionAdapter {
   enterBetting(): void {
     if (!this.#session || this.#session.current.round?.phase !== "complete" || this.#betting) throw new Error("A rodada anterior precisa terminar antes da próxima aposta.");
     if (this.#ledger.completedRounds >= A1A_HORIZON) throw new Error("A Noite A1a já terminou.");
-    this.#ledger = enterA1aPracticeIfNeeded(this.#ledger);
+    this.#ledger = enterA1aPracticeIfNeeded(this.#ledger, this.#practiceEligibleStake());
     this.#betting = true;
   }
 
   startRound(prepared: PreparedCofreFocoRound, stake: number, cofreOverride?: Card): PublicCofreFocoNight {
     if (!this.#betting) throw new Error("A aposta da rodada já foi confirmada.");
     const roundId = `${this.#ledger.id}:round:${this.#ledger.completedRounds + 1}`;
-    const nextLedger = beginA1aRound(this.#ledger, roundId, stake);
+    const nextLedger = beginA1aRound(this.#ledger, roundId, stake, this.#terms());
     const nextSession = this.#session
       ? (() => { this.#session!.nextRound(prepared, cofreOverride); return this.#session!; })()
       : CofreFocoSessionAdapter.start(prepared, this.#rules, A1A_HORIZON, this.#actionRestrictions, cofreOverride);
@@ -98,7 +116,21 @@ export class BankrollA1aSessionAdapter {
   #applyCompleted(view: PublicCofreFocoNight): PublicCofreFocoNight {
     if (view.round?.phase !== "complete" || !this.#roundId) return view;
     if (view.round.score === undefined) throw new Error("O motor concluiu sem score para liquidação A1a.");
-    this.#ledger = settleA1aRound(this.#ledger, this.#roundId, { phase: view.round.phase, score: view.round.score });
+    const stake = this.#ledger.round?.stake ?? 0;
+    const roundKind = this.#ledger.round?.kind;
+    const roundNumber = this.#ledger.completedRounds + 1;
+    const refundTicks = this.#pactHooks.refundTicks?.(view, stake, roundNumber) ?? 0;
+    this.#ledger = settleA1aRound(this.#ledger, this.#roundId, { phase: view.round.phase, score: view.round.score, refundTicks });
+    // A1a normally enters practice when the standard 4s reserve no longer
+    // covers a minimum stake. An available Audácia privilege can instead
+    // cover that minimum at 2s; keep the night funded until that option is
+    // either used or no longer affordable. The default A1a mode is unchanged.
+    if (roundKind === "funded" && this.#ledger.status === "practice" && this.#ledger.completedRounds < A1A_HORIZON) {
+      const defaultEligible = maxA1aStake(this.#ledger.balanceTicks);
+      const eligible = this.#pactHooks.practiceEligibility?.(this.#ledger.balanceTicks,
+        this.#ledger.completedRounds + 1, defaultEligible) ?? defaultEligible;
+      if (eligible > 0) this.#ledger = { ...this.#ledger, status: "active" };
+    }
     return view;
   }
 
@@ -107,7 +139,8 @@ export class BankrollA1aSessionAdapter {
     return this.#applyCompleted(operation());
   }
 
-  compose(partition: Partition) { return this.#transition(() => this.#session!.compose(partition)); }
+  compose(partition: Partition, suppressOpeningNatural = false) { return this.#transition(() => this.#session!.compose(partition, suppressOpeningNatural)); }
+  composeCisao(threeCardHand: HandName) { return this.#transition(() => this.#session!.composeCisao(threeCardHand)); }
   skipRead() { return this.#transition(() => this.#session!.skipRead()); }
   readDealerHole() { return this.#transition(() => this.#session!.readDealerHole()); }
   readDealerHoleWithPactPrivilege() { return this.#transition(() => this.#session!.readDealerHoleWithPactPrivilege()); }

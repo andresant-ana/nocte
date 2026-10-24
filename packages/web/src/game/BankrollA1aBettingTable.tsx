@@ -10,7 +10,7 @@ type Props = {
   onConfirm: (stake: number) => void;
   onPractice: () => void;
   onAbandon: () => void;
-  pact?: Readonly<{ contract: Readonly<{ status: string; pact: string | null; privilege: string; ironFace?: HandName | null; affectedFace?: HandName | null }>; roundsRemaining: number; pactName?: string; renunciation?: string; privilegeText?: string }>;
+  pact?: Readonly<{ contract: Readonly<{ status: string; pact: string | null; privilege: string; ironFace?: HandName | null; affectedFace?: HandName | null; protectedFace?: HandName | null }>; roundsRemaining: number; pactName?: string; renunciation?: string; privilegeText?: string; canUseLastro?: boolean; setLastroProtectionFace?: (face: HandName | null) => void; canUseAudacity?: boolean; audacityIntent?: boolean; setAudacityIntent?: (enabled: boolean) => void }>;
 };
 
 const denominations = [1, 5, 10, 25] as const;
@@ -71,8 +71,8 @@ export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm,
         <div className="table-zone a1a-stake-summary">
           <span>Aposta igual por mão</span><strong>{Number.isSafeInteger(stake) ? `${stake} fichas` : "—"}</strong>
           <span>Exposição inicial total</span><strong>{Number.isSafeInteger(stake) ? `${2 * stake} fichas` : "—"}</strong>
-          <span>Reserva máxima `R = 4s`</span><strong>{Number.isSafeInteger(stake) ? `${4 * stake} fichas` : "—"}</strong>
-          <span>Disponível após reserva</span><strong>{Number.isSafeInteger(stake) ? `${(bankroll.balanceTicks - (8 * stake)) / 2} fichas` : "—"}</strong>
+          <span>Reserva máxima `R = {pact?.audacityIntent ? "2s" : "4s"}`</span><strong>{Number.isSafeInteger(stake) ? `${(pact?.audacityIntent ? 2 : 4) * stake} fichas` : "—"}</strong>
+          <span>Disponível após reserva</span><strong>{Number.isSafeInteger(stake) ? `${(bankroll.balanceTicks - (pact?.audacityIntent ? 4 : 8) * stake) / 2} fichas` : "—"}</strong>
         </div>
         <div className="table-zone a1a-chip-controls">
           <h3>Escolha a exposição</h3>
@@ -86,11 +86,21 @@ export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm,
             <button type="button" className="secondary-action" onClick={clear}>Limpar</button>
             <button type="button" className="secondary-action" disabled={bankroll.lastStake === null || (bankroll.lastStake ?? 0) > bankroll.maxStake} onClick={repeat}>Repetir aposta</button>
           </div>
+          {pact?.canUseLastro && <fieldset className="pact-predeal-choice">
+            <legend>Privilégio do Lastro · proteger nesta rodada</legend>
+            <label><input type="radio" name="lastro-face" checked={pact.contract.protectedFace === "luz"} onChange={() => pact.setLastroProtectionFace?.("luz")} /> Luz</label>
+            <label><input type="radio" name="lastro-face" checked={pact.contract.protectedFace === "sombra"} onChange={() => pact.setLastroProtectionFace?.("sombra")} /> Sombra</label>
+            <button type="button" className="secondary-action" onClick={() => pact.setLastroProtectionFace?.(null)}>Não usar agora</button>
+          </fieldset>}
+          {pact?.canUseAudacity && <label className="pact-predeal-choice">
+            <input type="checkbox" checked={Boolean(pact.audacityIntent)} onChange={(event) => pact.setAudacityIntent?.(event.target.checked)} />
+            Usar Privilégio da Audácia nesta rodada · teto até {Math.floor(bankroll.balanceTicks / 4)} fichas por mão · Dobrar proibido nas duas Faces
+          </label>}
         </div>
       </>}
     </section>
     <section className="table-action-dock a1a-bet-dock" aria-label="Confirmar aposta">
-      <p>Depois da confirmação, a aposta fica travada para as duas mãos. O motor continua na exposição-base 10; a banca aplica o score final por `s/10`. Isso não multiplica pontos nem Foco.</p>
+      <p>Depois da confirmação, a aposta fica travada para as duas mãos. O motor continua na exposição-base 10; a banca aplica o score final por `s/10`. Isso não multiplica pontos nem Foco. Lastro protege uma Face; Audácia reserva apenas `2s` porque Dobrar fica proibido nesta rodada.</p>
       {bankroll.status === "practice"
         ? <button type="button" disabled={preparing} onClick={onPractice}>{preparing ? "Distribuindo..." : "Iniciar rodada gratuita"}</button>
         : <button type="button" disabled={!canConfirm || preparing} onClick={() => onConfirm(stake)}>{preparing ? "Distribuindo..." : "Confirmar aposta e distribuir"}</button>}

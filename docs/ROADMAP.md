@@ -130,3 +130,7 @@ N-058 autoriza o laboratório local versionado `PACT-BOOK-0.1`, com duas ofertas
 ### NOCTE-P7-B — Issue #44
 
 Adendo experimental a N-058 amplia o modo isolado para seis pares completos e doze Pactos jogáveis: P7-A mais Bastião/Reflexo, Penhor/Arremate e Ordem/Caos. As ofertas continuam antes das rodadas 4 e 8, em pares opostos sem repetição; Renúncias permanecem vigentes após o consumo e o Ato anterior expira antes do seguinte. Compra pendente, descartar/transferir/repor, Cofre Selado e preview de Ordem são transições do domínio com regressões determinísticas. Os pares Vínculo, Fortuna e Escolha ficam inelegíveis até P7-C. Não há simulação comparativa nesta fatia, dados humanos ou afirmação de equilíbrio. Regras permanecem EXPERIMENTAL; ver [PACTOS-LAB-P7](PACTOS-LAB-P7.md).
+
+### NOCTE-P7-C — Issue #46
+
+Adendo experimental a N-058 completa `PACT-BOOK-0.1` com os nove pares e dezoito Pactos jogáveis, incluindo Cisão/Balança, Lastro/Audácia e Segunda Chance/Juramento. As ofertas pareadas pré-deal continuam sem repetição e sem empilhamento. Cisão e Balança respeitam composição/natural; Lastro e Audácia alteram apenas o ledger fictício e sua cobertura; Segunda Chance e Juramento são transações de domínio de uso único. Os modos anteriores permanecem sem mudança de comportamento. O catálogo segue EXPERIMENTAL: esta entrega não realiza comparação estratégica, validação humana nem balanceamento. Ver [PACTOS-LAB-P7](PACTOS-LAB-P7.md).

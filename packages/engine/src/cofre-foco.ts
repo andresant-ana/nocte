@@ -32,6 +32,7 @@ export type CofreFocoRules = Readonly<{
 /** Optional, version-specific rules context. Omitted for every existing profile. */
 export type CofreFocoActionRestrictions = Readonly<{
   forbiddenDoubleHand?: HandName;
+  forbiddenManeuverHand?: HandName;
   forbidDouble?: boolean;
   forbidManeuver?: boolean;
   forbidRead?: boolean;
@@ -79,6 +80,9 @@ export type CofreFocoHand = Readonly<{
   maneuverTwentyOne: boolean;
 }>;
 export type CofreFocoRoundPhase = "compose" | "focusWindow" | "player" | "hitPending" | "dealer" | "complete";
+export type CofreFocoOpeningPartition = Partition
+  | Readonly<{ luz: readonly [number, number, number]; sombra: readonly [number] }>
+  | Readonly<{ luz: readonly [number]; sombra: readonly [number, number, number] }>;
 export type CofreFocoRound = Readonly<{
   phase: CofreFocoRoundPhase;
   roundNumber: number;
@@ -90,7 +94,7 @@ export type CofreFocoRound = Readonly<{
   hands?: Readonly<Record<HandName, CofreFocoHand>>;
   currentHand?: HandName;
   naturalPeek: boolean;
-  openingPartition?: Partition;
+  openingPartition?: CofreFocoOpeningPartition;
   openingNaturals?: Readonly<Record<HandName, boolean>>;
   focusAtStart: number;
   focusSpent: Readonly<{ read: number; maneuver: number }>;
@@ -106,6 +110,7 @@ export type CofreFocoRound = Readonly<{
   /** The just-confirmed Compra is visible while a P7 transactional hook is pending. */
   pendingHitHand?: HandName;
   pendingHitCard?: Card;
+  pactComposition?: "cisao-3+1";
 }>;
 
 export type CofreFocoNight = Readonly<{
@@ -170,21 +175,46 @@ function validPartition(partition: Partition): boolean {
   return indices.length === 4 && new Set(indices).size === 4 && indices.every(i => Number.isInteger(i) && i >= 0 && i < 4);
 }
 
-function makeHand(cards: readonly Card[], exposure: number): CofreFocoHand {
-  const openingNatural = handValue(cards).natural;
-  return { cards: [...cards], exposure, status: openingNatural ? "stood" : "playing", openingNatural, maneuverTwentyOne: false };
+function makeHand(cards: readonly Card[], exposure: number, suppressOpeningNatural = false): CofreFocoHand {
+  const openingNatural = !suppressOpeningNatural && handValue(cards).natural;
+  const value = handValue(cards);
+  return { cards: [...cards], exposure, status: value.bust ? "busted" : openingNatural ? "stood" : "playing", openingNatural, maneuverTwentyOne: false };
 }
 
-export function composeCofreFoco(night: CofreFocoNight, partition: Partition): CofreFocoNight {
+export function composeCofreFoco(night: CofreFocoNight, partition: Partition, options: Readonly<{ suppressOpeningNatural?: boolean }> = {}): CofreFocoNight {
   const round = night.round;
   if (night.status !== "active" || !round || round.phase !== "compose") throw new Error("Composition is illegal outside compose phase.");
   if (!validPartition(partition)) throw new Error("Invalid partition: each original card must be used exactly once.");
   const hands: Record<HandName, CofreFocoHand> = {
-    luz: makeHand(partition.luz.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure),
-    sombra: makeHand(partition.sombra.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure),
+    luz: makeHand(partition.luz.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure, options.suppressOpeningNatural),
+    sombra: makeHand(partition.sombra.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure, options.suppressOpeningNatural),
   };
   const openingNaturals = { luz: hands.luz.openingNatural, sombra: hands.sombra.openingNatural };
   const composed: CofreFocoRound = { ...round, hands, openingPartition: clone(partition), openingNaturals };
+  if (round.naturalPeek) {
+    const settled = dealerNaturalSettlement(night.rules, hands, [round.dealerUp, round.dealerHole]);
+    return completeRound(night, { ...composed, phase: "complete", focusWindowOpened: false, settlement: settled,
+      score: settled.luz.score + settled.sombra.score });
+  }
+  if (!hasPendingHand(composed)) return { ...night, round: { ...composed, phase: "dealer", focusWindowOpened: false,
+    readDecisionMade: true, maneuverDecisionMade: true } };
+  return { ...night, round: { ...composed, phase: "focusWindow", focusWindowOpened: true } };
+}
+
+/** P7 Cisão-only 3+1 composition. The exceptional layout never grants natural status. */
+export function composePactBookCisao(night: CofreFocoNight, threeCardHand: HandName): CofreFocoNight {
+  const round = night.round;
+  if (night.status !== "active" || !round || round.phase !== "compose") throw new Error("Composição Cisão só é legal antes da composição final.");
+  if (threeCardHand !== "luz" && threeCardHand !== "sombra") throw new Error("Cisão exige escolher Luz ou Sombra para três cartas.");
+  const partition: CofreFocoOpeningPartition = threeCardHand === "luz"
+    ? { luz: [0, 1, 2] as const, sombra: [3] as const }
+    : { luz: [3] as const, sombra: [0, 1, 2] as const };
+  const hands: Record<HandName, CofreFocoHand> = {
+    luz: makeHand(partition.luz.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure, true),
+    sombra: makeHand(partition.sombra.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure, true),
+  };
+  const composed: CofreFocoRound = { ...round, hands, openingPartition: clone(partition),
+    openingNaturals: { luz: false, sombra: false }, pactComposition: "cisao-3+1" };
   if (round.naturalPeek) {
     const settled = dealerNaturalSettlement(night.rules, hands, [round.dealerUp, round.dealerHole]);
     return completeRound(night, { ...composed, phase: "complete", focusWindowOpened: false, settlement: settled,
