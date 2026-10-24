@@ -12,7 +12,7 @@ export type PactPlaytestEvent =
   | Readonly<{ type: "choice"; round: 4 | 8; act: 2 | 3; choice: PactId | "refused"; affectedFace: "luz" | "sombra" | null }>
   | Readonly<{ type: "renunciation-active"; round: number; act: 2 | 3; pact: PactId; affectedFace: "luz" | "sombra" | null }>
   | Readonly<{ type: "renunciation-blocked"; round: number; act: 2 | 3; pact: PactId }>
-  | Readonly<{ type: "privilege-consumed" | "privilege-expired"; round: number; act: 2 | 3; pact: PactId }> 
+  | Readonly<{ type: "privilege-consumed" | "privilege-expired"; round: number; act: 2 | 3; pact: PactId }>
   | Readonly<{ type: "round-summary"; round: number; purchases: number; stops: number; doubles: number; maneuvers: number; reads: number; focusSpent: number }>;
 
 export type PactPlaytestAnswers = Readonly<{
