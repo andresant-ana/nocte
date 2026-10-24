@@ -62,6 +62,15 @@ Esta tabela é a célula `myopic` / aposta fixa 1, e mostra diferença **pareada
 - Tempo apresentou uso registrado do Privilégio mas diferença exatamente zero de score e frequências médias idênticas de Pedir/Parar/Dobrar em todas as sementes na fatia fixa-1; isso não demonstra irrelevância geral, mas é um sinal de que Penhor/Arremate não alteraram decisões/resultado observáveis neste experimento. Recomenda-se auditar essa interação e projetar cenários em que o Cofre selado ou a escolha entre candidatos mude a política antes de qualquer balanceamento.
 - Lastro/Audácia também ficaram próximos de zero em score nesta fatia fixa-1. Seu valor principal pode ser contábil e dependente da política de stake; os resultados de banca e as demais stakes precisam ser examinados separadamente, sem confundir lucro com skill score.
 
+### Recomendações priorizadas
+
+1. **Auditar Tempo antes de balancear:** adicionar cenários determinísticos em que um Cofre selado ou a escolha entre candidatos muda o valor/ação; confirmar impacto em mão, score e banco, além do contador de uso. Se não alterar escolhas sob nenhuma política competente, revisar o contrato somente em futura decisão aprovada.
+2. **Estudar sinais contextuais, não médias isoladas:** aumentar a amostra pareada e estratificar por estados elegíveis, Renúncia acionada e valor do Privilégio para Vigília, Caos, Bastião e Juramento. Corrigir ou declarar a multiplicidade ao comparar várias famílias, políticas e métricas.
+3. **Medir planejamento intertemporal real:** substituir a heurística de atraso por uma política de horizonte finito ou busca roll-out sobre estados públicos e oportunidades restantes; comparar decisão de gastar/guardar contra myopic em estados idênticos e reportar custo computacional.
+4. **Levar hipóteses a playtest humano instrumentado:** somente depois de confirmar transições/efeitos, investigar compreensão, variedade de decisões e preferência por aceitar/recusar. Não usar este estudo de agente como evidência de diversão ou retenção.
+
+Nenhuma recomendação autoriza mudança de regras ou balanceamento. Os itens 1–3 são investigações de modelo; o item 4 depende de estudo humano consentido.
+
 ### Leituras e candidatos para investigação
 
 1. A preferência global entre A/B/recusa e a frequência de inversões contextuais são exploratórias; exigir IC pareado e recortes antes de propor patch.
