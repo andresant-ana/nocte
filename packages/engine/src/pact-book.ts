@@ -2,9 +2,10 @@ import type { Action, Card, HandName } from "./index.js";
 import type { CofreFocoActionRestrictions } from "./cofre-foco.js";
 
 export const PACT_BOOK_VERSION = "PACT-BOOK-0.1" as const;
-export type PactFamily = "revelation" | "dominion" | "focus" | "sacrifice" | "time" | "destiny";
+export type PactFamily = "revelation" | "dominion" | "focus" | "sacrifice" | "time" | "destiny" | "bonding" | "fortune" | "choice";
 export type PactId = "veil" | "lighthouse" | "iron" | "impetus" | "vigil" | "flare"
-  | "bastion" | "reflection" | "bond" | "finale" | "order" | "chaos";
+  | "bastion" | "reflection" | "bond" | "finale" | "order" | "chaos"
+  | "cisao" | "balanca" | "lastro" | "audacity" | "secondChance" | "oath";
 export type PactUse = "none" | "available" | "consumed" | "expired";
 export type PactChoice = PactId | "refused";
 
@@ -21,12 +22,19 @@ export const PACT_BOOK_PACTS = Object.freeze({
   impetus: { id: "impetus", name: "Ímpeto", family: "dominion", pairId: "dominion", eligibility: "p7-a", activationWindow: "after-first-hit", uses: 1, privilege: "Uma vez, depois de exatamente uma Compra, Dobrar, receber uma carta e encerrar a mão.", renunciation: "Manobra fica indisponível durante o Ato." },
   vigil: { id: "vigil", name: "Vigília", family: "focus", pairId: "focus", eligibility: "p7-a", activationWindow: "late-period", uses: 1, privilege: "Uma Leitura ou Manobra gratuita e legal na parte final do Ato.", renunciation: "Leitura e Manobra normais ficam indisponíveis na parte inicial." },
   flare: { id: "flare", name: "Fulgor", family: "focus", pairId: "focus", eligibility: "p7-a", activationWindow: "early-period", uses: 1, privilege: "Uma Leitura ou Manobra gratuita e legal na parte inicial do Ato.", renunciation: "Leitura e Manobra normais ficam indisponíveis na parte final." },
+  cisao: { id: "cisao", name: "Cisão", family: "bonding", pairId: "bonding", eligibility: "p7-c", activationWindow: "composition", uses: 1, privilege: "Uma vez no Ato, distribuir as quatro cartas iniciais em 3+1, escolhendo a Face com três cartas.", renunciation: "Dobrar fica indisponível para ambas as Faces durante o Ato." },
+  balanca: { id: "balanca", name: "Balança", family: "bonding", pairId: "bonding", eligibility: "p7-c", activationWindow: "after-composition-proposal", uses: 1, privilege: "Após propor uma composição, revela a categoria da carta fechada e permite recompor as quatro cartas uma vez antes da confirmação final.", renunciation: "Manobra fica indisponível durante o Ato." },
+  lastro: { id: "lastro", name: "Lastro", family: "fortune", pairId: "fortune", eligibility: "p7-c", activationWindow: "before-deal", uses: 1, privilege: "Antes da distribuição, protege uma Face; se ela perder, devolve metade da perda financeira, inclusive após Dobrar.", renunciation: "A aposta máxima por mão é max(1, floor(B/8)), sem forçar prática se a entrada mínima couber." },
+  audacity: { id: "audacity", name: "Audácia", family: "fortune", pairId: "fortune", eligibility: "p7-c", activationWindow: "before-deal", uses: 1, privilege: "Antes da distribuição, permite apostar até floor(B/2) por mão nesta rodada; Dobrar fica proibido para ambas as Faces nesta rodada.", renunciation: "Manobra fica indisponível durante o Ato." },
+  secondChance: { id: "secondChance", name: "Segunda Chance", family: "choice", pairId: "choice", eligibility: "p7-c", activationWindow: "after-stand", uses: 1, privilege: "Após Parar e antes de avançar, reabre essa Face para exatamente uma Compra adicional, seguida obrigatoriamente de encerramento.", renunciation: "Leitura fica indisponível durante o Ato." },
+  oath: { id: "oath", name: "Juramento", family: "choice", pairId: "choice", eligibility: "p7-c", activationWindow: "before-player-action", uses: 1, privilege: "Revela a categoria da próxima Compra de uma Face e permite assumir compromisso irrevogável de Comprar uma vez e então Parar.", renunciation: "A Face escolhida não pode Dobrar nem ser alvo de Manobra durante o Ato." },
 } as const);
 
-export const PACT_BOOK_FAMILIES = Object.freeze(["revelation", "dominion", "focus", "sacrifice", "time", "destiny"] as const);
+export const PACT_BOOK_FAMILIES = Object.freeze(["revelation", "dominion", "focus", "sacrifice", "time", "destiny", "bonding", "fortune", "choice"] as const);
 const pairByFamily: Readonly<Record<PactFamily, readonly [PactId, PactId]>> = {
   revelation: ["veil", "lighthouse"], dominion: ["iron", "impetus"], focus: ["vigil", "flare"],
   sacrifice: ["bastion", "reflection"], time: ["bond", "finale"], destiny: ["order", "chaos"],
+  bonding: ["cisao", "balanca"], fortune: ["lastro", "audacity"], choice: ["secondChance", "oath"],
 };
 export type PactActState = Readonly<{
   status: "offered" | "active" | "refused" | "expired";
@@ -41,6 +49,7 @@ export type PactActState = Readonly<{
   usedRound: number | null;
   sealedRound: number | null;
   blockedManeuverRound: number | null;
+  audacityRound: number | null;
 }>;
 export type PactBookState = Readonly<{
   version: typeof PACT_BOOK_VERSION;
@@ -85,16 +94,17 @@ export function offerPactBook(state: PactBookState, round: number, seed: string,
   const [startRound, endRound] = round === 4 ? [4, 7] as const : [8, 10] as const;
   const current: PactActState = Object.freeze({ status: "offered", offerRound: round, startRound, endRound, family,
     options: Object.freeze([...pairByFamily[family]]) as unknown as readonly [PactId, PactId], choice: null,
-    affectedFace: null, privilege: "none", usedRound: null, sealedRound: null, blockedManeuverRound: null });
+    affectedFace: null, privilege: "none", usedRound: null, sealedRound: null, blockedManeuverRound: null, audacityRound: null });
   return Object.freeze({ ...state, firstFamily: round === 4 ? family : state.firstFamily, offers: Object.freeze([...state.offers, current]), current, fallbackReason: null });
 }
 
 export function signPactBook(state: PactBookState, pact: PactId, face?: HandName): PactBookState {
   const offer = state.current;
   if (!offer || offer.status !== "offered" || !offer.options.includes(pact)) throw new Error("Pacto não pertence à oferta ativa.");
-  if ((pact === "iron" || pact === "bastion") && face !== "luz" && face !== "sombra") throw new Error(`${PACT_BOOK_PACTS[pact].name} exige escolher a Face da Renúncia.`);
-  if (pact !== "iron" && pact !== "bastion" && face !== undefined) throw new Error("Este Pacto não exige escolher uma Face.");
-  const current = Object.freeze({ ...offer, status: "active" as const, choice: pact, affectedFace: pact === "iron" || pact === "bastion" ? face! : null, privilege: "available" as const });
+  if (["iron", "bastion", "oath"].includes(pact) && face !== "luz" && face !== "sombra") throw new Error(`${PACT_BOOK_PACTS[pact].name} exige escolher uma Face.`);
+  if (!["iron", "bastion", "oath"].includes(pact) && face !== undefined) throw new Error("Este Pacto não exige escolher uma Face.");
+  const current = Object.freeze({ ...offer, status: "active" as const, choice: pact,
+    affectedFace: ["iron", "bastion", "oath"].includes(pact) ? face! : null, privilege: "available" as const });
   return Object.freeze({ ...state, offers: replaceCurrent(state.offers, offer.offerRound, current), current });
 }
 export function refusePactBook(state: PactBookState): PactBookState {
@@ -129,6 +139,14 @@ export function markPactBookCofreSealed(state: PactBookState, round: number, tar
   const next = Object.freeze({ ...current, privilege: "consumed" as const, usedRound: round, sealedRound: round });
   return Object.freeze({ ...state, current: next, offers: replaceCurrent(state.offers, current.offerRound, next) });
 }
+/** Audácia is committed atomically with the selected pre-deal stake. */
+export function activatePactBookAudacity(state: PactBookState, round: number): PactBookState {
+  const current = state.current;
+  if (!current || current.status !== "active" || current.choice !== "audacity" || current.privilege !== "available"
+    || round < current.startRound || round > current.endRound) throw new Error("Privilégio da Audácia indisponível nesta rodada.");
+  const next = Object.freeze({ ...current, privilege: "consumed" as const, usedRound: round, audacityRound: round });
+  return Object.freeze({ ...state, current: next, offers: replaceCurrent(state.offers, current.offerRound, next) });
+}
 export function expirePactBook(state: PactBookState, status: "complete" | "abandoned" = "complete"): PactBookState {
   const current = state.current;
   if (!current) return Object.freeze({ ...state, status });
@@ -143,13 +161,21 @@ export function pactBookRestrictions(state: PactBookState, round: number): Cofre
   const pact = state.current;
   if (!pact || pact.status !== "active" || round < pact.startRound || round > pact.endRound) return undefined;
   if (pact.choice === "iron" && pact.affectedFace) return Object.freeze({ forbiddenDoubleHand: pact.affectedFace });
-  if (pact.choice === "impetus") return Object.freeze({ forbidManeuver: true });
+  if (pact.choice === "impetus" || pact.choice === "audacity") return Object.freeze({ forbidManeuver: true,
+    ...(pact.choice === "audacity" && pact.audacityRound === round ? { forbidDouble: true } : {}) });
   if (pact.choice === "bastion" && pact.affectedFace) return Object.freeze({ requiredHitBeforeStandHand: pact.affectedFace, autoStandAt21Hand: pact.affectedFace });
   if (pact.choice === "reflection") return Object.freeze({ forbidDouble: true });
   if (pact.choice === "bond" && pact.sealedRound === round) return Object.freeze({ forbidManeuver: true });
   if (pact.choice === "finale" && pact.blockedManeuverRound === round) return Object.freeze({ forbidManeuver: true });
   if (pact.choice === "order") return Object.freeze({ forbidManeuver: true });
   if (pact.choice === "chaos") return Object.freeze({ forbidRead: true });
+  if (pact.choice === "cisao") return Object.freeze({ forbidDouble: true });
+  if (pact.choice === "balanca") return Object.freeze({ forbidManeuver: true });
+  if (pact.choice === "lastro" || pact.choice === "oath" && pact.affectedFace) {
+    return Object.freeze({ ...(pact.choice === "lastro" ? {} : { forbiddenDoubleHand: pact.affectedFace! }),
+      ...(pact.choice === "oath" ? { forbiddenManeuverHand: pact.affectedFace! } : {}) });
+  }
+  if (pact.choice === "secondChance") return Object.freeze({ forbidRead: true });
   return undefined;
 }
 export function assertPactBookActionAllowed(state: PactBookState, round: number, hand: HandName, action: Action, cards?: readonly Card[]): void {
@@ -160,6 +186,12 @@ export function assertPactBookActionAllowed(state: PactBookState, round: number,
   }
   if (action === "stand" && restrictions?.requiredHitBeforeStandHand === hand && (cards?.length ?? 2) <= 2) {
     throw new Error("A Renúncia do Bastião exige uma Compra normal antes de Parar nesta Face.");
+  }
+}
+export function assertPactBookManeuverAllowed(state: PactBookState, round: number, hand: HandName): void {
+  const restrictions = pactBookRestrictions(state, round);
+  if (restrictions?.forbidManeuver || restrictions?.forbiddenManeuverHand === hand) {
+    throw new Error("Manobra está proibida pela Renúncia vigente.");
   }
 }
 export function canUsePactBookPrivilege(state: PactBookState, round: number, pactId?: PactId): boolean {

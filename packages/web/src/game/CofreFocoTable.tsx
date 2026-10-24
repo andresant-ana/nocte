@@ -47,6 +47,21 @@ type PactActions = Readonly<{
   arremateOptions?: readonly [Card, Card] | null;
   canUseOrder?: boolean;
   orderPreview?: Readonly<{ hand: HandName; card: Card }> | null;
+  canUseCisao?: boolean;
+  composeCisao?: (threeCardHand: HandName, singleCardIndex: number) => PublicCofreFocoNight;
+  canUseBalanca?: boolean;
+  balancaProposalMade?: boolean;
+  balancaRecomposePending?: boolean;
+  proposeBalanca?: (partition: Partition) => void;
+  revealBalancaCategory?: () => string;
+  balancaCategory?: string | null;
+  canUseSecondChance?: boolean;
+  secondChancePending?: HandName | null;
+  resolveSecondChance?: (accept: boolean) => PublicCofreFocoNight;
+  canUseJuramento?: boolean;
+  juramentoPreview?: Readonly<{ hand: HandName; category: string }> | null;
+  revealJuramento?: () => Readonly<{ hand: HandName; category: string }>;
+  resolveJuramento?: (accept: boolean) => PublicCofreFocoNight;
   resolvePendingHit?: (choice: "normal" | "bastion" | "reflection" | "chaos") => PublicCofreFocoNight;
   sealCofre?: () => PublicCofreFocoNight;
   activateArremate?: () => readonly [Card, Card];
@@ -103,6 +118,7 @@ function phaseLabel(night: VisibleTableNight): string {
 export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, cardIdentityMode = false, pact }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
+  const [cisaoSingleIndex, setCisaoSingleIndex] = useState(3);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
   const [maneuverChooserOpen, setManeuverChooserOpen] = useState(false);
   const [confirmation, setConfirmation] = useState<"read" | "read-privilege" | "maneuver" | "maneuver-privilege" | null>(null);
@@ -150,7 +166,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
       setLocalError(null);
       const next = operation();
       onNightChange(next as PublicCofreFocoNight);
-      if (next.round?.roundNumber !== round?.roundNumber) setSelectedPartition(0);
+      if (next.round?.roundNumber !== round?.roundNumber) { setSelectedPartition(0); setCisaoSingleIndex(3); }
       succeeded = true;
     } catch (cause) {
       setLocalError(cause instanceof Error ? cause.message : "Ação indisponível. Confira o estado da rodada.");
@@ -211,6 +227,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
                   <span>Renúncia: {pact.renunciationText ?? (pact.contract.pact === "veil" ? "upcard oculta na composição" : `sem Dobrar ${pact.contract.ironFace === "luz" ? "Luz" : "Sombra"}`)}</span>
                   <span>Privilégio: {pact.privilegeText ?? (pact.contract.pact === "veil" ? "Leitura" : "Manobra")} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : pact.contract.privilege === "expired" ? "Expirado" : "—"}</span>
                   {"affectedFace" in pact.contract && pact.contract.affectedFace && <span>Face afetada: {pact.contract.affectedFace === "luz" ? "Luz" : "Sombra"}</span>}
+                  {"protectedFace" in pact.contract && pact.contract.protectedFace && <span>Proteção desta rodada: {pact.contract.protectedFace === "luz" ? "Luz" : "Sombra"}</span>}
                   {pact.focusAbilityRenunciation && <span>{pact.focusAbilityRenunciation}</span>}
                 </> : null}
           </p>}
@@ -316,7 +333,21 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
               </label>;
             })}
           </fieldset>
-          <button type="button" disabled={Boolean(pact?.arremateOptions)} onClick={() => update(() => session.compose(partitionsForRound[selectedPartition]!))}>Confirmar composição</button>
+          {pact?.canUseCisao && <div className="pact-composition-controls" role="group" aria-label="Composição excepcional Cisão">
+            <p>Cisão · distribuição 3+1 · nenhum natural nesta composição.</p>
+             <label htmlFor="cisao-single-card">Carta que ficará sozinha</label>
+             <select id="cisao-single-card" value={cisaoSingleIndex} onChange={event => setCisaoSingleIndex(Number(event.target.value))}>
+               {round.originalCards.map((card, index) => <option key={index} value={index}>Carta {index + 1} · {faceLabel(card)}</option>)}
+             </select>
+            <button type="button" className="secondary-action" onClick={() => update(() => pact.composeCisao!("luz", cisaoSingleIndex))}>Cisão · 3 Luz + 1 Sombra</button>
+            <button type="button" className="secondary-action" onClick={() => update(() => pact.composeCisao!("sombra", cisaoSingleIndex))}>Cisão · 1 Luz + 3 Sombra</button>
+          </div>}
+          {pact?.balancaProposalMade && <p className="ability-status" role="status">Balança · proposta inicial registrada. A confirmação final ainda não ocorreu.</p>}
+          {pact?.balancaCategory && <p className="ability-status" role="status">Balança · carta fechada do dealer: {pact.balancaCategory}. O valor exato continua oculto.</p>}
+          {pact?.canUseBalanca && <button type="button" className="secondary-action" disabled={Boolean(pact?.arremateOptions)} onClick={() => update(() => { pact.proposeBalanca!(partitionsForRound[selectedPartition]!); pact.revealBalancaCategory!(); return session.current; })}>Balança · revelar categoria e recompor</button>}
+          {pact?.balancaRecomposePending
+            ? <button type="button" disabled={Boolean(pact?.arremateOptions)} onClick={() => update(() => session.compose(partitionsForRound[selectedPartition]!))}>Confirmar composição revista · sem bônus de natural</button>
+            : <button type="button" disabled={Boolean(pact?.arremateOptions)} onClick={() => update(() => session.compose(partitionsForRound[selectedPartition]!))}>Confirmar composição</button>}
         </>}
 
         {night.status === "active" && round.phase === "focusWindow" && <>
@@ -367,9 +398,20 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
         </>}
 
         {night.status === "active" && round.phase === "player" && <div className="action-row" role="group" aria-label={`Ações para ${round.currentHand === "luz" ? "Luz" : "Sombra"}`}>
+          {pact?.canUseJuramento && <button type="button" className="secondary-action" onClick={() => update(() => { pact.revealJuramento!(); return session.current; })}>Juramento · revelar categoria da próxima Compra (consome)</button>}
+          {pact?.juramentoPreview && <div className="pact-pending-decision" role="group" aria-label="Decisão do Juramento">
+            <p>Face {pact.juramentoPreview.hand === "luz" ? "Luz" : "Sombra"} · próxima Compra: {pact.juramentoPreview.category}. O Privilégio já foi consumido.</p>
+            <button type="button" onClick={() => update(() => pact.resolveJuramento!(true))}>Assumir compromisso · Comprar e Parar</button>
+            <button type="button" className="secondary-action" onClick={() => update(() => pact.resolveJuramento!(false))}>Declinar informação</button>
+          </div>}
           {pact?.canUseOrder && <button type="button" className="secondary-action" onClick={() => update(() => { pact.revealOrderPreview!(); return session.current; })}>Ordem · revelar próxima Compra (consome Privilégio)</button>}
           {pact?.orderPreview && <p className="ability-status" role="status">Ordem · próxima Compra de {pact.orderPreview.hand === "luz" ? "Luz" : "Sombra"}: {faceLabel(pact.orderPreview.card)}. Comprar recebe essa carta.</p>}
           {session.legalActions.map(action => <button type="button" key={action} disabled={Boolean(pact?.orderPreview && action === "double")} onClick={() => update(() => session.act(action))}>{actionLabels[action]}</button>)}
+          {pact?.secondChancePending && <div className="pact-pending-decision" role="group" aria-label="Segunda Chance">
+            <p>Face {pact.secondChancePending === "luz" ? "Luz" : "Sombra"} parou. Reabrir para exatamente uma Compra?</p>
+            <button type="button" disabled={!pact.canUseSecondChance} onClick={() => update(() => pact.resolveSecondChance!(true))}>Usar Segunda Chance</button>
+            <button type="button" className="secondary-action" onClick={() => update(() => pact.resolveSecondChance!(false))}>Manter Parar</button>
+          </div>}
           {pact?.canUseImpetusDouble && <button type="button" className="secondary-action" onClick={() => update(() => pact.impetusDouble!())}>Privilégio de Ímpeto · Dobrar após Compra</button>}
         </div>}
         {night.status === "active" && round.phase === "hitPending" && <div className="action-row" role="group" aria-label="Resolver a Compra pendente">

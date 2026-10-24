@@ -4,6 +4,7 @@ import {
   applyCofreFocoAction,
   beginRound,
   composeCofreFoco,
+  composePactBookCisao,
   continueAfterAbilities,
   createNight,
   legalCofreFocoActions,
@@ -77,8 +78,13 @@ export class CofreFocoSessionAdapter {
     return { ...current, canDecideManeuver: afterReadSkip.canDecideManeuver, maneuverTargets: afterReadSkip.maneuverTargets };
   }
 
-  compose(partition: Partition): PublicCofreFocoNight {
-    this.#night = composeCofreFoco(this.#night, partition);
+  compose(partition: Partition, suppressOpeningNatural = false): PublicCofreFocoNight {
+    this.#night = composeCofreFoco(this.#night, partition, { suppressOpeningNatural });
+    return this.current;
+  }
+
+  composeCisao(threeCardHand: HandName, singleCardIndex = 3): PublicCofreFocoNight {
+    this.#night = composePactBookCisao(this.#night, threeCardHand, singleCardIndex);
     return this.current;
   }
 

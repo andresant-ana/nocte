@@ -4,9 +4,9 @@ import { PACT_BOOK_FAMILIES, PACT_BOOK_PACTS, createPactBook, drawPactFamily, en
   markPactBookCofreSealed, canUsePactBookPrivilege } from "./pact-book.js";
 
 describe("PACT-BOOK-0.1 staged catalogue and offers", () => {
-  it("exposes only complete versioned first-delivery pairs", () => {
-    expect(Object.keys(PACT_BOOK_PACTS)).toHaveLength(12);
-    expect(PACT_BOOK_FAMILIES).toEqual(["revelation", "dominion", "focus", "sacrifice", "time", "destiny"]);
+  it("exposes all nine complete versioned pairs and eighteen pacts", () => {
+    expect(Object.keys(PACT_BOOK_PACTS)).toHaveLength(18);
+    expect(PACT_BOOK_FAMILIES).toEqual(["revelation", "dominion", "focus", "sacrifice", "time", "destiny", "bonding", "fortune", "choice"]);
     expect(new Set(Object.values(PACT_BOOK_PACTS).map(p => p.family))).toEqual(new Set(PACT_BOOK_FAMILIES));
   });
   it("reproduces family draws independently by offer domain and uniformly rejects biased tails", () => {
@@ -19,7 +19,7 @@ describe("PACT-BOOK-0.1 staged catalogue and offers", () => {
       const family = drawPactFamily(`distribution-${i}`, 4)!;
       counts.set(family, (counts.get(family) ?? 0) + 1);
     }
-    for (const family of PACT_BOOK_FAMILIES) expect(counts.get(family)).toBeGreaterThan(1600);
+    for (const family of PACT_BOOK_FAMILIES) expect(counts.get(family)).toBeGreaterThan(1000);
   });
   it("offers opposite complete pairs twice, forbids repeats even after refusal, and expires before Ato III", () => {
     let state = offerPactBook(createPactBook(), 4, "night-seed");
@@ -80,5 +80,25 @@ describe("PACT-BOOK-0.1 staged catalogue and offers", () => {
     const thirdAct = offerPactBook(enterPactBookRound(first, 8), 8, "finale-last", ["time"]);
     const finale = signPactBook(thirdAct, "finale");
     expect(canUsePactBookPrivilege(finale, 10)).toBe(false);
+  });
+  it("enforces P7-C renunciations and atomic Audácia scope through the Act", async () => {
+    const { activatePactBookAudacity, assertPactBookManeuverAllowed } = await import("./pact-book.js");
+    const signed = (family: "bonding" | "fortune" | "choice", pact: "cisao" | "balanca" | "lastro" | "audacity" | "secondChance" | "oath", face?: "luz" | "sombra") =>
+      signPactBook(offerPactBook(createPactBook(), 4, `p7c-${pact}`, [family]), pact, face);
+    const cisao = signed("bonding", "cisao");
+    expect(pactBookRestrictions(cisao, 4)).toMatchObject({ forbidDouble: true });
+    expect(pactBookRestrictions(cisao, 7)).toMatchObject({ forbidDouble: true });
+    expect(pactBookRestrictions(signed("bonding", "balanca"), 5)).toMatchObject({ forbidManeuver: true });
+    expect(pactBookRestrictions(signed("fortune", "audacity"), 4)).toMatchObject({ forbidManeuver: true });
+    const audacity = activatePactBookAudacity(signed("fortune", "audacity"), 5);
+    expect(pactBookRestrictions(audacity, 5)).toMatchObject({ forbidDouble: true, forbidManeuver: true });
+    expect(pactBookRestrictions(audacity, 6)).toMatchObject({ forbidManeuver: true });
+    expect(() => activatePactBookAudacity(audacity, 5)).toThrow(/indisponível/i);
+    expect(pactBookRestrictions(signed("choice", "secondChance"), 4)).toMatchObject({ forbidRead: true });
+    const oath = signed("choice", "oath", "luz");
+    expect(pactBookRestrictions(oath, 4)).toMatchObject({ forbiddenDoubleHand: "luz", forbiddenManeuverHand: "luz" });
+    expect(() => assertPactBookManeuverAllowed(oath, 4, "luz")).toThrow(/Manobra/i);
+    expect(() => assertPactBookManeuverAllowed(oath, 4, "sombra")).not.toThrow();
+    expect(() => signPactBook(offerPactBook(createPactBook(), 4, "oath-invalid", ["choice"]), "oath")).toThrow(/Face/i);
   });
 });

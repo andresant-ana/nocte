@@ -642,7 +642,7 @@ test("PACT-LAB-0.1 enforces Iron on the chosen Face, supports free Manobra, and 
   await expect(page.getByRole("button", { name: "Confirmar composição" })).toBeVisible();
 });
 
-test("P7-B opens two seeded-independent pair offers at rounds four and eight without repeats and fits viewport", async ({ page }, testInfo) => {
+test("P7 opens two pair offers at rounds four and eight without repeats and fits viewport", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.getByLabel("Modo de jogo").selectOption("pact-book-a1a");
   await page.getByRole("button", { name: "Jogar livre" }).click();
@@ -663,7 +663,7 @@ test("P7-B opens two seeded-independent pair offers at rounds four and eight wit
     throw new Error("Oferta P7 não apareceu antes do limite de navegação.");
   };
   const offerFour = await advanceToOffer();
-  await expect(offerFour).toHaveAttribute("data-pact-family", /^(revelation|dominion|focus|sacrifice|time|destiny)$/);
+  await expect(offerFour).toHaveAttribute("data-pact-family", /^(revelation|dominion|focus|sacrifice|time|destiny|bonding|fortune|choice)$/);
   const firstFamily = await offerFour.getAttribute("data-pact-family");
   for (const viewport of [{ width: 1366, height: 768 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
@@ -734,7 +734,7 @@ test("P7-B Bastião intercepts a busting Compra and resolves it on the table", a
 });
 
 test("P7-B Ordem reveals one card and the next Comprar receives it", async ({ page }) => {
-  const offer = await reachP7BOffer(page, "00000000000000000000000000000002");
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000007");
   await expect(offer).toHaveAttribute("data-pact-family", "destiny");
   await page.getByRole("button", { name: "Assinar Ordem" }).click();
   await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
@@ -745,4 +745,88 @@ test("P7-B Ordem reveals one card and the next Comprar receives it", async ({ pa
   await page.getByRole("button", { name: "Comprar" }).click();
   await expect(page.getByText("Total 26 · estourou")).toBeVisible();
   await expect(page.getByText(/Privilégio: Revela exatamente a próxima carta que uma Face ativa receberia; o Privilégio é consumido ao revelar\. · Consumido/)).toBeVisible();
+});
+
+test("P7-C Cisão creates the 3+1 composition and removes both Dobrar actions", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "0000000000000000000000000000000c");
+  await expect(offer).toHaveAttribute("data-pact-family", "bonding");
+  await page.getByRole("button", { name: "Assinar Cisão" }).click();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByLabel("Carta que ficará sozinha").selectOption("1");
+  await page.getByRole("button", { name: "Cisão · 3 Luz + 1 Sombra" }).click();
+  await expect(page.getByRole("list", { name: "Cartas da mão Luz" }).getByRole("listitem")).toHaveCount(3);
+  await expect(page.getByRole("list", { name: "Cartas da mão Sombra" }).getByRole("listitem")).toHaveCount(1);
+  await expect(page.getByText("Privilégio: Uma vez no Ato, distribuir as quatro cartas iniciais em 3+1, escolhendo a Face com três cartas. · Consumido")).toBeVisible();
+});
+
+test("P7-C Balança reveals only a category and requires one revised composition", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "0000000000000000000000000000000c");
+  await expect(offer).toHaveAttribute("data-pact-family", "bonding");
+  await page.getByRole("button", { name: "Assinar Balança" }).click();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByRole("button", { name: "Balança · revelar categoria e recompor" }).click();
+  await expect(page.getByText("Balança · carta fechada do dealer: Alta (7–K). O valor exato continua oculto.")).toBeVisible();
+  await expect(page.getByRole("list", { name: "Cartas visíveis do dealer" }).getByRole("img", { name: "Carta do dealer fechada" })).toBeVisible();
+  await page.getByRole("button", { name: "Confirmar composição revista · sem bônus de natural" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="focusWindow"]')).toBeVisible();
+});
+
+test("P7-C Lastro selects one protected Face before the deal", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000000");
+  await expect(offer).toHaveAttribute("data-pact-family", "fortune");
+  await page.getByRole("button", { name: "Assinar Lastro" }).click();
+  await page.getByRole("radio", { name: "Luz" }).check();
+  await expect(page.getByRole("radio", { name: "Luz" })).toBeChecked();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="compose"]')).toBeVisible();
+  await expect(page.getByText(/Privilégio: Antes da distribuição, protege uma Face/)).toBeVisible();
+  await expect(page.getByText("Proteção desta rodada: Luz")).toBeVisible();
+});
+
+test("P7-C Audácia exposes the 2s-covered stake and prohibits both doubles", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000000");
+  await expect(offer).toHaveAttribute("data-pact-family", "fortune");
+  await page.getByRole("button", { name: "Assinar Audácia" }).click();
+  const audacity = page.getByRole("checkbox", { name: /Usar Privilégio da Audácia nesta rodada/ });
+  const balanceText = await page.locator('.hud-stat[aria-label="Banca A1a"] strong').innerText();
+  const balance = Number(balanceText.match(/[\d,.]+/)?.[0].replace(",", "."));
+  await expect(audacity).toHaveAccessibleName(new RegExp(`teto até ${Math.floor(balance / 2)} fichas por mão`));
+  await audacity.check();
+  await expect(page.getByText(/Dobrar proibido nas duas Faces/)).toBeVisible();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+  await expect(page.getByRole("group", { name: "Ações para Luz" }).getByRole("button", { name: "Dobrar" })).toHaveCount(0);
+  await expect(page.getByRole("group", { name: "Ações para Sombra" }).getByRole("button", { name: "Dobrar" })).toHaveCount(0);
+});
+
+test("P7-C Segunda Chance offers one forced extra Compra after Parar", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000009");
+  await expect(offer).toHaveAttribute("data-pact-family", "choice");
+  await page.getByRole("button", { name: "Assinar Segunda Chance" }).click();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+  await page.getByRole("button", { name: "Parar" }).click();
+  await expect(page.getByRole("group", { name: "Segunda Chance" })).toBeVisible();
+  await page.getByRole("button", { name: "Usar Segunda Chance" }).click();
+  await expect(page.getByRole("list", { name: "Cartas da mão Luz" }).getByRole("listitem")).toHaveCount(3);
+  await expect(page.getByRole("group", { name: "Ações para Sombra" })).toBeVisible();
+});
+
+test("P7-C Juramento consumes the category preview and commits to one Compra then Parar", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000009");
+  await expect(offer).toHaveAttribute("data-pact-family", "choice");
+  await page.getByRole("radio", { name: "Luz" }).check();
+  await page.getByRole("button", { name: "Assinar Juramento" }).click();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+  await page.getByRole("button", { name: /Juramento · revelar categoria da próxima Compra/ }).click();
+  await expect(page.getByText(/próxima Compra: Alta \(7–K\)\. O Privilégio já foi consumido\./)).toBeVisible();
+  await expect(page.getByText(/próxima Compra: 10/)).toHaveCount(0);
+  await page.getByRole("button", { name: "Assumir compromisso · Comprar e Parar" }).click();
+  await expect(page.getByRole("group", { name: "Ações para Luz" }).getByRole("button")).toHaveCount(1);
+  await page.getByRole("button", { name: "Comprar" }).click();
+  await expect(page.getByRole("list", { name: "Cartas da mão Luz" }).getByRole("listitem")).toHaveCount(3);
 });

@@ -10,7 +10,7 @@ describe("BANKROLL-LAB-A1a-0.1 ledger", () => {
     expect(night.balanceTicks).toBe(300);
     expect(maxA1aStake(night.balanceTicks)).toBe(37);
     const round = beginA1aRound(night, "math:1", 37);
-    expect(round.round).toEqual({ id: "math:1", stake: 37, kind: "funded" });
+    expect(round.round).toEqual({ id: "math:1", stake: 37, kind: "funded", coveragePerStake: 4 });
     expect(round.balanceTicks).toBe(300); // reserve is derived, never debited
     expect(4 * 37).toBeLessThanOrEqual(150);
   });
@@ -69,6 +69,28 @@ describe("BANKROLL-LAB-A1a-0.1 ledger", () => {
     expect(() => settleA1aRound(settled, "idempotent:1", { phase: "complete", score: -5 })).toThrow(/diverge/);
     expect(() => beginA1aRound(settled, "idempotent:1", 1)).toThrow(/repetido/);
     expect(() => settleA1aRound(begun, "idempotent:1", { phase: "player", score: 5 })).toThrow(/score final/);
+  });
+
+  it("supports an explicitly scoped no-double reserve while preserving baseline R=4s", () => {
+    const state = createA1aBankroll("audacity-ledger");
+    expect(maxA1aStake(state.balanceTicks, 4)).toBe(37);
+    expect(maxA1aStake(state.balanceTicks, 2)).toBe(75);
+    const begun = beginA1aRound(state, "audacity:1", 75, { coveragePerStake: 2 });
+    expect(begun.round).toMatchObject({ stake: 75, coveragePerStake: 2 });
+    const settled = settleA1aRound(begun, "audacity:1", { phase: "complete", score: -20 });
+    expect(settled.balanceTicks).toBe(0);
+    expect(settled.status).toBe("practice");
+    const tooMuch = beginA1aRound(state, "audacity:bad", 75, { coveragePerStake: 2 });
+    expect(() => settleA1aRound(tooMuch, "audacity:bad", { phase: "complete", score: -40 })).toThrow(/reserva/i);
+  });
+
+  it("books Lastro restitution as exact half-chip ticks without changing score", () => {
+    const begun = beginA1aRound(createA1aBankroll("lastro-ledger"), "lastro:1", 1);
+    const settled = settleA1aRound(begun, "lastro:1", { phase: "complete", score: -10, refundTicks: 1 });
+    expect(settled.balanceTicks).toBe(299);
+    expect(settled.lastSettlement).toMatchObject({ score: -10, deltaTicks: -1, refundTicks: 1 });
+    expect(settleA1aRound(settled, "lastro:1", { phase: "complete", score: -10, refundTicks: 1 })).toBe(settled);
+    expect(() => settleA1aRound(settled, "lastro:1", { phase: "complete", score: -10, refundTicks: 0 })).toThrow(/diverge/i);
   });
 
   it("keeps exact divisibility for every base-engine score increment and enforces the ten-round horizon", () => {

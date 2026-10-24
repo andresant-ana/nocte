@@ -39,7 +39,7 @@ export function PactOfferTable({ bankroll, onSign, onRefuse, onAbandon, options 
       {options.map(id => {
         const pact = PACT_BOOK_PACTS[id as PactId];
         const details = pact ?? legacy[id]!;
-        const needsFace = id === "iron" || id === "bastion";
+        const needsFace = id === "iron" || id === "bastion" || id === "oath";
         return <article className="table-zone pact-option" key={id}>
           <h3>{names[id] ?? id}</h3>
           <p><strong>Privilégio:</strong> {details.privilege}</p>
