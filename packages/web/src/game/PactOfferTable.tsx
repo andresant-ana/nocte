@@ -16,7 +16,7 @@ type Props = {
 
 export function PactOfferTable({ bankroll, onSign, onRefuse, onAbandon, options = ["veil", "iron"], version = "PACT-LAB-0.1", actLabel = "ATO II · RODADAS 4–7", family }: Props) {
   const [face, setFace] = useState<HandName | "">("");
-  const names: Record<string, string> = { veil: "Véu", iron: "Ferro", lighthouse: "Farol", impetus: "Ímpeto", vigil: "Vigília", flare: "Fulgor" };
+  const names: Record<string, string> = Object.fromEntries(Object.entries(PACT_BOOK_PACTS).map(([id, pact]) => [id, pact.name]));
   const legacy: Record<string, { privilege: string; renunciation: string }> = {
     veil: { privilege: "Uma Leitura gratuita em uma janela legal do Ato. Não consome Foco.", renunciation: "A carta aberta do dealer fica oculta até confirmar Luz e Sombra." },
     iron: { privilege: "Uma Manobra gratuita; a Manobra paga continua disponível para preservar este Privilégio.", renunciation: "A Face escolhida não pode Dobrar durante o Ato." },
@@ -39,12 +39,12 @@ export function PactOfferTable({ bankroll, onSign, onRefuse, onAbandon, options 
       {options.map(id => {
         const pact = PACT_BOOK_PACTS[id as PactId];
         const details = pact ?? legacy[id]!;
-        const needsFace = id === "iron";
+        const needsFace = id === "iron" || id === "bastion";
         return <article className="table-zone pact-option" key={id}>
           <h3>{names[id] ?? id}</h3>
           <p><strong>Privilégio:</strong> {details.privilege}</p>
           <p><strong>Renúncia:</strong> {details.renunciation}</p>
-          <p>Vigência: quatro rodadas deste Ato · um Privilégio.</p>
+          <p>Vigência: {actLabel.includes("III") ? "três" : "quatro"} rodadas deste Ato · um Privilégio.</p>
           {needsFace && <fieldset>
             <legend>Face afetada pela Renúncia</legend>
             <label><input type="radio" name="iron-face" value="luz" checked={face === "luz"} onChange={() => setFace("luz")} /> Luz</label>

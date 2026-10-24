@@ -30,7 +30,14 @@ export type CofreFocoRules = Readonly<{
 }>;
 
 /** Optional, version-specific rules context. Omitted for every existing profile. */
-export type CofreFocoActionRestrictions = Readonly<{ forbiddenDoubleHand?: HandName; forbidManeuver?: boolean }>;
+export type CofreFocoActionRestrictions = Readonly<{
+  forbiddenDoubleHand?: HandName;
+  forbidDouble?: boolean;
+  forbidManeuver?: boolean;
+  forbidRead?: boolean;
+  requiredHitBeforeStandHand?: HandName;
+  autoStandAt21Hand?: HandName;
+}>;
 export type DealerHoleCategory = "ace" | "low" | "high";
 export type PactPrivilegePayment = "focus" | "pact-privilege";
 
@@ -71,7 +78,7 @@ export type CofreFocoHand = Readonly<{
   /** A post-maneuver A+10 is ordinary 21 and cannot act again. */
   maneuverTwentyOne: boolean;
 }>;
-export type CofreFocoRoundPhase = "compose" | "focusWindow" | "player" | "dealer" | "complete";
+export type CofreFocoRoundPhase = "compose" | "focusWindow" | "player" | "hitPending" | "dealer" | "complete";
 export type CofreFocoRound = Readonly<{
   phase: CofreFocoRoundPhase;
   roundNumber: number;
@@ -96,6 +103,9 @@ export type CofreFocoRound = Readonly<{
   score?: number;
   /** P7 privilege: only an explicitly authorized coarse category, never the hidden card. */
   dealerHoleCategory?: DealerHoleCategory;
+  /** The just-confirmed Compra is visible while a P7 transactional hook is pending. */
+  pendingHitHand?: HandName;
+  pendingHitCard?: Card;
 }>;
 
 export type CofreFocoNight = Readonly<{
@@ -136,14 +146,15 @@ export function createNight(rules: CofreFocoRules = CF_LAB_01_3_TO_2, horizon = 
     focusSpent: { read: 0, maneuver: 0 }, totalScore: 0, expiredFocus: 0, status: "active" };
 }
 
-export function beginRound(night: CofreFocoNight, draws: CofreFocoDraws): CofreFocoNight {
+export function beginRound(night: CofreFocoNight, draws: CofreFocoDraws, cofreOverride?: Card): CofreFocoNight {
   if (night.status !== "active") throw new Error("Cannot deal a round in a finished Night.");
   if (night.completedRounds >= night.horizon) throw new Error("Night horizon is already complete.");
   if (night.round && night.round.phase !== "complete") throw new Error("The previous round is not complete.");
   const originalCards = Array.from({ length: 4 }, () => clone(draws.initial()));
   const dealerUp = clone(draws.dealer());
   const dealerHole = clone(draws.dealer());
-  const cofre = clone(draws.cofre());
+  const sampledCofre = clone(draws.cofre());
+  const cofre = clone(cofreOverride ?? sampledCofre);
   const roundNumber = night.completedRounds + 1;
   const round: CofreFocoRound = {
     phase: "compose", roundNumber, originalCards, dealerUp, dealerHole, dealerDraws: [], cofre,
@@ -232,6 +243,13 @@ export function maneuver(night: CofreFocoNight, handName: HandName, cardIndex: n
   return maneuverWithPayment(night, handName, cardIndex, "focus");
 }
 
+/** P7 Arremate: choose one of two already-consumed Cofre candidates before composition. */
+export function choosePactCofre(night: CofreFocoNight, card: Card): CofreFocoNight {
+  const round = requirePhase(night, "compose");
+  if (!night.rules.hasCofre) throw new Error("Cofre is disabled in this profile.");
+  return { ...night, round: { ...round, cofre: clone(card) } };
+}
+
 /** PACT-LAB-0.1 only: performs a normal legal Manobra without charging Focus. */
 export function maneuverWithPactPrivilege(night: CofreFocoNight, handName: HandName, cardIndex: number): CofreFocoNight {
   return maneuverWithPayment(night, handName, cardIndex, "pact-privilege");
@@ -275,7 +293,8 @@ export function legalCofreFocoActions(night: CofreFocoNight, handName?: HandName
   const hand = round.hands[round.currentHand];
   if (hand.status !== "playing" || hand.openingNatural || hand.maneuverTwentyOne) return [];
   if (hand.cards.length !== 2) return ["hit", "stand"];
-  if (restrictions?.forbiddenDoubleHand === round.currentHand) return ["hit", "stand"];
+  if (restrictions?.requiredHitBeforeStandHand === round.currentHand && hand.cards.length <= 2) return ["hit"];
+  if (restrictions?.forbidDouble || restrictions?.forbiddenDoubleHand === round.currentHand) return ["hit", "stand"];
   return ["hit", "stand", "double"];
 }
 
@@ -316,10 +335,65 @@ export function applyCofreFocoAction(night: CofreFocoNight, action: Action, draw
   if (action === "double") { exposure += night.rules.initialExposure; status = "doubled"; }
   if (action === "stand") status = "stood";
   if (handValue(cards).bust) status = "busted";
+  if (action === "hit" && restrictions?.autoStandAt21Hand === name && handValue(cards).total === 21) status = "stood";
   const hands = { ...round.hands!, [name]: { ...current, cards, exposure, status } };
   const { currentHand: _currentHand, ...withoutCurrentHand } = round;
   const advanced = { ...withoutCurrentHand, hands, phase: "player" as const };
   return advanceHands(night, advanced);
+}
+
+export type PactBookHitResolution = "normal" | "bastion" | "reflection" | "chaos";
+
+/** Starts an intercepted ordinary Compra without resolving bust or advancing the turn. */
+export function beginPactBookHit(night: CofreFocoNight, draw: CardSource,
+  restrictions?: CofreFocoActionRestrictions): CofreFocoNight {
+  const round = night.round;
+  if (!round || !round.currentHand || !legalCofreFocoActions(night, undefined, restrictions).includes("hit")) {
+    throw new Error("Illegal Duas Faces action: hit.");
+  }
+  const pendingHitCard = clone(draw());
+  return { ...night, round: { ...round, phase: "hitPending", pendingHitHand: round.currentHand, pendingHitCard } };
+}
+
+/** Resolves one pending P7 Compra exactly once; Caos may consume one mandatory next draw. */
+export function resolvePactBookHit(night: CofreFocoNight, resolution: PactBookHitResolution = "normal",
+  replacement?: CardSource, transferTo?: HandName, restrictions?: CofreFocoActionRestrictions): CofreFocoNight {
+  const round = night.round;
+  if (night.status !== "active" || !round || round.phase !== "hitPending" || !round.pendingHitHand || !round.pendingHitCard || !round.hands) {
+    throw new Error("Não há Compra P7 aguardando resolução.");
+  }
+  const sourceName = round.pendingHitHand;
+  const source = round.hands[sourceName];
+  if (source.status !== "playing" || round.currentHand !== sourceName) throw new Error("A Face da Compra pendente não está ativa.");
+  const busts = handValue([...source.cards, round.pendingHitCard]).bust;
+  if (resolution === "bastion" && !busts) throw new Error("Bastião só pode salvar uma Compra que estouraria a mão.");
+  if (resolution === "reflection") {
+    const targetName = transferTo;
+    const target = targetName && targetName !== sourceName ? round.hands[targetName] : undefined;
+    if (!target || target.status !== "playing" || target.openingNatural || target.maneuverTwentyOne) {
+      throw new Error("Reflexo exige que a outra Face ainda esteja ativa e possa receber a carta.");
+    }
+  }
+  if (resolution === "chaos" && !replacement) throw new Error("Caos exige a próxima carta da mesma lane.");
+
+  const { pendingHitCard, pendingHitHand: _pendingHand, ...baseRound } = round;
+  let hands = { ...round.hands };
+  if (resolution === "bastion") {
+    hands = { ...hands, [sourceName]: { ...source, status: "stood" } };
+  } else if (resolution === "reflection") {
+    const targetName = transferTo!;
+    const target = hands[targetName];
+    const cards = [...target.cards, clone(pendingHitCard)];
+    hands = { ...hands, [sourceName]: { ...source, status: "stood" },
+      [targetName]: { ...target, cards, status: handValue(cards).bust ? "busted" : "playing" } };
+  } else {
+    const card = resolution === "chaos" ? clone(replacement!()) : clone(pendingHitCard);
+    const cards = [...source.cards, card];
+    let status: CofreFocoHand["status"] = handValue(cards).bust ? "busted" : "playing";
+    if (resolution === "normal" && restrictions?.autoStandAt21Hand === sourceName && handValue(cards).total === 21) status = "stood";
+    hands = { ...hands, [sourceName]: { ...source, cards, status } };
+  }
+  return advanceHands(night, { ...baseRound, hands, phase: "player" });
 }
 
 /** P7 Ímpeto: only a three-card hand (exactly one normal Compra) may use the special post-hit double. */

@@ -464,7 +464,15 @@ export function App() {
           readPrivilege: () => active.controller.readPrivilege(), maneuverPrivilege: (hand, cardIndex) => active.controller.maneuverPrivilege(hand, cardIndex),
           canUseFarol: active.controller.canUseFarol, farolCategory: active.controller.farolCategory,
           revealFarol: () => active.controller.farol(), canUseImpetusDouble: active.controller.canUseImpetusDouble,
-          impetusDouble: () => active.controller.impetusDouble(), focusAbilityRenunciation: active.controller.focusAbilityRenunciation,
+          impetusDouble: () => active.controller.impetusDouble(), canUseBastion: active.controller.canUseBastion,
+          canUseReflection: active.controller.canUseReflection, reflectionTarget: active.controller.reflectionTarget,
+          canUseChaos: active.controller.canUseChaos, canUsePenhor: active.controller.canUsePenhor,
+          canUseArremate: active.controller.canUseArremate, arremateOptions: active.controller.arremateOptions,
+          canUseOrder: active.controller.canUseOrder, orderPreview: active.controller.orderPreview,
+          resolvePendingHit: (choice) => active.controller.resolvePendingHit(choice),
+          sealCofre: () => active.controller.sealCofre(), activateArremate: () => active.controller.activateArremate(),
+          chooseArremate: (index) => active.controller.chooseArremate(index),
+          revealOrderPreview: () => active.controller.revealOrderPreview(), focusAbilityRenunciation: active.controller.focusAbilityRenunciation,
           renunciationText: definition?.renunciation ?? "", privilegeText: definition?.privilege ?? "", pactName: definition?.name ?? "" }} />
     </main>;
   }
@@ -485,7 +493,7 @@ export function App() {
           <option value="p5-cards">Laboratório P5 · cartas com naipes · EXPERIMENTAL</option>
           <option value="bankroll-a1a">Apostas livres · fichas A1a · EXPERIMENTAL</option>
           <option value="pact-a1a">Pactos por Ato · Véu/Ferro · EXPERIMENTAL</option>
-          <option value="pact-book-a1a">Livro dos Pactos · 6 Pactos · P7-A · EXPERIMENTAL</option>
+          <option value="pact-book-a1a">Livro dos Pactos · 12 Pactos · P7-B · EXPERIMENTAL</option>
         </select>
         <p className="mode-explanation">
           {mode === "basic"
@@ -500,7 +508,7 @@ export function App() {
                   ? "Aposta inteira escolhida antes de cada distribuição, igual para Luz e Sombra, com cobertura 4s. Laboratório local separado da banca fixa A0.1; Foco e pontuação estratégica não escalam com a aposta."
                   : mode === "pact-a1a"
                     ? "PACT-LAB-0.1 mantém a oferta de Véu, Ferro ou recusa antes da rodada 4. Laboratório experimental separado dos modos anteriores."
-                    : "PACT-BOOK-0.1 oferece dois Pactos opostos antes das rodadas 4 e 8. P7-A contém seis Pactos em três pares; o restante do catálogo ainda não é elegível. Laboratório experimental local."
+                    : "PACT-BOOK-0.1 oferece dois Pactos opostos antes das rodadas 4 e 8. P7-B contém doze Pactos em seis pares; as três famílias restantes aguardam P7-C. Laboratório experimental local."
           }
         </p>
 

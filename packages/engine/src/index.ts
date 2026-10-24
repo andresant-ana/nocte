@@ -90,7 +90,8 @@ export type PublicRound = Readonly<{
   naturalPeek: boolean | null;
   settlement?: Record<HandName, SettledHand>;
 }>;
-export type CardSource = () => Card;
+/** Optional non-consuming preview for isolated, explicitly authorized Pact privileges. */
+export type CardSource = (() => Card) & { peek?: () => Card };
 
 export function createRound(draw: CardSource, rules: RuleProfile = DF_SYM_01_3_TO_2): InternalRound {
   const originalCards = [draw(), draw(), draw(), draw()];

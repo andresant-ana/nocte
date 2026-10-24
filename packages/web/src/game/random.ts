@@ -50,11 +50,17 @@ class CounterRandom {
 
 function source(cards: readonly Card[]): CardSource {
   let next = 0;
-  return () => {
+  const draw = (() => {
     const card = cards[next++];
     if (!card) throw new Error("A faixa de sorteio preparada se esgotou; inicie uma nova rodada.");
     return { ...card, ...(card.art ? { art: { ...card.art } } : {}) };
+  }) as CardSource;
+  draw.peek = () => {
+    const card = cards[next];
+    if (!card) throw new Error("A faixa de sorteio preparada se esgotou; inicie uma nova rodada.");
+    return { ...card, ...(card.art ? { art: { ...card.art } } : {}) };
   };
+  return draw;
 }
 
 async function cards(random: CounterRandom, count: number): Promise<Card[]> {
@@ -139,7 +145,7 @@ export async function prepareCofreFocoRound(seed: string, index: number): Promis
   const [initialAndDealer, dealerDraws, cofre, luz, sombra] = await Promise.all([
     cards(new CounterRandom(seed, index, "initial"), 6),
     cards(new CounterRandom(seed, index, "dealer"), DRAW_BUFFER_SIZE),
-    cards(new CounterRandom(seed, index, "cofre"), 1),
+    cards(new CounterRandom(seed, index, "cofre"), 2),
     cards(new CounterRandom(seed, index, "luz"), DRAW_BUFFER_SIZE),
     cards(new CounterRandom(seed, index, "sombra"), DRAW_BUFFER_SIZE),
   ]);
@@ -163,7 +169,7 @@ export async function prepareP5CofreFocoRound(seed: string, index: number): Prom
   const [initialRaw, dealerRaw, cofreRaw, luzRaw, sombraRaw] = await Promise.all([
     cards(new CounterRandom(seed, index, "initial"), 6),
     cards(new CounterRandom(seed, index, "dealer"), DRAW_BUFFER_SIZE),
-    cards(new CounterRandom(seed, index, "cofre"), 1),
+    cards(new CounterRandom(seed, index, "cofre"), 2),
     cards(new CounterRandom(seed, index, "luz"), DRAW_BUFFER_SIZE),
     cards(new CounterRandom(seed, index, "sombra"), DRAW_BUFFER_SIZE),
   ]);

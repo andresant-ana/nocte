@@ -43,7 +43,7 @@ N-042 ratifies **only the strategic direction**. N-043 remains CANDIDATE for fin
 
 P1A–P1C and the local P2A prototype/protocol are integrated. Issue #14 authorizes the separate Cofre + Foco experimental engine and offline comparison lab; keep it isolated from P2A and baseline rules. See [docs/LAB-P2B.md](docs/LAB-P2B.md). No networked play, identity, persistence, economy, deployment, human-study outcome, or final balance claim is authorized. N-019/N-020 remain EXPERIMENTAL; N-036, N-024 and O-01/O-02/O-03 remain OPEN. N-042–N-047 retain their recorded statuses; no implementation changes those statuses.
 
-**Current P7 authorization:** Issue #42 / N-058 authorizes the isolated `PACT-BOOK-0.1` experiment in incremental deliveries. P7-A makes only its implemented complete families eligible; this first slice is stacked on PR #41 and must not modify PACT-LAB-0.1 or previous gameplay modes. All catalog rules remain EXPERIMENTAL pending balance and human evidence. See [docs/PACTOS-LAB-P7.md](docs/PACTOS-LAB-P7.md). Do not claim multiplayer authority, balance, fun or fairness.
+**Current P7 authorization:** Issue #42 / N-058 authorizes the isolated `PACT-BOOK-0.1` experiment in incremental deliveries. Issue #44 authorizes P7-B to extend P7-A with the complete Sacrifício, Tempo and Destino pairs, making twelve Pactos in six pairs eligible. Keep PACT-LAB-0.1 and previous gameplay modes unchanged. Vínculo, Fortuna and Escolha remain ineligible until P7-C. All catalog rules remain EXPERIMENTAL pending balance and human evidence. See [docs/PACTOS-LAB-P7.md](docs/PACTOS-LAB-P7.md). Do not claim multiplayer authority, balance, fun or fairness.
 
 ## PR requirements
 

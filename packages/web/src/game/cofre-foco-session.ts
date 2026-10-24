@@ -16,12 +16,17 @@ import {
   readDealerHoleWithPactPrivilege,
   revealDealerHoleCategory,
   applyPactImpetusDouble,
+  beginPactBookHit,
+  choosePactCofre,
+  resolvePactBookHit,
   skipManeuver,
   skipRead,
   type CofreFocoNight,
   type CofreFocoRules,
   type CofreFocoActionRestrictions,
   type PublicCofreFocoNight,
+  type PactBookHitResolution,
+  type Card,
 } from "@nocte/engine/cofre-foco";
 import type { PreparedCofreFocoRound } from "./random";
 
@@ -32,15 +37,15 @@ export class CofreFocoSessionAdapter {
   #actionRestrictions: ((roundNumber: number) => CofreFocoActionRestrictions | undefined) | undefined;
 
   private constructor(prepared: PreparedCofreFocoRound, rules: CofreFocoRules, horizon: number,
-    actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined) {
+    actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined, cofreOverride?: Card) {
     this.#prepared = prepared;
     this.#actionRestrictions = actionRestrictions;
-    this.#night = beginRound(createNight(rules, horizon), prepared.draws);
+    this.#night = beginRound(createNight(rules, horizon), prepared.draws, cofreOverride);
   }
 
   static start(prepared: PreparedCofreFocoRound, rules: CofreFocoRules, horizon = 10,
-    actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined): CofreFocoSessionAdapter {
-    return new CofreFocoSessionAdapter(prepared, rules, horizon, actionRestrictions);
+    actionRestrictions?: (roundNumber: number) => CofreFocoActionRestrictions | undefined, cofreOverride?: Card): CofreFocoSessionAdapter {
+    return new CofreFocoSessionAdapter(prepared, rules, horizon, actionRestrictions, cofreOverride);
   }
 
   get current(): PublicCofreFocoNight {
@@ -133,6 +138,35 @@ export class CofreFocoSessionAdapter {
     return this.current;
   }
 
+  beginPactHit(): PublicCofreFocoNight {
+    const hand = this.#night.round?.currentHand;
+    if (!hand) throw new Error("Não há Face ativa para uma Compra P7.");
+    this.#night = beginPactBookHit(this.#night, this.#prepared.draws[hand], this.#actionRestrictions?.(this.#night.roundNumber));
+    return this.current;
+  }
+
+  resolvePactHit(resolution: PactBookHitResolution, transferTo?: HandName): PublicCofreFocoNight {
+    const hand = this.#night.round?.pendingHitHand;
+    if (!hand) throw new Error("Não há Compra P7 aguardando resolução.");
+    this.#night = resolvePactBookHit(this.#night, resolution, resolution === "chaos" ? this.#prepared.draws[hand] : undefined,
+      transferTo, this.#actionRestrictions?.(this.#night.roundNumber));
+    return this.current;
+  }
+
+  peekNextForCurrentHand(): Card {
+    const hand = this.#night.round?.currentHand;
+    const peek = hand && this.#prepared.draws[hand].peek;
+    if (!peek) throw new Error("Esta faixa não oferece prévia não consumível.");
+    return peek();
+  }
+
+  drawAlternateCofreCandidate(): Card { return this.#prepared.draws.cofre(); }
+
+  chooseCofre(card: Card): PublicCofreFocoNight {
+    this.#night = choosePactCofre(this.#night, card);
+    return this.current;
+  }
+
   impetusDouble(): PublicCofreFocoNight {
     const hand = this.#night.round?.currentHand;
     if (!hand) throw new Error("Não há mão ativa para Ímpeto.");
@@ -145,8 +179,8 @@ export class CofreFocoSessionAdapter {
     return this.current;
   }
 
-  nextRound(prepared: PreparedCofreFocoRound): PublicCofreFocoNight {
-    const next = beginRound(this.#night, prepared.draws);
+  nextRound(prepared: PreparedCofreFocoRound, cofreOverride?: Card): PublicCofreFocoNight {
+    const next = beginRound(this.#night, prepared.draws, cofreOverride);
     this.#night = next;
     this.#prepared = prepared;
     return this.current;

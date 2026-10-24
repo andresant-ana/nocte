@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { PACT_BOOK_FAMILIES, PACT_BOOK_PACTS, createPactBook, drawPactFamily, enterPactBookRound,
-  offerPactBook, refusePactBook, signPactBook, consumePactBookPrivilege, pactBookRestrictions, expirePactBook } from "./pact-book.js";
+  offerPactBook, refusePactBook, signPactBook, consumePactBookPrivilege, pactBookRestrictions, expirePactBook,
+  markPactBookCofreSealed, canUsePactBookPrivilege } from "./pact-book.js";
 
 describe("PACT-BOOK-0.1 staged catalogue and offers", () => {
   it("exposes only complete versioned first-delivery pairs", () => {
-    expect(Object.keys(PACT_BOOK_PACTS)).toHaveLength(6);
-    expect(PACT_BOOK_FAMILIES).toEqual(["revelation", "dominion", "focus"]);
+    expect(Object.keys(PACT_BOOK_PACTS)).toHaveLength(12);
+    expect(PACT_BOOK_FAMILIES).toEqual(["revelation", "dominion", "focus", "sacrifice", "time", "destiny"]);
     expect(new Set(Object.values(PACT_BOOK_PACTS).map(p => p.family))).toEqual(new Set(PACT_BOOK_FAMILIES));
   });
   it("reproduces family draws independently by offer domain and uniformly rejects biased tails", () => {
@@ -18,7 +19,7 @@ describe("PACT-BOOK-0.1 staged catalogue and offers", () => {
       const family = drawPactFamily(`distribution-${i}`, 4)!;
       counts.set(family, (counts.get(family) ?? 0) + 1);
     }
-    for (const family of PACT_BOOK_FAMILIES) expect(counts.get(family)).toBeGreaterThan(3800);
+    for (const family of PACT_BOOK_FAMILIES) expect(counts.get(family)).toBeGreaterThan(1600);
   });
   it("offers opposite complete pairs twice, forbids repeats even after refusal, and expires before Ato III", () => {
     let state = offerPactBook(createPactBook(), 4, "night-seed");
@@ -56,5 +57,28 @@ describe("PACT-BOOK-0.1 staged catalogue and offers", () => {
     expect(fallback.current).toBeNull();
     expect(fallback.offers).toHaveLength(0);
     expect(fallback.fallbackReason).toBe("no-complete-pair-eligible");
+  });
+  it("applies Bastião, Reflexo, Penhor, Arremate and Destino Renúncias while their Privilégio is available or consumed", () => {
+    const signed = (pact: "bastion" | "reflection" | "bond" | "finale" | "order" | "chaos", family: "sacrifice" | "time" | "destiny", round = 4) =>
+      signPactBook(offerPactBook(createPactBook(), round, `restriction-${pact}`, [family]), pact, pact === "bastion" ? "luz" : undefined);
+    const bastion = signed("bastion", "sacrifice");
+    expect(pactBookRestrictions(bastion, 4)).toMatchObject({ requiredHitBeforeStandHand: "luz", autoStandAt21Hand: "luz" });
+    const reflection = signed("reflection", "sacrifice");
+    expect(pactBookRestrictions(reflection, 4)).toMatchObject({ forbidDouble: true });
+    const penhor = markPactBookCofreSealed(signed("bond", "time"), 5, 6);
+    expect(pactBookRestrictions(penhor, 5)).toMatchObject({ forbidManeuver: true });
+    expect(pactBookRestrictions(penhor, 6)).toBeUndefined();
+    const arremate = consumePactBookPrivilege(signed("finale", "time"), 4);
+    expect(pactBookRestrictions(arremate, 5)).toMatchObject({ forbidManeuver: true });
+    expect(pactBookRestrictions(signed("order", "destiny"), 4)).toMatchObject({ forbidManeuver: true });
+    expect(pactBookRestrictions(signed("chaos", "destiny"), 4)).toMatchObject({ forbidRead: true });
+  });
+  it("does not allow temporal Privilégios with no eligible within-Ato consequence", () => {
+    const penhor = signPactBook(offerPactBook(createPactBook(), 4, "penhor-last", ["time"]), "bond");
+    expect(() => markPactBookCofreSealed(penhor, 7, 7)).toThrow(/rodada seguinte/i);
+    const first = offerPactBook(createPactBook(), 4, "finale-first", ["destiny"]);
+    const thirdAct = offerPactBook(enterPactBookRound(first, 8), 8, "finale-last", ["time"]);
+    const finale = signPactBook(thirdAct, "finale");
+    expect(canUsePactBookPrivilege(finale, 10)).toBe(false);
   });
 });
