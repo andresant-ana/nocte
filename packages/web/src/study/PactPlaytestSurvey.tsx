@@ -42,7 +42,7 @@ export function PactPlaytestSurvey({ data, onAnswers, onClear, onExit }: Props) 
   return <main className="landing-shell playtest-survey" data-testid="pact-playtest-survey">
     <p className="eyebrow">PLAYTEST LOCAL · PACT-BOOK-0.1</p>
     <h1>Como foi a Noite?</h1>
-    <p className="local-notice">Questionário opcional. Suas respostas e os eventos da sessão ficam somente nesta página, em memória. Nada é enviado; fechar ou recarregar apaga os dados não exportados.</p>
+    <p className="local-notice">Questionário opcional. Respostas e eventos ficam nesta página, em memória, sem envio pelo jogo. O provedor pode registrar dados técnicos do acesso. Fechar ou recarregar apaga os dados não exportados.</p>
     <p role="status">Noite {data.status === "complete" ? "concluída" : "abandonada"} · {data.events.length} eventos públicos registrados.</p>
     <form onSubmit={(event) => event.preventDefault()}>
       {questions.map(question => <fieldset className="playtest-question" key={question.key}>

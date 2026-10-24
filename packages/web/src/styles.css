@@ -25,6 +25,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 h1 { margin: .25rem 0; color: #f0d897; font-size: clamp(3.5rem, 15vw, 7rem); letter-spacing: .12em; }
 .subtitle { margin: 0 0 2rem; color: #c8bfa9; font-size: 1.2rem; letter-spacing: .22em; }
 .local-notice { margin: 0 auto 2rem; max-width: 32rem; color: #ded6c3; font: 1rem/1.6 system-ui, sans-serif; }
+.experimental-preview-notice { margin: -1.2rem auto 1.5rem; max-width: 36rem; color: #c8bfa9; font: .84rem/1.45 system-ui, sans-serif; }
 .profile-label { display: block; margin-bottom: .5rem; color: #c1ad78; font: 600 .9rem system-ui, sans-serif; }
 select { width: min(100%, 24rem); min-height: 2.8rem; padding: .6rem .8rem; color: #eee8d8; background: #11100e; border: 1px solid #77633a; }
 .experimental-note { letter-spacing: .04em; text-transform: uppercase; }
@@ -304,7 +305,7 @@ body { min-height: 100vh; min-height: 100dvh; }
 .playtest-opt-in { display: grid; grid-template-columns: auto 1fr; align-items: start; gap: .35rem .55rem; padding: .65rem; border: 1px solid #77633a; border-radius: .25rem; font: .9rem/1.35 system-ui, sans-serif; }
 .playtest-opt-in input { margin-top: .15rem; }
 .playtest-opt-in small { grid-column: 2; color: #c8bfa9; font: .78rem/1.4 system-ui, sans-serif; }
-.playtest-survey { width: min(100% - 1.2rem, 48rem); max-height: calc(100dvh - 1.2rem); overflow: auto; }
+.playtest-survey { position: fixed; top: .5rem; bottom: .5rem; left: 50%; width: min(100% - 1.2rem, 48rem); margin: 0; overflow: auto; transform: translateX(-50%); }
 .playtest-question { margin: .55rem 0; padding: .55rem .7rem; border: 1px solid #77633a; }
 .playtest-question legend { padding: 0 .25rem; font: .9rem/1.35 system-ui, sans-serif; }
 .playtest-scale { display: flex; flex-wrap: wrap; gap: .45rem .8rem; }

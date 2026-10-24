@@ -13,7 +13,7 @@ describe("solo prototype landing", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: "NOCTE" })).toBeInTheDocument();
-    expect(screen.getByText(/jogo solo.*local/i)).toBeInTheDocument();
+    expect(screen.getByText(/jogo solo.*neste navegador/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Jogar livre" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Iniciar estudo P2A" })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: /perfil experimental/i })).toHaveValue("DF-SYM-0.1-lab-infinite-3to2-peek-natural-first");

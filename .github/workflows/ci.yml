@@ -21,5 +21,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm --filter @nocte/web build:pages
       - run: pnpm --filter @nocte/web exec playwright install --with-deps chromium
       - run: pnpm --filter @nocte/web test:e2e
+      - run: pnpm --filter @nocte/web test:e2e:pages
