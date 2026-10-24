@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { PublicBankrollA1a } from "./bankroll-a1a-session";
 import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
-import type { PublicPactContract } from "./pact-a1a-session";
+import type { HandName } from "@nocte/engine";
 
 type Props = {
   bankroll: PublicBankrollA1a;
@@ -10,7 +10,7 @@ type Props = {
   onConfirm: (stake: number) => void;
   onPractice: () => void;
   onAbandon: () => void;
-  pact?: Readonly<{ contract: PublicPactContract; roundsRemaining: number }>;
+  pact?: Readonly<{ contract: Readonly<{ status: string; pact: string | null; privilege: string; ironFace?: HandName | null; affectedFace?: HandName | null }>; roundsRemaining: number; pactName?: string; renunciation?: string; privilegeText?: string }>;
 };
 
 const denominations = [1, 5, 10, 25] as const;
@@ -46,9 +46,9 @@ export function BankrollA1aBettingTable({ bankroll, error, preparing, onConfirm,
         <p className="table-profile">{pact ? "PACT-LAB-0.1 · EXPERIMENTAL · A1a + Cofre + Foco" : "BANKROLL-LAB-A1a-0.1 · EXPERIMENTAL · Cofre + Foco"}</p>
         {pact && <p className="pact-status-strip" role="status">
           {pact.contract.status === "refused" ? "Pactos recusados · sem Renúncia ou Privilégio"
-            : pact.contract.pact ? <>Pacto {pact.contract.pact === "veil" ? "Véu" : "Ferro"} · {pact.contract.status === "signed" ? `assinado · Ato II · ${pact.roundsRemaining} rodadas restantes` : pact.contract.status === "expired" ? "expirado" : `Ato II · ${pact.roundsRemaining} rodadas restantes`}
-                <span>Renúncia: {pact.contract.pact === "veil" ? "upcard oculta na composição" : `sem Dobrar ${pact.contract.ironFace === "luz" ? "Luz" : "Sombra"}`}</span>
-                <span>Privilégio: {pact.contract.pact === "veil" ? "Leitura" : "Manobra"} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : "Expirado"}</span>
+            : pact.contract.pact ? <>Pacto {pact.pactName ?? pact.contract.pact} · {pact.contract.status === "signed" ? `assinado · ${pact.roundsRemaining} rodadas restantes` : pact.contract.status === "expired" ? "expirado" : `${pact.roundsRemaining} rodadas restantes`}
+                <span>Renúncia: {pact.renunciation ?? "ativa durante este Ato"}</span>
+                <span>Privilégio: {pact.privilegeText ?? "Pacto"} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : "Expirado"}</span>
               </> : null}
         </p>}
       </div>

@@ -636,3 +636,51 @@ test("PACT-LAB-0.1 enforces Iron on the chosen Face, supports free Manobra, and 
   await expect(dealer.getByRole("img", { name: "Carta aberta do dealer" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Confirmar composição" })).toBeVisible();
 });
+
+test("P7-A opens two seeded-independent pair offers at rounds four and eight without repeats and fits viewport", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await page.getByLabel("Modo de jogo").selectOption("pact-book-a1a");
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+  const advanceToOffer = async () => {
+    for (let guard = 0; guard < 60; guard += 1) {
+      const offer = page.locator('.viewport-table[data-game-phase="pact-offer"]');
+      if (await offer.count()) return offer;
+      const phase = await page.locator(".viewport-table").getAttribute("data-game-phase");
+      if (phase === "betting") await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+      else if (phase === "compose") await page.getByRole("button", { name: "Confirmar composição" }).click();
+      else if (phase === "focusWindow") await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+      else if (phase === "player") await page.getByRole("button", { name: "Parar" }).click();
+      else if (phase === "dealer") await page.getByRole("button", { name: "Resolver dealer" }).click();
+      else if (phase === "complete") await page.getByRole("button", { name: "Próxima rodada" }).click();
+      else throw new Error(`Fase inesperada no P7 E2E: ${phase}`);
+    }
+    throw new Error("Oferta P7 não apareceu antes do limite de navegação.");
+  };
+  const offerFour = await advanceToOffer();
+  await expect(offerFour).toHaveAttribute("data-pact-family", /^(revelation|dominion|focus)$/);
+  const firstFamily = await offerFour.getAttribute("data-pact-family");
+  for (const viewport of [{ width: 1366, height: 768 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    const metrics = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, scrollHeight: document.documentElement.scrollHeight, innerWidth, innerHeight }));
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.innerWidth + 1);
+    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.innerHeight + 1);
+    for (const button of await offerFour.getByRole("button").all()) { await expect(button).toBeVisible(); await expect(button).toBeInViewport(); }
+    await page.screenshot({ path: testInfo.outputPath(`p7-offer-ato-ii-${viewport.width}x${viewport.height}.png`) });
+  }
+  const privilege = await offerFour.locator(".pact-option").first().locator("p").nth(0).innerText();
+  const renunciation = await offerFour.locator(".pact-option").first().locator("p").nth(1).innerText();
+  expect(privilege.startsWith("Privilégio:")).toBe(true);
+  expect(renunciation.startsWith("Renúncia:")).toBe(true);
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.getByRole("button", { name: "Recusar Pactos" }).click();
+  const offerEight = await advanceToOffer();
+  expect(await offerEight.getAttribute("data-pact-family")).not.toBe(firstFamily);
+  await expect(page.getByText("ATO III · RODADAS 8–10")).toBeVisible();
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.screenshot({ path: testInfo.outputPath("p7-offer-ato-iii-1366x768.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: testInfo.outputPath("p7-offer-ato-iii-390x844.png") });
+  await page.getByRole("button", { name: "Recusar Pactos" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+});

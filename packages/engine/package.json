@@ -3,6 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "exports": { ".": "./src/index.ts", "./cofre-foco": "./src/cofre-foco.ts", "./pacts": "./src/pacts.ts" },
+  "exports": { ".": "./src/index.ts", "./cofre-foco": "./src/cofre-foco.ts", "./pacts": "./src/pacts.ts", "./pact-book": "./src/pact-book.ts" },
   "scripts": { "typecheck": "tsc -b" }
 }

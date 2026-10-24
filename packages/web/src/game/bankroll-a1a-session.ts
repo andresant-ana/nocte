@@ -114,6 +114,8 @@ export class BankrollA1aSessionAdapter {
   skipManeuver() { return this.#transition(() => this.#session!.skipManeuver()); }
   maneuverDirect(hand: HandName, cardIndex: number) { return this.#transition(() => this.#session!.maneuverDirect(hand, cardIndex)); }
   maneuverDirectWithPactPrivilege(hand: HandName, cardIndex: number) { return this.#transition(() => this.#session!.maneuverDirectWithPactPrivilege(hand, cardIndex)); }
+  revealFarolCategory() { return this.#transition(() => this.#session!.revealFarolCategory()); }
+  impetusDouble() { return this.#transition(() => this.#session!.impetusDouble()); }
   continueAfterAbilities() { return this.#transition(() => this.#session!.continueAfterAbilities()); }
   act(action: Action) { return this.#transition(() => this.#session!.act(action)); }
   resolveDealer() { return this.#transition(() => this.#session!.resolveDealer()); }

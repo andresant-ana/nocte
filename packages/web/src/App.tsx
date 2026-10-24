@@ -13,19 +13,22 @@ import { BankrollA1aSessionAdapter } from "./game/bankroll-a1a-session";
 import { BankrollA1aBettingTable } from "./game/BankrollA1aBettingTable";
 import { PactOfferTable } from "./game/PactOfferTable";
 import { PactA1aSessionAdapter } from "./game/pact-a1a-session";
+import { PactBookA1aSessionAdapter } from "./game/pact-book-a1a-session";
+import { PACT_BOOK_PACTS, type PactId } from "@nocte/engine/pact-book";
 import { GameTable } from "./game/GameTable";
 import { SoloRoundController } from "./game/controller";
 import { prepareCofreFocoRound, prepareP5CofreFocoRound, prepareRound } from "./game/random";
 import { StudyFlow } from "./study/StudyFlow";
 
 type ProfileId = RuleProfile["id"];
-type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards" | "bankroll-a1a" | "pact-a1a";
+type GameMode = "basic" | "cofre-foco" | "bankroll-a0" | "p5-cards" | "bankroll-a1a" | "pact-a1a" | "pact-book-a1a";
 type ActiveBasic = { mode: "basic"; controller: SoloRoundController; view: PublicRound; profile: RuleProfile; roundNumber: number };
 type ActiveCofreFoco = { mode: "cofre-foco" | "p5-cards"; cardIdentityMode: boolean; controller: CofreFocoSessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; horizon: number; seed: string };
 type ActiveBankrollA0 = { mode: "bankroll-a0"; controller: BankrollA0SessionAdapter; view: PublicCofreFocoNight; rules: CofreFocoRules; seed: string };
 type ActiveBankrollA1a = { mode: "bankroll-a1a"; controller: BankrollA1aSessionAdapter; rules: CofreFocoRules; seed: string | null; revision: number };
 type ActivePactA1a = { mode: "pact-a1a"; controller: PactA1aSessionAdapter; rules: CofreFocoRules; seed: string | null; revision: number };
-type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0 | ActiveBankrollA1a | ActivePactA1a;
+type ActivePactBook = { mode: "pact-book-a1a"; controller: PactBookA1aSessionAdapter; rules: CofreFocoRules; seed: string | null; revision: number };
+type ActiveGame = ActiveBasic | ActiveCofreFoco | ActiveBankrollA0 | ActiveBankrollA1a | ActivePactA1a | ActivePactBook;
 const getProfile = (id: ProfileId): RuleProfile => id === DF_SYM_01_1_TO_1.id ? DF_SYM_01_1_TO_1 : DF_SYM_01_3_TO_2;
 const getCofreFocoRules = (profile: ProfileId): CofreFocoRules => profile === DF_SYM_01_1_TO_1.id ? CF_LAB_01_1_TO_1 : CF_LAB_01_3_TO_2;
 
@@ -147,17 +150,28 @@ export function App() {
     }
   };
 
+  const startPactBookNight = () => {
+    a1aSessionGeneration.current += 1; a1aStartPending.current = false; setA1aPreparing(false); setError(null);
+    try {
+      const rules = getCofreFocoRules(profile);
+      const controller = PactBookA1aSessionAdapter.start(rules);
+      setNightScore(0); setRoundNumber(0); scoreApplied.current = false;
+      setActive({ mode: "pact-book-a1a", controller, rules, seed: null, revision: 0 });
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Não foi possível iniciar o Livro dos Pactos."); }
+  };
+
   const startSelectedNight = () => {
     if (mode === "basic") void startBasicNight();
     else if (mode === "cofre-foco") void startCofreFocoNight();
     else if (mode === "bankroll-a0") void startBankrollA0Night();
     else if (mode === "bankroll-a1a") startBankrollA1aNight();
     else if (mode === "pact-a1a") startPactNight();
+    else if (mode === "pact-book-a1a") startPactBookNight();
     else void startP5CardNight();
   };
 
   const startA1aRound = async (stake: number) => {
-    if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a") || !active.controller.isBetting || a1aStartPending.current) return;
+    if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a" && active.mode !== "pact-book-a1a") || !active.controller.isBetting || a1aStartPending.current) return;
     // Validate the wager before touching the RNG, including the practice-only case.
     const bank = active.controller.bankroll;
     const validStake = bank.status === "practice" ? stake === 0
@@ -178,7 +192,7 @@ export function App() {
       // Abandoning during asynchronous preparation must never resurrect the Night.
       if (generation !== a1aSessionGeneration.current) return;
       active.controller.startRound(prepared, stake);
-      setActive((current) => (current?.mode === "bankroll-a1a" || current?.mode === "pact-a1a") && current.controller === active.controller
+      setActive((current) => (current?.mode === "bankroll-a1a" || current?.mode === "pact-a1a" || current?.mode === "pact-book-a1a") && current.controller === active.controller
         ? { ...current, seed, revision: current.revision + 1 } : current);
     } catch (cause) {
       if (generation === a1aSessionGeneration.current)
@@ -192,7 +206,7 @@ export function App() {
   };
 
   const nextA1aBetting = () => {
-    if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a")) return;
+    if (!active || (active.mode !== "bankroll-a1a" && active.mode !== "pact-a1a" && active.mode !== "pact-book-a1a")) return;
     try {
       active.controller.enterBetting();
       setActive({ ...active, revision: active.revision + 1 });
@@ -203,14 +217,18 @@ export function App() {
   };
 
   const onA1aNightChange = (_view: PublicCofreFocoNight) => {
-    setActive((current) => current && (current.mode === "bankroll-a1a" || current.mode === "pact-a1a") ? { ...current, revision: current.revision + 1 } : current);
+    setActive((current) => current && (current.mode === "bankroll-a1a" || current.mode === "pact-a1a" || current.mode === "pact-book-a1a") ? { ...current, revision: current.revision + 1 } : current);
   };
 
-  const resolvePactOffer = (pact?: "veil" | "iron", ironFace?: "luz" | "sombra") => {
-    if (!active || active.mode !== "pact-a1a" || !active.controller.isPactOfferPending) return;
+  const resolvePactOffer = (pact?: "veil" | "iron" | PactId, ironFace?: "luz" | "sombra") => {
+    if (!active || (active.mode !== "pact-a1a" && active.mode !== "pact-book-a1a") || !active.controller.isPactOfferPending) return;
     try {
-      if (pact) active.controller.sign(pact, ironFace);
-      else active.controller.refuse();
+      if (pact) {
+        if (active.mode === "pact-a1a") {
+          if (pact !== "veil" && pact !== "iron") throw new Error("Este Pacto não pertence ao modo PACT-LAB-0.1.");
+          active.controller.sign(pact, ironFace);
+        } else active.controller.sign(pact, ironFace);
+      } else active.controller.refuse();
       setActive({ ...active, revision: active.revision + 1 });
       setError(null);
     } catch (cause) {
@@ -366,12 +384,27 @@ export function App() {
     </main>;
   }
 
-  if ((active?.mode === "bankroll-a1a" || active?.mode === "pact-a1a") && active.controller.isBetting) {
+  if (active?.mode === "pact-book-a1a" && active.controller.isPactOfferPending) {
+    return <main className="game-session-shell">
+      <PactOfferTable bankroll={active.controller.bankroll} options={active.controller.offerOptions} version={active.controller.version}
+        family={active.controller.offerFamily}
+        actLabel={active.controller.contract.actStartRound === 8 ? "ATO III · RODADAS 8–10" : "ATO II · RODADAS 4–7"}
+        onSign={(pact, face) => resolvePactOffer(pact, face)} onRefuse={() => resolvePactOffer()}
+        onAbandon={() => { active.controller.abandonBeforeDeal(); returnToSetup(); }} />
+      {error && <p role="alert" className="recoverable-error error-overlay">{error}</p>}
+    </main>;
+  }
+
+  if ((active?.mode === "bankroll-a1a" || active?.mode === "pact-a1a" || active?.mode === "pact-book-a1a") && active.controller.isBetting) {
     return <main className="game-session-shell">
       <BankrollA1aBettingTable
         key={`a1a-bet-${active.controller.bankroll.completedRounds}-${active.revision}`}
         bankroll={active.controller.bankroll}
-        {...(active.mode === "pact-a1a" ? { pact: { contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining } } : {})}
+        {...(active.mode === "pact-a1a" ? { pact: { contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining } }
+          : active.mode === "pact-book-a1a" ? { pact: { contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining,
+            pactName: active.controller.contract.pact ? PACT_BOOK_PACTS[active.controller.contract.pact].name : "",
+            renunciation: active.controller.contract.pact ? PACT_BOOK_PACTS[active.controller.contract.pact].renunciation : "",
+            privilegeText: active.controller.contract.pact ? PACT_BOOK_PACTS[active.controller.contract.pact].privilege : "" } } : {})}
         error={error}
         preparing={a1aPreparing}
         onConfirm={(stake) => void startA1aRound(stake)}
@@ -419,6 +452,23 @@ export function App() {
     </main>;
   }
 
+  if (active?.mode === "pact-book-a1a" && !active.controller.isBetting) {
+    const pactId = active.controller.contract.pact;
+    const definition = pactId ? PACT_BOOK_PACTS[pactId] : null;
+    return <main className="game-session-shell">
+      <CofreFocoTable key={`pact-book-round-${active.controller.bankroll.completedRounds}`} session={active.controller}
+        night={active.controller.current} rules={active.rules} error={error} bankroll={active.controller.bankroll}
+        onNightChange={onA1aNightChange} onNextRound={nextA1aBetting} onReturnToSetup={returnToSetup} cardIdentityMode
+        pact={{ contract: active.controller.contract, roundsRemaining: active.controller.roundsRemaining,
+          canUseReadPrivilege: active.controller.canUseReadPrivilege, canUseManeuverPrivilege: active.controller.canUseManeuverPrivilege,
+          readPrivilege: () => active.controller.readPrivilege(), maneuverPrivilege: (hand, cardIndex) => active.controller.maneuverPrivilege(hand, cardIndex),
+          canUseFarol: active.controller.canUseFarol, farolCategory: active.controller.farolCategory,
+          revealFarol: () => active.controller.farol(), canUseImpetusDouble: active.controller.canUseImpetusDouble,
+          impetusDouble: () => active.controller.impetusDouble(), focusAbilityRenunciation: active.controller.focusAbilityRenunciation,
+          renunciationText: definition?.renunciation ?? "", privilegeText: definition?.privilege ?? "", pactName: definition?.name ?? "" }} />
+    </main>;
+  }
+
   return (
     <main className="landing-shell">
       <p className="eyebrow">PROTÓTIPO SOLO · LABORATÓRIO LOCAL</p>
@@ -435,6 +485,7 @@ export function App() {
           <option value="p5-cards">Laboratório P5 · cartas com naipes · EXPERIMENTAL</option>
           <option value="bankroll-a1a">Apostas livres · fichas A1a · EXPERIMENTAL</option>
           <option value="pact-a1a">Pactos por Ato · Véu/Ferro · EXPERIMENTAL</option>
+          <option value="pact-book-a1a">Livro dos Pactos · 6 Pactos · P7-A · EXPERIMENTAL</option>
         </select>
         <p className="mode-explanation">
           {mode === "basic"
@@ -447,7 +498,9 @@ export function App() {
                 ? "Laboratório de cartas sem apostas ou banca. J/Q/K mantêm valor 10; naipes e identidades são apenas visuais e usam o motor Cofre + Foco sem alterar regras ou resultados."
                 : mode === "bankroll-a1a"
                   ? "Aposta inteira escolhida antes de cada distribuição, igual para Luz e Sombra, com cobertura 4s. Laboratório local separado da banca fixa A0.1; Foco e pontuação estratégica não escalam com a aposta."
-                  : "A1a + Cofre + Foco com escolha de Véu, Ferro ou recusa antes da rodada 4. Pactos e privilégios são experimentais, sem alterar os modos anteriores."
+                  : mode === "pact-a1a"
+                    ? "PACT-LAB-0.1 mantém a oferta de Véu, Ferro ou recusa antes da rodada 4. Laboratório experimental separado dos modos anteriores."
+                    : "PACT-BOOK-0.1 oferece dois Pactos opostos antes das rodadas 4 e 8. P7-A contém seis Pactos em três pares; o restante do catálogo ainda não é elegível. Laboratório experimental local."
           }
         </p>
 
@@ -460,6 +513,7 @@ export function App() {
 
         {mode === "bankroll-a0" && <p className="mode-explanation">Banca fictícia reiniciada em 150 fichas por Noite, 10 rodadas e cobertura reservada de 40 por rodada financiada. Se o saldo ficar abaixo de 40 entre rodadas, a Noite continua em prática gratuita. Nada persiste após sair.</p>}
         {mode === "bankroll-a1a" && <p className="mode-explanation">Banca reiniciada em 150 fichas, 10 rodadas. Escolha s fichas por mão antes de cada distribuição; R=4s cobre ambos os doubles. O ledger aceita meios de ficha exatos. A prática gratuita começa quando nenhuma aposta mínima cabe. Perfil EXPERIMENTAL, sem persistência.</p>}
+        {mode === "pact-book-a1a" && <p className="mode-explanation">Ato I: rodadas 1–3 sem Pacto. Ofertas pareadas antes das rodadas 4 e 8, sem repetir família; o Pacto do Ato expira antes da oferta seguinte. Privilégio aparece primeiro, Renúncia logo abaixo. Recusar ambos não altera regras nem recursos.</p>}
 
         {(mode === "cofre-foco") && <>
           <label className="profile-label" htmlFor="night-horizon">Duração da Noite experimental</label>
