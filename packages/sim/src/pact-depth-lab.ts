@@ -31,6 +31,7 @@ export type PactDepthFamily = typeof PACT_BOOK_FAMILIES[number];
 type NightMetric = {
   score: number; bankDeltaTicks: number; finalBankTicks: number; fundedRounds: number; practiceRounds: number;
   focusSpent: number; focusReadSpent: number; focusManeuverSpent: number; focusExpired: number; privilegesUsed: number; privilegesExpired: number;
+  paidReadUses: number; paidReadAfterPactPrivilegeConsumed: number; paidManeuverUses: number; paidManeuverUsesUnderPact: number;
   acceptedPactCount: number; renunciationBlocks: number; hits: number; stands: number; doubles: number;
 };
 type NightActionTrace = Readonly<{ stateKey: string; action: Action }>;
@@ -262,7 +263,8 @@ function runNight(input: { seed: string; index: number; family: PactDepthFamily;
   const { seed, index, family, choice, policy, stakePolicy, payout, rules, solver, conditional } = input;
   let night = createNight(rules, 10); let book = createPactBook(); let balanceTicks = 300;
   let practice = false; let fundedRounds = 0; let practiceRounds = 0; let renunciationBlocks = 0;
-  let privilegesUsed = 0; let hits = 0; let stands = 0; let doubles = 0;
+  let privilegesUsed = 0; let paidReadUses = 0; let paidReadAfterPactPrivilegeConsumed = 0; let paidManeuverUses = 0; let paidManeuverUsesUnderPact = 0;
+  let hits = 0; let stands = 0; let doubles = 0;
   let sealedCofre: { card: Card; round: number } | null = null;
   let protectedFace: HandName | null = null;
   let score = 0;
@@ -391,6 +393,8 @@ function runNight(input: { seed: string; index: number; family: PactDepthFamily;
         holeKnown = night.round!.dealerHole;
       } else if (readMethod === "paid") {
         night = readDealerHole(night); holeKnown = night.round!.dealerHole;
+        paidReadUses++;
+        if (book.current?.status === "active" && book.current.privilege === "consumed") paidReadAfterPactPrivilegeConsumed++;
       } else night = skipRead(night);
 
       const freeManeuverId = pactId && ["iron", "vigil", "flare"].includes(pactId) && inFocusWindow(pactId) ? pactId : null;
@@ -421,7 +425,10 @@ function runNight(input: { seed: string; index: number; family: PactDepthFamily;
         if (maneuverMethod === "free") {
           night = maneuverWithPactPrivilege(night, bestSwap.hand, bestSwap.cardIndex);
           book = consumePactBookPrivilege(book, roundNumber); privilegesUsed++;
-        } else night = maneuver(night, bestSwap.hand, bestSwap.cardIndex);
+        } else {
+          night = maneuver(night, bestSwap.hand, bestSwap.cardIndex); paidManeuverUses++;
+          if (book.current?.status === "active") paidManeuverUsesUnderPact++;
+        }
       } else night = skipManeuver(night);
       if (night.round?.phase === "focusWindow") night = continueAfterAbilities(night);
       void current;
@@ -552,7 +559,8 @@ function runNight(input: { seed: string; index: number; family: PactDepthFamily;
   const focusReadSpent = night.focusSpent.read; const focusManeuverSpent = night.focusSpent.maneuver;
   const focusSpent = focusReadSpent + focusManeuverSpent;
   return { metric: { score, bankDeltaTicks: balanceTicks - 300, finalBankTicks: balanceTicks, fundedRounds, practiceRounds,
-    focusSpent, focusReadSpent, focusManeuverSpent, focusExpired: night.expiredFocus, privilegesUsed, privilegesExpired, acceptedPactCount,
+    focusSpent, focusReadSpent, focusManeuverSpent, focusExpired: night.expiredFocus, privilegesUsed, privilegesExpired,
+    paidReadUses, paidReadAfterPactPrivilegeConsumed, paidManeuverUses, paidManeuverUsesUnderPact, acceptedPactCount,
     renunciationBlocks, hits, stands, doubles }, actionTrace };
 }
 
@@ -572,7 +580,9 @@ function settleBankroll(kind: "funded" | "practice", stake: number, coverage: nu
 }
 
 function emptyMetric(): NightMetric { return { score: 0, bankDeltaTicks: 0, finalBankTicks: 0, fundedRounds: 0, practiceRounds: 0,
-  focusSpent: 0, focusReadSpent: 0, focusManeuverSpent: 0, focusExpired: 0, privilegesUsed: 0, privilegesExpired: 0, acceptedPactCount: 0, renunciationBlocks: 0,
+  focusSpent: 0, focusReadSpent: 0, focusManeuverSpent: 0, focusExpired: 0, privilegesUsed: 0, privilegesExpired: 0,
+  paidReadUses: 0, paidReadAfterPactPrivilegeConsumed: 0, paidManeuverUses: 0, paidManeuverUsesUnderPact: 0,
+  acceptedPactCount: 0, renunciationBlocks: 0,
   hits: 0, stands: 0, doubles: 0 }; }
 
 export function runPactDepthLab(options: { seed: string; nights: number }): PactDepthReport {
@@ -650,8 +660,10 @@ export function runPactDepthLab(options: { seed: string; nights: number }): Pact
   for (const result of results) {
     if (result.choice !== "option-a" && result.choice !== "option-b") continue;
     const id = result.pactId as PactId;
-    acceptedNightSamplesPerPact[id] += result.metrics.acceptedPactCount.mean * result.metrics.acceptedPactCount.n;
-    privilegeUseEventsPerPact[id] += result.metrics.privilegesUsed.mean * result.metrics.privilegesUsed.n;
+    // Metrics are means over integer Night counts; round the reconstructed totals to
+    // avoid floating-point artifacts such as 581.9999999999999 in the audit metadata.
+    acceptedNightSamplesPerPact[id] += Math.round(result.metrics.acceptedPactCount.mean * result.metrics.acceptedPactCount.n);
+    privilegeUseEventsPerPact[id] += Math.round(result.metrics.privilegesUsed.mean * result.metrics.privilegesUsed.n);
   }
   return { schemaVersion: 1, labVersion: PACT_DEPTH_LAB_VERSION, catalogVersion: "PACT-BOOK-0.1",
     agentVersion: PACT_DEPTH_AGENT_VERSION, cardStreamVersion: STREAM_VERSION,

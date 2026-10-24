@@ -33,7 +33,7 @@ Cada família/Pacto foi avaliado nos cenários da matriz: três políticas × tr
 
 ## Resultados
 
-Coleta final: **64.800 Noites modelo** (100 por célula; 648 células), 648.000 rodadas e 10.000 sementes no audit independente das ofertas. Todas as 18 entradas do catálogo foram exercitadas; cobertura lista zero Pactos não testados e zero Privilégios sem evento de uso. Isso mede execução das rotinas sob as políticas, não utilidade estratégica de cada uso. Não houve família repetida nas 10.000 ofertas pareadas do audit.
+Coleta corrigida: **64.800 Noites modelo** (100 por célula; 648 células), 648.000 rodadas e 10.000 sementes no audit independente das ofertas. Todas as 18 entradas do catálogo tiveram 1.800 Noites com assinatura (3 políticas × 3 stakes × 2 payouts × 100) e ao menos um evento de uso de Privilégio. O total de eventos por Pacto está no JSON; isso mede execução das rotinas, não utilidade estratégica de cada uso. Não houve família repetida nas 10.000 ofertas pareadas do audit.
 
 Resultados auditáveis completos — médias, desvios, erros-padrão, IC95%, pares A/B/recusa, banca, score, Foco, Renúncias, uso/expiração de Privilégios, frequências de ações e desacordo em estados comuns — estão em [`lab/results/p8-pact-depth-v1.json`](../lab/results/p8-pact-depth-v1.json).
 
@@ -41,31 +41,32 @@ Resultados auditáveis completos — médias, desvios, erros-padrão, IC95%, par
 
 | Família (A / B) | A − recusa, 3:2 | B − recusa, 3:2 | A − recusa, 1:1 | B − recusa, 1:1 |
 |---|---:|---:|---:|---:|
-| Revelação (Véu / Farol) | +2,30 [0,07; 4,53] | +2,15 [0,34; 3,96] | +2,30 [0,07; 4,53] | +2,10 [0,14; 4,06] |
-| Domínio (Ferro / Ímpeto) | +1,40 [-1,26; 4,06] | -2,10 [-3,44; -0,76] | +1,50 [-1,22; 4,22] | -2,20 [-3,55; -0,85] |
-| Foco (Vigília / Fulgor) | +6,40 [3,84; 8,96] | +4,90 [2,34; 7,46] | +6,00 [3,46; 8,54] | +4,80 [2,24; 7,36] |
-| Sacrifício (Bastião / Reflexo) | -5,80 [-8,82; -2,78] | -0,50 [-3,26; 2,26] | -5,80 [-8,83; -2,77] | -0,30 [-3,12; 2,52] |
-| Tempo (Penhor / Arremate) | 0,00 [0; 0] | 0,00 [0; 0] | 0,00 [0; 0] | 0,00 [0; 0] |
-| Destino (Ordem / Caos) | +0,80 [-0,19; 1,79] | +6,40 [4,00; 8,80] | +0,70 [-0,28; 1,68] | +6,40 [4,00; 8,80] |
-| Vínculo (Cisão / Balança) | -2,90 [-7,11; 1,31] | -0,60 [-1,02; -0,18] | -2,00 [-6,22; 2,22] | +0,20 [-0,28; 0,68] |
-| Fortuna (Lastro / Audácia) | 0,00 [0; 0] | 0,00 [-1,25; 1,25] | 0,00 [0; 0] | 0,00 [-1,25; 1,25] |
-| Escolha (Segunda Chance / Juramento) | +2,00 [-0,55; 4,55] | -3,50 [-5,68; -1,32] | +2,00 [-0,55; 4,55] | -3,60 [-5,89; -1,31] |
+| Revelação (Véu / Farol) | +0,60 [-1,41; 2,61] | +0,55 [-0,21; 1,31] | +0,60 [-1,41; 2,61] | +0,50 [-0,31; 1,31] |
+| Domínio (Ferro / Ímpeto) | +3,00 [0,34; 5,66] | -0,80 [-2,70; 1,10] | +2,80 [0,06; 5,54] | -0,90 [-2,85; 1,05] |
+| Foco (Vigília / Fulgor) | +4,80 [2,62; 6,98] | +4,60 [2,35; 6,85] | +4,40 [2,18; 6,62] | +4,60 [2,31; 6,89] |
+| Sacrifício (Bastião / Reflexo) | -6,10 [-9,02; -3,18] | -0,60 [-3,42; 2,22] | -6,10 [-9,03; -3,17] | -0,40 [-3,28; 2,48] |
+| Tempo (Penhor / Arremate) | +1,30 [0,23; 2,37] | +1,10 [-0,08; 2,28] | +1,10 [0,18; 2,02] | +0,90 [-0,15; 1,95] |
+| Destino (Ordem / Caos) | +1,80 [0,32; 3,28] | +4,40 [2,72; 6,08] | +1,70 [0,22; 3,18] | +4,40 [2,72; 6,08] |
+| Vínculo (Cisão / Balança) | -2,40 [-6,78; 1,98] | +0,60 [-0,80; 2,00] | -1,60 [-5,96; 2,76] | +1,30 [-0,08; 2,68] |
+| Fortuna (Lastro / Audácia) | 0,00 [0; 0] | +1,20 [-0,50; 2,90] | 0,00 [0; 0] | +1,20 [-0,50; 2,90] |
+| Escolha (Segunda Chance / Juramento) | +0,60 [-1,11; 2,31] | -2,70 [-5,22; -0,18] | +0,60 [-1,11; 2,31] | -2,80 [-5,38; -0,22] |
 
-Esta tabela é a célula `myopic` / aposta fixa 1, e mostra diferença **pareada** de score estratégico em relação à recusa, não lucro. O intervalo é IC95% normal da diferença sobre 100 Noites pareadas. 3:2 e 1:1 resultaram quase idênticos nesta célula: o pagamento natural raro e a amostra não separaram os perfis. Não resume a heterogeneidade entre políticas e apostas; consulte todas as células JSON. Intervalos são marginais, sem ajuste de multiplicidade.
+Esta tabela é a célula `myopic` / aposta fixa 1, e mostra diferença **pareada** de score estratégico em relação à recusa, não lucro. O intervalo é IC95% normal da diferença sobre 100 Noites pareadas. Nesta fatia, 3:2 e 1:1 permanecem próximos; o pagamento natural raro e a amostra não distinguem amplamente os perfis. A tabela não resume a heterogeneidade entre políticas e apostas; consulte todas as células JSON. Intervalos são marginais, sem ajuste de multiplicidade.
 
 ### Leituras preliminares
 
-- Não há evidência de uma ordenação universal: Domínio, Sacrifício e Escolha mostram diferenças entre A e B, enquanto os efeitos variam entre conservador, imediatista e intertemporal (ver JSON por política). Na célula myopic, Vigília e Caos tiveram ganhos médios positivos com IC que não cruza zero; Ímpeto, Bastião e Juramento foram negativos. São sinais para investigação, não vereditos de dominância: três políticas artificiais, 100 sementes e comparações múltiplas.
-- Recusar permaneceu melhor que algumas escolhas no agente myopic, incluindo Bastião, Balança e Juramento; em outros Pactos a diferença ficou indistinguível de zero. A alternativa tem valor contextual e nenhum bônus/penalidade próprio.
-- Sob a política conservadora, que nunca dobra e não usa Privilégios, a maioria das escolhas reproduziu o controle; Bastião ainda teve diferença de score -12,3 [ -15,5; -9,1 ], coerente com a Renúncia de não poder Parar sem Compra. Para Ferro, o agente myopic teve +1,4 [-1,3; 4,1] contra recusa e dobrou em média 2,95 vezes versus 3,48 no controle: a Manobra gratuita pode compensar parte do custo, mas esta amostra não demonstra vantagem significativa. É consistente com a hipótese qualitativa do fundador, não a prova.
-- Nos estados públicos comparáveis, conservador e myopic escolheram ações ordinárias diferentes em média 35,5% das vezes (média de 3,94 estados comuns por Noite nesta fatia). Intertemporal e myopic não divergiram nessas ações ordinárias compartilhadas: a política intertemporal altera sobretudo o timing de recursos, e não é um solver de planejamento global.
-- Tempo apresentou uso registrado do Privilégio mas diferença exatamente zero de score e frequências médias idênticas de Pedir/Parar/Dobrar em todas as sementes na fatia fixa-1; isso não demonstra irrelevância geral, mas é um sinal de que Penhor/Arremate não alteraram decisões/resultado observáveis neste experimento. Recomenda-se auditar essa interação e projetar cenários em que o Cofre selado ou a escolha entre candidatos mude a política antes de qualquer balanceamento.
-- Lastro/Audácia também ficaram próximos de zero em score nesta fatia fixa-1. Seu valor principal pode ser contábil e dependente da política de stake; os resultados de banca e as demais stakes precisam ser examinados separadamente, sem confundir lucro com skill score.
+- Não há evidência de uma ordenação universal: os sinais variam por par e política. Na fatia myopic/fixa 1, os ICs de 3:2 excluem zero em sentido positivo para Ferro, Vigília, Fulgor, Penhor, Ordem e Caos, e em sentido negativo para Bastião e Juramento; os demais efeitos da tabela cruzam zero ou são exatamente zero. Isto é exploratório: três políticas artificiais, 100 sementes por célula, muitos recortes e nenhuma correção de multiplicidade.
+- Recusar foi melhor que Bastião e Juramento nessa fatia, mas os outros sinais dependem do par; a recusa segue sem bônus ou penalidade próprios. A presença de ICs que cruzam zero não prova equivalência.
+- O controle conservador, que não usa Privilégios nem paga Foco, reproduz o controle sem Pacto quando a Renúncia não o afeta; Bastião é a exceção: exigir uma Compra antes de Parar reduziu o score em -12,30 [-15,55; -9,05] (3:2), com 1,61 bloqueios de Parar por Noite. Ferro e Juramento, cujas Renúncias fixam Luz e esse agente nunca Dobra, ficaram exatamente em zero contra recusa. Ferro foi positivo para o agente myopic (+3,00 [0,34; 5,66] em 3:2; +2,80 [0,06; 5,54] em 1:1), mas bloqueou em média 0,79 tentativas legais de Dobrar por Noite; o agente ainda dobrou 3,23 vezes com Ferro versus 3,81 no controle sem Pacto. Manobra paga e os demais efeitos são usados; não há evidência para reduzir esse resultado à Renúncia irrelevante. A percepção individual do fundador continua observação n=1.
+- A paridade de ação entre myopic e conservador é esparsa: na célula recusa/fixa 1/3:2 foram compartilhados 0,60 estados por Noite e 0,18 ações diferiram por Noite; o desacordo agregado nesses estados foi 30% (189 de 900 pares família-Noite continham algum estado compartilhado). Portanto a taxa percentual isolada é frágil e não quantifica domínio geral. O intertemporal também é uma heurística de timing, não um solver global de planejamento.
+- **Tempo mudou com a correção.** Antes, o agente não conseguia executar Manobras pagas quando não havia Privilégio gratuito, fazendo Penhor/Arremate parecerem sem efeito. Agora, no Ato II, a política myopic executou em média **0,22 Manobra paga por Noite** sob cada Pacto (IC95% [0,12; 0,32]; 22 ações em 100 Noites); no total da Noite pagou 1,64 Manobras em média. A Leitura paga foi executada 0,68 vezes/Noite em média (1,36 pontos de Foco consumidos); a fixture de seleção verifica que ela continua disponível quando a carga gratuita não está mais elegível. Com payout 3:2, Penhor ficou em +1,30 [0,23; 2,37] de score vs recusa e +0,26 [0,05; 0,47] ticks de banca; Arremate em +1,10 [-0,08; 2,28] de score e +0,22 [-0,02; 0,46] ticks. Em 1:1, respectivamente +1,10 [0,18; 2,02] e +0,22 [0,04; 0,40] ticks para Penhor; +0,90 [-0,15; 1,95] e +0,18 [-0,03; 0,39] ticks para Arremate. Penhor tem sinal positivo nesta amostra myopic; Arremate não separa de zero. Os ICs são pareados sobre 100 Noites, e não demonstram causalidade universal, efeito marginal isolado de Selar/segundo Cofre ou dominância. O resultado não permite manter a antiga conclusão de “efeito exatamente nulo”.
+- A Manobra paga compete pelo Foco e pelo valor da mão com Selar/gerar segundo Cofre. Em ambas as opções Tempo, a Manobra paga ocorreu enquanto o Pacto estava vigente, então a nova comparação não depende de um agente que nunca usa essa habilidade. Ainda é necessário isolar elegibilidade e estado do Cofre para separar o valor marginal do Privilégio temporal do restante da estratégia.
+- Lastro continua em score zero na fatia fixa 1 por construção do ledger: sua principal consequência é a banca/seguro; Audácia +1,20 [-0,50; 2,90]. Esses valores não devem ser confundidos com lucro nem com classificação estratégica; verificar saldos e stakes variáveis no JSON.
 
 ### Recomendações priorizadas
 
-1. **Auditar Tempo antes de balancear:** adicionar cenários determinísticos em que um Cofre selado ou a escolha entre candidatos muda o valor/ação; confirmar impacto em mão, score e banco, além do contador de uso. Se não alterar escolhas sob nenhuma política competente, revisar o contrato somente em futura decisão aprovada.
-2. **Estudar sinais contextuais, não médias isoladas:** aumentar a amostra pareada e estratificar por estados elegíveis, Renúncia acionada e valor do Privilégio para Vigília, Caos, Bastião e Juramento. Corrigir ou declarar a multiplicidade ao comparar várias famílias, políticas e métricas.
+1. **Isolar o valor de Tempo:** criar análise determinística pareada onde o Cofre selado/alternativo muda a decisão ótima/EV, separar o efeito de Manobra paga e reportar decisão, score e banca. Penhor agora tem sinal positivo e Arremate permanece inconclusivo no myopic/fixa 1; não fazer balanceamento com esta amostra.
+2. **Estudar sinais contextuais, não médias isoladas:** aumentar a amostra pareada e estratificar por estados elegíveis, Renúncia acionada e valor do Privilégio para Ferro, Vigília, Fulgor, Caos, Bastião e Juramento. Corrigir ou declarar a multiplicidade ao comparar famílias, políticas e métricas.
 3. **Medir planejamento intertemporal real:** substituir a heurística de atraso por uma política de horizonte finito ou busca roll-out sobre estados públicos e oportunidades restantes; comparar decisão de gastar/guardar contra myopic em estados idênticos e reportar custo computacional.
 4. **Levar hipóteses a playtest humano instrumentado:** somente depois de confirmar transições/efeitos, investigar compreensão, variedade de decisões e preferência por aceitar/recusar. Não usar este estudo de agente como evidência de diversão ou retenção.
 
@@ -81,7 +82,7 @@ Nenhuma recomendação autoriza mudança de regras ou balanceamento. Os itens 1�
 
 ## Reproduzir
 
-Na raiz do repositório, com Node compatível e pnpm da raiz:
+Na raiz do repositório, com Node compatível e pnpm da raiz (a execução de 64.800 Noites levou cerca de 182 s no Node 24.21.0):
 
 ```powershell
 pnpm install --frozen-lockfile
@@ -92,7 +93,13 @@ pnpm build
 pnpm --filter @nocte/web test:e2e
 ```
 
-O JSON inclui a seed, versões de motor/solver/streams/agente, tamanho de cada célula e metadados de execução. `elapsedMs` é incidental; resultados, sem esse campo, são determinísticos para mesmo SHA, seed e amostra.
+O JSON compacto tem cerca de 2,7 MB e 857 linhas (antes: 4,6 MB e cerca de 173 mil linhas), sem remover células ou métricas. Inclui seed, versões de motor/solver/streams/agente, tamanho de cada célula, eventos de ação paga discriminados e metadados de execução. `elapsedMs` é incidental; os resultados, sem esse campo, são determinísticos para mesmo SHA, seed e amostra.
+
+## Correção metodológica desta revisão
+
+A revisão no PR #49 encontrou que a política myopic condicionava Manobra paga à existência de Privilégio gratuito e bloqueava Leitura paga depois do uso do Privilégio. O agente foi corrigido em `c741fe1`; um teste de regressão cobre seleção paga/consumo/ausência de Privilégio e um teste determinístico confirma a chamada paga de Manobra durante as Noites com Penhor e Arremate, além de Leitura paga no controle e com Véu. O relatório registra separadamente Manobra paga com Pacto vigente e Leitura paga depois de consumir qualquer Privilégio do Pacto. As regras e o motor P7 não foram alterados. A matriz e este relatório foram recalculados após essa correção.
+
+Auditoria adicional não identificou divergência nova de transição: os caminhos especiais chamam as transições Cofre + Foco/PactBook, os previews de Ordem/Juramento são de uma carta consumida pela ação seguinte, e os efeitos de Penhor/Arremate são limitados ao Ato. O laboratório agora conta chamadas de Manobra/Leitura pagas no adaptador junto com o gasto de Foco devolvido pelo motor, e confere que a Manobra paga é executada em estado com Penhor/Arremate vigentes. Limitação: `paidReadAfterPactPrivilegeConsumed` não distingue qual capacidade consumiu o Privilégio; portanto é diagnóstico de sequência, não prova específica de Leitura paga após Leitura gratuita. A fixture de unidade prova a disponibilidade pela regra de seleção em ambas as condições, mas a amostra da célula Véu não exercitou Leitura paga depois de gastar sua Leitura gratuita. Nenhuma diferença foi encontrada que justificasse alterar o motor.
 
 ## Limitações
 
@@ -100,6 +107,7 @@ O JSON inclui a seed, versões de motor/solver/streams/agente, tamanho de cada c
 - As heurísticas de composição, timing dos Privilégios e seleção situacional não modelam compreensão ou estratégia humana. O solver exato só cobre decisões ordinárias do estado corrente sob reposição infinita/S17 e informação disponível.
 - O estudo forçado isola uma família no Ato II e recusa a oferta do Ato III nas células A/B/recusa. A célula situacional aceita heurísticamente oportunidades nos dois Atos. Não há fatorial de duas escolhas assinadas nem estimativa de todas as interações entre Pactos.
 - Sementes pareadas acoplam sequências por lane, mas as lanes divergem após consumos diferentes; não equivalem a baralho físico espelhado.
+- O JSON preserva agregados completos por célula (média, desvio, EP, IC95%, mínimo e máximo), não os registros individuais das 64.800 Noites; a reprodução integral exige executar novamente o comando com o mesmo SHA, seed e amostra.
 - ICs são normais, marginais, sem correção das muitas famílias/políticas/métricas. A leitura de dominância é exploratória.
 - Não há playtest humano, informação populacional, multiplayer, shoe finito, autoridade de servidor, validação de fairness, equilíbrio final, diversão ou retenção.
 - Determinismo de oferta serve ao replay, não à segurança contra adulteração/refresh. O modo continua local e experimental.

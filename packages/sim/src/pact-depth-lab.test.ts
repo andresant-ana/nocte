@@ -19,6 +19,22 @@ describe("P8 paired strategic depth lab", () => {
     expect(selectFocusUse("maneuver", "intertemporal", 6, 7, false, true, true, 1.0)).toBe("paid");
   });
 
+  it("reaches paid engine Maneuver and Read paths in deterministic PactBook runs", () => {
+    const row = (family: string, choice: string) => report.results.find(result => result.payout === "3:2"
+      && result.stakePolicy === "fixed-1" && result.policy === "myopic" && result.family === family && result.choice === choice)!;
+    // Penhor has no free Maneuver privilege; Arremate's free privilege is Cofre selection.
+    // The event counter proves the simulator reaches the engine's ordinary paid path.
+    expect(row("time", "option-a").metrics.focusManeuverSpent.mean).toBeGreaterThan(0);
+    expect(row("time", "option-b").metrics.focusManeuverSpent.mean).toBeGreaterThan(0);
+    expect(row("time", "option-a").metrics.paidManeuverUses.mean).toBeGreaterThan(0);
+    expect(row("time", "option-b").metrics.paidManeuverUses.mean).toBeGreaterThan(0);
+    // The no-Pact control takes ordinary paid Reads; selectFocusUse also checks that
+    // consuming a free charge does not close this same legal paid path.
+    expect(row("revelation", "refuse").metrics.paidReadUses.mean).toBeGreaterThan(0);
+    expect(row("revelation", "option-a").metrics.paidReadUses.mean).toBeGreaterThan(0);
+    expect(row("revelation", "refuse").metrics.focusReadSpent.mean).toBeGreaterThan(0);
+  });
+
   it("covers every pair, policy, stake policy and natural payout with reproducible paired seeds", () => {
     expect(report.seed).toBe("p8-deterministic-fixture");
     expect(report.results).toHaveLength(9 * 4 * 3 * 3 * 2);
