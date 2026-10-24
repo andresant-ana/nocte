@@ -1,9 +1,23 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { runPactDepthLab } from "./pact-depth-lab.js";
+import { runPactDepthLab, selectFocusUse } from "./pact-depth-lab.js";
 
 describe("P8 paired strategic depth lab", () => {
   let report: ReturnType<typeof runPactDepthLab>;
   beforeAll(() => { report = runPactDepthLab({ seed: "p8-deterministic-fixture", nights: 1 }); }, 60000);
+
+  it("keeps paid Focus actions possible without a free privilege, and after a privilege was spent", () => {
+    expect(selectFocusUse("maneuver", "myopic", 4, 7, false, true, true, 0.2)).toBe("paid");
+    expect(selectFocusUse("maneuver", "myopic", 5, 7, true, true, true, 0.2)).toBe("free");
+    expect(selectFocusUse("maneuver", "myopic", 5, 7, false, true, true, 0.2)).toBe("paid");
+    expect(selectFocusUse("maneuver", "myopic", 5, 7, false, false, true, 0.2)).toBe("none");
+    expect(selectFocusUse("read", "myopic", 5, 7, false, true, true)).toBe("paid");
+    expect(selectFocusUse("read", "myopic", 5, 7, true, true, true)).toBe("free");
+    expect(selectFocusUse("read", "myopic", 5, 7, false, true, false)).toBe("none");
+    expect(selectFocusUse("read", "conservative", 5, 7, true, true, true)).toBe("none");
+    expect(selectFocusUse("maneuver", "intertemporal", 6, 7, true, true, true, 0.2)).toBe("none");
+    expect(selectFocusUse("maneuver", "intertemporal", 7, 7, true, true, true, 0.2)).toBe("free");
+    expect(selectFocusUse("maneuver", "intertemporal", 6, 7, false, true, true, 1.0)).toBe("paid");
+  });
 
   it("covers every pair, policy, stake policy and natural payout with reproducible paired seeds", () => {
     expect(report.seed).toBe("p8-deterministic-fixture");

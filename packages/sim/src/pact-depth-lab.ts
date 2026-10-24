@@ -240,6 +240,22 @@ function shouldUsePrivilege(policy: PactDepthPolicy, round: number, endRound: nu
   return round >= endRound && immediateWorthwhile;
 }
 
+/** Free Pacto privileges and ordinary paid Focus are independent legal paths.
+ * The P8 study must not silently disable paid actions when a privilege is absent
+ * or was consumed earlier in the Act. Deterministic selection, no card peeking. */
+export function selectFocusUse(
+  ability: "read" | "maneuver", policy: PactDepthPolicy, round: number, freeEndRound: number,
+  freeEligible: boolean, paidEligible: boolean, worthwhile: boolean, maneuverGain = 0,
+): "free" | "paid" | "none" {
+  if (policy === "conservative" || !worthwhile) return "none";
+  if (shouldUsePrivilege(policy, round, freeEndRound, freeEligible, worthwhile)) return "free";
+  if (!paidEligible) return "none";
+  if (policy === "myopic") return "paid";
+  // Explicit resource-sensitive heuristic, not a globally optimal Focus policy.
+  if (ability === "maneuver" && round >= 6 && maneuverGain >= 0.75) return "paid";
+  return "none";
+}
+
 function runNight(input: { seed: string; index: number; family: PactDepthFamily; choice: PactDepthChoice;
   policy: PactDepthPolicy; stakePolicy: PactDepthStake; payout: PactDepthPayout;
   rules: CofreFocoRules; solver: EvSolver; conditional: ConditionalRoundSolver }): NightRun {
@@ -364,16 +380,16 @@ function runNight(input: { seed: string; index: number; family: PactDepthFamily;
         || (pactId === "vigil" && !inFocusWindow("vigil")) || (pactId === "flare" && !inFocusWindow("flare"));
       if (readForbidden && policy === "myopic" && night.focusRemaining >= rules.readCost
         && (night.round!.dealerUp.rank === "A" || night.round!.dealerUp.rank === "10")) renunciationBlocks++;
-      const readAllowed = !readForbidden && (freeReadId ? privilegeLegal(freeReadId) : night.focusRemaining >= rules.readCost);
       const privilegeWindowEnd = pactId === "flare" ? (actEnd === 7 ? 5 : 8) : actEnd;
-      const readNow = shouldUsePrivilege(policy, roundNumber, freeReadId ? privilegeWindowEnd : actEnd, Boolean(freeReadId && readAllowed),
-        night.round!.dealerUp.rank === "A" || night.round!.dealerUp.rank === "10")
-        || (!freeReadId && readAllowed && policy === "myopic" && (night.round!.dealerUp.rank === "A" || night.round!.dealerUp.rank === "10"));
+      const readMethod = selectFocusUse("read", policy, roundNumber, freeReadId ? privilegeWindowEnd : actEnd,
+        !readForbidden && Boolean(freeReadId && privilegeLegal(freeReadId)),
+        !readForbidden && night.focusRemaining >= rules.readCost,
+        night.round!.dealerUp.rank === "A" || night.round!.dealerUp.rank === "10");
       let holeKnown: Card | undefined;
-      if (readNow && freeReadId) {
+      if (readMethod === "free") {
         night = readDealerHoleWithPactPrivilege(night); book = consumePactBookPrivilege(book, roundNumber); privilegesUsed++;
         holeKnown = night.round!.dealerHole;
-      } else if (readNow && !freeReadId) {
+      } else if (readMethod === "paid") {
         night = readDealerHole(night); holeKnown = night.round!.dealerHole;
       } else night = skipRead(night);
 
@@ -397,12 +413,15 @@ function runNight(input: { seed: string; index: number; family: PactDepthFamily;
         void replaced;
       }
       if (maneuverForbidden && policy === "myopic" && night.focusRemaining >= rules.maneuverCost && bestSwap) renunciationBlocks++;
-      const shouldManeuver = (freeManeuver || canPayManeuver && policy === "myopic") && Boolean(bestSwap)
-        && shouldUsePrivilege(policy, roundNumber, freeManeuverId === "flare" ? (actEnd === 7 ? 5 : 8) : actEnd, freeManeuver, Boolean(bestSwap));
-      if (shouldManeuver && bestSwap) {
+      const maneuverMethod = selectFocusUse("maneuver", policy, roundNumber,
+        freeManeuverId === "flare" ? (actEnd === 7 ? 5 : 8) : actEnd,
+        freeManeuver, canPayManeuver, Boolean(bestSwap), bestSwap?.value ?? 0);
+      if (maneuverMethod !== "none" && bestSwap) {
         assertPactBookManeuverAllowed(book, roundNumber, bestSwap.hand);
-        if (freeManeuverId) { night = maneuverWithPactPrivilege(night, bestSwap.hand, bestSwap.cardIndex); book = consumePactBookPrivilege(book, roundNumber); privilegesUsed++; }
-        else night = maneuver(night, bestSwap.hand, bestSwap.cardIndex);
+        if (maneuverMethod === "free") {
+          night = maneuverWithPactPrivilege(night, bestSwap.hand, bestSwap.cardIndex);
+          book = consumePactBookPrivilege(book, roundNumber); privilegesUsed++;
+        } else night = maneuver(night, bestSwap.hand, bestSwap.cardIndex);
       } else night = skipManeuver(night);
       if (night.round?.phase === "focusWindow") night = continueAfterAbilities(night);
       void current;
