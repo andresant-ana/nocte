@@ -20,7 +20,8 @@
     "playtest:pools": "tsx src/playtest-pools-cli.ts",
     "cofre-foco": "tsx src/cofre-foco-cli.ts",
     "cofre-foco-conditional": "tsx src/conditional-lab-cli.ts",
-    "bankroll-a0-validation": "tsx src/bankroll-a0-validation-cli.ts"
+    "bankroll-a0-validation": "tsx src/bankroll-a0-validation-cli.ts",
+    "pact-depth": "tsx src/pact-depth-cli.ts"
   },
   "dependencies": {
     "@nocte/engine": "workspace:*"
