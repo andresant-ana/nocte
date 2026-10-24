@@ -134,3 +134,7 @@ Adendo experimental a N-058 amplia o modo isolado para seis pares completos e do
 ### NOCTE-P7-C — Issue #46
 
 Adendo experimental a N-058 completa `PACT-BOOK-0.1` com os nove pares e dezoito Pactos jogáveis, incluindo Cisão/Balança, Lastro/Audácia e Segunda Chance/Juramento. As ofertas pareadas pré-deal continuam sem repetição e sem empilhamento. Cisão e Balança respeitam composição/natural; Lastro e Audácia alteram apenas o ledger fictício e sua cobertura; Segunda Chance e Juramento são transações de domínio de uso único. Os modos anteriores permanecem sem mudança de comportamento. O catálogo segue EXPERIMENTAL: esta entrega não realiza comparação estratégica, validação humana nem balanceamento. Ver [PACTOS-LAB-P7](PACTOS-LAB-P7.md).
+
+### NOCTE-P8-S — Issue #48
+
+Auditoria offline pareada do catálogo PACT-BOOK-0.1 sem alteração de regras: 18 Pactos, nove pares, três políticas públicas, três políticas de stake, dois pagamentos naturais e 100 Noites por célula (64.800 Noites modelo). O relatório e JSON auditável registram efeitos distintos por política, sinais preliminares contra Bastião/Juramento e a favor de Vigília/Caos na célula myopic/fixa-1, além de efeito não detectado para Tempo nessa fatia. Todos esses sinais são hipóteses para avaliação dirigida; ICs são marginais e não há dados humanos ou conclusão de equilíbrio. N-058 e todos os contratos P7 permanecem EXPERIMENTAL, sem alteração. Ver [LAB-P8-PACT-DEPTH](LAB-P8-PACT-DEPTH.md).
