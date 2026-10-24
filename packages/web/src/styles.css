@@ -203,6 +203,11 @@ body { min-height: 100vh; min-height: 100dvh; }
 .round-summary { margin: 0; padding: .35rem; border: 0; }
 .round-summary h3 { margin: 0 0 .2rem; }
 .round-summary p { margin: .1rem 0; font-size: .74rem; }
+.pending-hit { display: flex; align-items: center; flex-wrap: wrap; gap: .3rem .7rem; padding: .3rem .45rem; }
+.pending-hit h3, .pending-hit .card-row, .pending-hit p { margin: 0; }
+.pending-hit .playing-card { width: 2rem; height: 2.75rem; }
+.arremate-options { display: flex; flex-wrap: wrap; gap: .3rem; }
+.table-play-area:has(.pending-hit) { grid-template-rows: minmax(0, 1fr) auto; }
 .table-footer { display: flex; justify-content: space-between; align-items: center; gap: .5rem; }
 .info-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: .75rem; background: #000b; }
 .info-dialog { width: min(100%, 42rem); max-height: min(90vh, 90dvh); overflow: auto; padding: 1rem; border: 1px solid #77633a; background: #191714; }
@@ -270,6 +275,9 @@ body { min-height: 100vh; min-height: 100dvh; }
 .pact-offer-table > .phase-status { margin: 0; padding: .25rem .5rem; border-left: 2px solid #53675a; color: #ddd4c0; font: .72rem/1.3 system-ui, sans-serif; }
 .pact-offer-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: .45rem; min-height: 0; }
 .pact-option { display: flex; flex-direction: column; gap: .25rem; padding: .45rem; }
+.pact-option h3 { order: 0; }
+.pact-option p:first-of-type { order: 1; font-size: .78rem; }
+.pact-option p:nth-of-type(2) { order: 2; }
 .pact-option p { margin: 0; color: #ddd4c0; font: .72rem/1.3 system-ui, sans-serif; }
 .pact-option fieldset { display: flex; gap: .6rem; margin: .2rem 0; padding: .25rem; font: .7rem/1.2 system-ui, sans-serif; }
 .pact-option button { margin-top: auto; min-height: 2.3rem; padding: .35rem .5rem; font-size: .75rem; }

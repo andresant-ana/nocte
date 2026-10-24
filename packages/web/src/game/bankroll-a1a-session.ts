@@ -1,4 +1,4 @@
-import type { Action, HandName, Partition } from "@nocte/engine";
+import type { Action, Card, HandName, Partition } from "@nocte/engine";
 import type { CofreFocoActionRestrictions, CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import type { PreparedCofreFocoRound } from "./random";
 import { CofreFocoSessionAdapter } from "./cofre-foco-session";
@@ -81,13 +81,13 @@ export class BankrollA1aSessionAdapter {
     this.#betting = true;
   }
 
-  startRound(prepared: PreparedCofreFocoRound, stake: number): PublicCofreFocoNight {
+  startRound(prepared: PreparedCofreFocoRound, stake: number, cofreOverride?: Card): PublicCofreFocoNight {
     if (!this.#betting) throw new Error("A aposta da rodada já foi confirmada.");
     const roundId = `${this.#ledger.id}:round:${this.#ledger.completedRounds + 1}`;
     const nextLedger = beginA1aRound(this.#ledger, roundId, stake);
     const nextSession = this.#session
-      ? (() => { this.#session!.nextRound(prepared); return this.#session!; })()
-      : CofreFocoSessionAdapter.start(prepared, this.#rules, A1A_HORIZON, this.#actionRestrictions);
+      ? (() => { this.#session!.nextRound(prepared, cofreOverride); return this.#session!; })()
+      : CofreFocoSessionAdapter.start(prepared, this.#rules, A1A_HORIZON, this.#actionRestrictions, cofreOverride);
     this.#ledger = nextLedger;
     this.#session = nextSession;
     this.#roundId = roundId;
@@ -116,6 +116,13 @@ export class BankrollA1aSessionAdapter {
   maneuverDirectWithPactPrivilege(hand: HandName, cardIndex: number) { return this.#transition(() => this.#session!.maneuverDirectWithPactPrivilege(hand, cardIndex)); }
   revealFarolCategory() { return this.#transition(() => this.#session!.revealFarolCategory()); }
   impetusDouble() { return this.#transition(() => this.#session!.impetusDouble()); }
+  beginPactHit() { return this.#transition(() => this.#session!.beginPactHit()); }
+  resolvePactHit(resolution: "normal" | "bastion" | "reflection" | "chaos", transferTo?: HandName) {
+    return this.#transition(() => this.#session!.resolvePactHit(resolution, transferTo));
+  }
+  peekNextForCurrentHand(): Card { if (!this.#session || this.#betting) throw new Error("A rodada ainda aguarda a aposta."); return this.#session.peekNextForCurrentHand(); }
+  drawAlternateCofreCandidate(): Card { if (!this.#session || this.#betting) throw new Error("A rodada ainda aguarda a aposta."); return this.#session.drawAlternateCofreCandidate(); }
+  chooseCofre(card: Card) { return this.#transition(() => this.#session!.chooseCofre(card)); }
   continueAfterAbilities() { return this.#transition(() => this.#session!.continueAfterAbilities()); }
   act(action: Action) { return this.#transition(() => this.#session!.act(action)); }
   resolveDealer() { return this.#transition(() => this.#session!.resolveDealer()); }

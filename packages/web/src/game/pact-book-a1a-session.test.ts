@@ -7,10 +7,15 @@ import type { PreparedCofreFocoRound } from "./random";
 import { PactBookA1aSessionAdapter } from "./pact-book-a1a-session";
 
 const card = (rank: Card["rank"]): Card => ({ rank });
-const lane = (cards: readonly Card[]): CardSource => { let i = 0; return () => { const c = cards[i++]; if (!c) throw Error("fixture exhausted"); return { ...c }; }; };
-const prepared = (seed: string, index: number, initial: readonly Card[] = [card("8"), card("8"), card("9"), card("9")]): PreparedCofreFocoRound => ({ seed, index, draws: {
+const lane = (cards: readonly Card[]): CardSource => {
+  let i = 0;
+  const draw = (() => { const c = cards[i++]; if (!c) throw Error("fixture exhausted"); return { ...c }; }) as CardSource;
+  draw.peek = () => { const c = cards[i]; if (!c) throw Error("fixture exhausted"); return { ...c }; };
+  return draw;
+};
+const prepared = (seed: string, index: number, initial: readonly Card[] = [card("8"), card("8"), card("9"), card("9")], luzCards: readonly Card[] = [card("2"), card("3"), card("4")]): PreparedCofreFocoRound => ({ seed, index, draws: {
   initial: lane(initial), dealer: lane([card("6"), card("10"), card("10"), card("10")]),
-  cofre: lane([card("5")]), luz: lane([card("2"), card("3"), card("4")]), sombra: lane([card("2"), card("3"), card("4")]),
+  cofre: lane([card("5"), card("A")]), luz: lane(luzCards), sombra: lane([card("2"), card("3"), card("4")]),
 } });
 const opening = partitions([card("8"), card("8"), card("9"), card("9")]).find(p => p.luz[0] === 0 && p.luz[1] === 1 && p.sombra[0] === 2 && p.sombra[1] === 3)!;
 function finish(session: PactBookA1aSessionAdapter, seed: string, round: number): void {
@@ -21,11 +26,11 @@ function finish(session: PactBookA1aSessionAdapter, seed: string, round: number)
   expect(session.current.round?.roundNumber).toBe(round);
   if (round < 10) session.enterBetting();
 }
-function seedFor(family: "revelation" | "dominion" | "focus"): string {
+function seedFor(family: "revelation" | "dominion" | "focus" | "sacrifice" | "time" | "destiny"): string {
   for (let n = 0; n < 1000; n += 1) { const seed = `P7-test-seed-${n}`; if (drawPactFamily(seed, 4) === family) return seed; }
   throw Error("No seed fixture found");
 }
-function reachFour(family: "revelation" | "dominion" | "focus"): { session: PactBookA1aSessionAdapter; seed: string } {
+function reachFour(family: "revelation" | "dominion" | "focus" | "sacrifice" | "time" | "destiny"): { session: PactBookA1aSessionAdapter; seed: string } {
   const seed = seedFor(family); const session = PactBookA1aSessionAdapter.start(CF_LAB_01_3_TO_2);
   session.startRound(prepared(seed, 0), 1); finish(session, seed, 1);
   session.startRound(prepared(seed, 1), 1); finish(session, seed, 2);
@@ -88,6 +93,106 @@ describe("PACT-BOOK-0.1 first playable slice", () => {
     expect(() => session.act("double")).toThrow(/Renúncia/i);
     expect(session.bankroll.focusRemaining).toBe(focus);
     expect(composed.focusRemaining).toBe(focus);
+  });
+
+  it("Bastião discards only a pending bust, consumes once, and keeps its Renúncia active", () => {
+    const { session, seed } = reachFour("sacrifice");
+    session.sign("bastion", "luz");
+    session.startRound(prepared(seed, 3, [card("10"), card("9"), card("8"), card("9")], [card("5")]), 1);
+    const partition = partitions([card("10"), card("9"), card("8"), card("9")]).find(p => p.luz[0] === 0 && p.luz[1] === 1 && p.sombra[0] === 2 && p.sombra[1] === 3)!;
+    session.compose(partition); session.skipRead(); session.skipManeuver(); session.continueAfterAbilities();
+    expect(session.legalActions).not.toContain("stand");
+    expect(() => session.resolvePendingHit("bastion")).toThrow(/Compra pendente/i);
+    session.act("hit");
+    expect(session.current.round?.phase).toBe("hitPending");
+    expect(session.canUseBastion).toBe(true);
+    const saved = session.resolvePendingHit("bastion");
+    expect(saved.round?.hands?.luz.cards).toEqual([card("10"), card("9")]);
+    expect(saved.round?.hands?.luz.status).toBe("stood");
+    expect(session.contract.privilege).toBe("consumed");
+    expect(session.state.current?.status).toBe("active");
+  });
+
+  it("Reflexo transfers a pending card once, while forbidding Dobrar on both Faces", () => {
+    const { session, seed } = reachFour("sacrifice");
+    session.sign("reflection"); session.startRound(prepared(seed, 3, [card("10"), card("9"), card("8"), card("8")] ), 1);
+    session.compose(partitions([card("10"), card("9"), card("8"), card("8")]).find(p => p.luz[0] === 0 && p.luz[1] === 1 && p.sombra[0] === 2 && p.sombra[1] === 3)!);
+    session.skipRead(); session.skipManeuver(); session.continueAfterAbilities();
+    expect(session.legalActions).not.toContain("double");
+    expect(() => session.act("double")).toThrow(/Dobrar está proibido/i);
+    session.act("hit");
+    expect(session.current.round?.phase).toBe("hitPending");
+    expect(session.current.round?.pendingHitHand).toBeDefined();
+    expect(session.current.round?.hands?.sombra.status).toBe("playing");
+    expect(session.canUseReflection).toBe(true);
+    const transferred = session.resolvePendingHit("reflection");
+    expect(transferred.round?.hands?.luz.cards).toHaveLength(2);
+    expect(transferred.round?.hands?.luz.status).toBe("stood");
+    expect(transferred.round?.hands?.sombra.cards).toEqual([card("8"), card("8"), card("2")]);
+    expect(session.contract.privilege).toBe("consumed");
+  });
+
+  it("Penhor preserves the selected Cofre into only the next round and only blocks Manobra while sealing", () => {
+    const { session, seed } = reachFour("time");
+    session.sign("bond"); session.startRound(prepared(seed, 3), 1);
+    expect(session.current.round?.cofre).toEqual(card("5"));
+    session.sealCofre();
+    expect(session.contract.privilege).toBe("consumed");
+    session.compose(opening);
+    expect(session.focusOptions.maneuverTargets).toHaveLength(0);
+    finish(session, seed, 4);
+    session.startRound(prepared(seed, 4), 1);
+    expect(session.current.round?.cofre).toEqual(card("5"));
+    session.compose(opening);
+    expect(session.focusOptions.maneuverTargets.length).toBeGreaterThan(0);
+  });
+
+  it("Arremate offers exactly two Cofres, commits one choice before composition, and its Renúncia lasts one round", () => {
+    const { session, seed } = reachFour("time");
+    session.sign("finale"); session.startRound(prepared(seed, 3), 1);
+    expect(session.canUseArremate).toBe(true);
+    expect(session.activateArremate()).toEqual([card("5"), card("A")]);
+    expect(() => session.compose(opening)).toThrow(/Escolha uma das duas/i);
+    session.chooseArremate(1);
+    expect(session.current.round?.cofre).toEqual(card("A"));
+    session.compose(opening);
+    finish(session, seed, 4);
+    session.startRound(prepared(seed, 4), 1); session.compose(opening);
+    expect(session.focusOptions.maneuverTargets).toHaveLength(0);
+    finish(session, seed, 5);
+    session.startRound(prepared(seed, 5), 1); session.compose(opening);
+    expect(session.focusOptions.maneuverTargets.length).toBeGreaterThan(0);
+  });
+
+  it("Ordem reveals one non-consuming exact preview and Comprar receives that card", () => {
+    const { session, seed } = reachFour("destiny");
+    session.sign("order"); session.startRound(prepared(seed, 3), 1); session.compose(opening);
+    session.skipRead(); session.skipManeuver(); session.continueAfterAbilities();
+    const preview = session.revealOrderPreview();
+    expect(preview).toEqual({ hand: "luz", card: card("2") });
+    expect(session.contract.privilege).toBe("consumed");
+    expect(() => session.revealOrderPreview()).toThrow(/indisponível/i);
+    const result = session.act("hit");
+    expect(result.round?.hands?.luz.cards.at(-1)).toEqual(preview.card);
+    expect(session.orderPreview).toBeNull();
+  });
+
+  it("Caos permits a normal first Compra, then consumes exactly one pending and one forced replacement from that Face", () => {
+    const { session, seed } = reachFour("destiny");
+    session.sign("chaos"); session.startRound(prepared(seed, 3), 1); session.compose(opening);
+    expect(session.focusOptions.canRead).toBe(false);
+    session.skipRead(); session.skipManeuver(); session.continueAfterAbilities();
+    session.act("hit");
+    expect(session.current.round?.phase).toBe("hitPending");
+    session.resolvePendingHit("normal");
+    expect(session.contract.privilege).toBe("available");
+    session.act("hit");
+    expect(session.current.round?.pendingHitCard).toEqual(card("3"));
+    expect(session.canUseChaos).toBe(true);
+    const result = session.resolvePendingHit("chaos");
+    expect(result.round?.hands?.luz.cards).toEqual([card("8"), card("8"), card("2"), card("4")]);
+    expect(session.contract.privilege).toBe("consumed");
+    expect(() => session.resolvePendingHit("chaos")).toThrow(/Compra pendente/i);
   });
 
   it("Ímpeto preserves ordinary two-card double, disables Manobra, and consumes only on the post-hit double", () => {

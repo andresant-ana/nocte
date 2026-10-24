@@ -126,3 +126,7 @@ N-057 autoriza somente o modo local isolado `PACT-LAB-0.1`: oferta antes da apos
 ### NOCTE-P7-A — Issue #42
 
 N-058 autoriza o laboratório local versionado `PACT-BOOK-0.1`, com duas ofertas pareadas pré-deal sem repetição e sem empilhamento. Esta entrega incremental é empilhada sobre PR #41, preservando PACT-LAB-0.1; torna jogáveis Véu, Farol, Ferro, Ímpeto, Vigília e Fulgor, em três famílias completas. Os seis pares restantes não entram no sorteio nesta base. Não há solver comparativo, ajuste de regras, resultados humanos ou alegação de equilíbrio. Ver [PACTOS-LAB-P7](PACTOS-LAB-P7.md).
+
+### NOCTE-P7-B — Issue #44
+
+Adendo experimental a N-058 amplia o modo isolado para seis pares completos e doze Pactos jogáveis: P7-A mais Bastião/Reflexo, Penhor/Arremate e Ordem/Caos. As ofertas continuam antes das rodadas 4 e 8, em pares opostos sem repetição; Renúncias permanecem vigentes após o consumo e o Ato anterior expira antes do seguinte. Compra pendente, descartar/transferir/repor, Cofre Selado e preview de Ordem são transições do domínio com regressões determinísticas. Os pares Vínculo, Fortuna e Escolha ficam inelegíveis até P7-C. Não há simulação comparativa nesta fatia, dados humanos ou afirmação de equilíbrio. Regras permanecem EXPERIMENTAL; ver [PACTOS-LAB-P7](PACTOS-LAB-P7.md).

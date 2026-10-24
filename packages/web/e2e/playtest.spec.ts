@@ -1,11 +1,16 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function fixedPactDraws(page: Page) {
-  await page.addInitScript(() => {
+async function fixedPactDraws(page: Page, seedHex = "00000000000000000000000000000000") {
+  await page.addInitScript((seed) => {
     (window as unknown as { __pactDigestCalls: number }).__pactDigestCalls = 0;
     Object.defineProperty(Object.getPrototypeOf(globalThis.crypto), "getRandomValues", {
       configurable: true, value<T extends ArrayBufferView | null>(array: T): T {
-        if (array) new Uint8Array(array.buffer, array.byteOffset, array.byteLength).fill(0);
+        if (array) {
+          const target = new Uint8Array(array.buffer, array.byteOffset, array.byteLength);
+          target.fill(0);
+          const seedBytes = new Uint8Array(seed.match(/.{2}/g)!.map(byte => Number.parseInt(byte, 16)));
+          target.set(seedBytes.subarray(0, target.byteLength));
+        }
         return array;
       },
     });
@@ -25,7 +30,7 @@ async function fixedPactDraws(page: Page) {
         return block.buffer;
       },
     });
-  });
+  }, seedHex);
 }
 
 async function startPactLab(page: Page) {
@@ -637,7 +642,7 @@ test("PACT-LAB-0.1 enforces Iron on the chosen Face, supports free Manobra, and 
   await expect(page.getByRole("button", { name: "Confirmar composição" })).toBeVisible();
 });
 
-test("P7-A opens two seeded-independent pair offers at rounds four and eight without repeats and fits viewport", async ({ page }, testInfo) => {
+test("P7-B opens two seeded-independent pair offers at rounds four and eight without repeats and fits viewport", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.getByLabel("Modo de jogo").selectOption("pact-book-a1a");
   await page.getByRole("button", { name: "Jogar livre" }).click();
@@ -658,7 +663,7 @@ test("P7-A opens two seeded-independent pair offers at rounds four and eight wit
     throw new Error("Oferta P7 não apareceu antes do limite de navegação.");
   };
   const offerFour = await advanceToOffer();
-  await expect(offerFour).toHaveAttribute("data-pact-family", /^(revelation|dominion|focus)$/);
+  await expect(offerFour).toHaveAttribute("data-pact-family", /^(revelation|dominion|focus|sacrifice|time|destiny)$/);
   const firstFamily = await offerFour.getAttribute("data-pact-family");
   for (const viewport of [{ width: 1366, height: 768 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
@@ -683,4 +688,61 @@ test("P7-A opens two seeded-independent pair offers at rounds four and eight wit
   await page.screenshot({ path: testInfo.outputPath("p7-offer-ato-iii-390x844.png") });
   await page.getByRole("button", { name: "Recusar Pactos" }).click();
   await expect(page.locator('.viewport-table[data-game-phase="betting"]')).toBeVisible();
+});
+
+async function reachP7BOffer(page: Page, seedHex: string) {
+  await fixedPactDraws(page, seedHex);
+  await page.goto("/");
+  await page.getByLabel("Modo de jogo").selectOption("pact-book-a1a");
+  await page.getByRole("button", { name: "Jogar livre" }).click();
+  for (let guard = 0; guard < 60; guard += 1) {
+    const offer = page.locator('.viewport-table[data-game-phase="pact-offer"]');
+    if (await offer.count()) return offer;
+    const phase = await page.locator(".viewport-table").getAttribute("data-game-phase");
+    if (phase === "betting") await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+    else if (phase === "compose") await page.getByRole("button", { name: "Confirmar composição" }).click();
+    else if (phase === "focusWindow") await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+    else if (phase === "player") await page.getByRole("button", { name: "Parar" }).click();
+    else if (phase === "dealer") await page.getByRole("button", { name: "Resolver dealer" }).click();
+    else if (phase === "complete") await page.getByRole("button", { name: "Próxima rodada" }).click();
+    else throw new Error(`Fase inesperada no P7-B E2E: ${phase}`);
+  }
+  throw new Error("Oferta P7-B não apareceu antes do limite de navegação.");
+}
+
+test("P7-B Bastião intercepts a busting Compra and resolves it on the table", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000001");
+  await expect(offer).toHaveAttribute("data-pact-family", "sacrifice");
+  await expect(offer.getByRole("heading", { name: "Bastião" })).toBeVisible();
+  await page.getByRole("radio", { name: "Luz" }).check();
+  await page.getByRole("button", { name: "Assinar Bastião" }).click();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+  await page.getByRole("button", { name: "Comprar" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="hitPending"]')).toBeVisible();
+  await expect(page.getByRole("button", { name: "Bastião · descartar e Parar" })).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  const metrics = await page.evaluate(() => ({ width: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight, innerWidth, innerHeight }));
+  expect(metrics.width).toBeLessThanOrEqual(metrics.innerWidth + 1);
+  expect(metrics.height).toBeLessThanOrEqual(metrics.innerHeight + 1);
+  await expect(page.getByRole("button", { name: "Bastião · descartar e Parar" })).toBeInViewport();
+  await page.getByRole("button", { name: "Bastião · descartar e Parar" }).click();
+  await expect(page.locator('.viewport-table[data-game-phase="player"]')).toBeVisible();
+  await expect(page.getByText(/Privilégio: Após uma Compra normal que estouraria a mão.*Consumido/)).toBeVisible();
+  await expect(page.getByRole("group", { name: "Cartas da mão Luz" }).getByRole("listitem", { name: "Carta 10" })).toHaveCount(0);
+});
+
+test("P7-B Ordem reveals one card and the next Comprar receives it", async ({ page }) => {
+  const offer = await reachP7BOffer(page, "00000000000000000000000000000002");
+  await expect(offer).toHaveAttribute("data-pact-family", "destiny");
+  await page.getByRole("button", { name: "Assinar Ordem" }).click();
+  await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByRole("button", { name: "Confirmar composição" }).click();
+  await page.getByRole("button", { name: /Conservar Foco|Continuar/ }).click();
+  await page.getByRole("button", { name: /Ordem · revelar próxima Compra/ }).click();
+  await expect(page.getByText("Ordem · próxima Compra de Luz: 10. Comprar recebe essa carta.")).toBeVisible();
+  await page.getByRole("button", { name: "Comprar" }).click();
+  await expect(page.getByText("Total 26 · estourou")).toBeVisible();
+  await expect(page.getByText(/Privilégio: Revela exatamente a próxima carta que uma Face ativa receberia; o Privilégio é consumido ao revelar\. · Consumido/)).toBeVisible();
 });

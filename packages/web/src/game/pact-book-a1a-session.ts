@@ -1,8 +1,8 @@
-import type { Action, HandName, Partition } from "@nocte/engine";
+import { handValue, type Action, type Card, type HandName, type Partition } from "@nocte/engine";
 import type { CofreFocoActionRestrictions, CofreFocoRules, PublicCofreFocoNight } from "@nocte/engine/cofre-foco";
 import {
   assertPactBookActionAllowed, canUsePactBookPrivilege, consumePactBookPrivilege, createPactBook,
-  enterPactBookRound, expirePactBook, offerPactBook, pactActRoundsRemaining, pactBookRestrictions,
+  enterPactBookRound, expirePactBook, markPactBookCofreSealed, offerPactBook, pactActRoundsRemaining, pactBookRestrictions,
   refusePactBook, signPactBook, type PactActState, type PactBookState, type PactFamily, type PactId,
 } from "@nocte/engine/pact-book";
 import type { PreparedCofreFocoRound } from "./random";
@@ -17,6 +17,8 @@ export type PactBookPublicContract = Readonly<{
   family: PactFamily | null;
   actStartRound: number;
   actEndRound: number;
+  sealedRound: number | null;
+  blockedManeuverRound: number | null;
 }>;
 
 /** Isolated PACT-BOOK-0.1 browser laboratory. PACT-LAB-0.1 remains unchanged. */
@@ -25,6 +27,9 @@ export class PactBookA1aSessionAdapter {
   #state: PactBookState = createPactBook();
   #base: BankrollA1aSessionAdapter;
   #seed: string | null = null;
+  #sealedCofre: Readonly<{ card: Card; targetRound: number }> | null = null;
+  #arremateOptions: readonly [Card, Card] | null = null;
+  #orderPreview: Readonly<{ hand: HandName; card: Card }> | null = null;
 
   private constructor(rules: CofreFocoRules) {
     this.#rules = rules;
@@ -37,7 +42,8 @@ export class PactBookA1aSessionAdapter {
     const pact = this.#state.current;
     return Object.freeze({ status: pact?.status ?? "unoffered", pact: pact?.choice && pact.choice !== "refused" ? pact.choice : null,
       affectedFace: pact?.affectedFace ?? null, ironFace: pact?.affectedFace ?? null, privilege: pact?.privilege ?? "none", family: pact?.family ?? null,
-      actStartRound: pact?.startRound ?? 0, actEndRound: pact?.endRound ?? 0 });
+      actStartRound: pact?.startRound ?? 0, actEndRound: pact?.endRound ?? 0,
+      sealedRound: pact?.sealedRound ?? null, blockedManeuverRound: pact?.blockedManeuverRound ?? null });
   }
   get offerFamily(): PactFamily | null { return this.#state.current?.status === "offered" ? this.#state.current.family : null; }
   get offerOptions(): readonly PactId[] { return this.#state.current?.status === "offered" ? this.#state.current.options : []; }
@@ -80,6 +86,47 @@ export class PactBookA1aSessionAdapter {
     return Boolean(round?.phase === "player" && hand?.status === "playing" && hand.cards.length === 3
       && this.#state.current?.choice === "impetus" && this.#privilegeWindow(round.roundNumber));
   }
+  get canUseBastion(): boolean {
+    const round = this.#base.current.round;
+    const hand = round?.pendingHitHand && round.hands?.[round.pendingHitHand];
+    return Boolean(round?.phase === "hitPending" && hand && round.pendingHitCard
+      && handValue([...hand.cards, round.pendingHitCard]).bust && this.#state.current?.choice === "bastion"
+      && canUsePactBookPrivilege(this.#state, round.roundNumber));
+  }
+  get canUseReflection(): boolean {
+    const round = this.#base.current.round; const hand = round?.pendingHitHand;
+    const other: HandName | null = hand === "luz" ? "sombra" : hand === "sombra" ? "luz" : null;
+    const receiver = other && round?.hands?.[other];
+    return Boolean(round?.phase === "hitPending" && receiver?.status === "playing" && this.#state.current?.choice === "reflection"
+      && canUsePactBookPrivilege(this.#state, round.roundNumber));
+  }
+  get reflectionTarget(): HandName | null {
+    const hand = this.#base.current.round?.pendingHitHand;
+    const other: HandName | null = hand === "luz" ? "sombra" : hand === "sombra" ? "luz" : null;
+    return other && this.#base.current.round?.hands?.[other].status === "playing" ? other : null;
+  }
+  get canUseChaos(): boolean {
+    const round = this.#base.current.round;
+    return Boolean(round?.phase === "hitPending" && this.#state.current?.choice === "chaos"
+      && canUsePactBookPrivilege(this.#state, round.roundNumber));
+  }
+  get canUsePenhor(): boolean {
+    const round = this.#base.current.round;
+    return Boolean(round?.phase === "compose" && this.#state.current?.choice === "bond" && round.roundNumber < this.#state.current.endRound
+      && canUsePactBookPrivilege(this.#state, round.roundNumber) && round.cofre);
+  }
+  get canUseArremate(): boolean {
+    const round = this.#base.current.round;
+    return Boolean(!this.#arremateOptions && round?.phase === "compose" && this.#state.current?.choice === "finale"
+      && canUsePactBookPrivilege(this.#state, round.roundNumber));
+  }
+  get arremateOptions(): readonly [Card, Card] | null { return this.#arremateOptions; }
+  get canUseOrder(): boolean {
+    const round = this.#base.current.round;
+    return Boolean(round?.phase === "player" && round.currentHand && this.#state.current?.choice === "order"
+      && canUsePactBookPrivilege(this.#state, round.roundNumber));
+  }
+  get orderPreview(): Readonly<{ hand: HandName; card: Card }> | null { return this.#orderPreview; }
   get focusAbilityRenunciation(): string | null {
     const round = this.#base.current.round;
     if (!round || !this.#state.current || !["vigil", "flare"].includes(this.#state.current.choice ?? "")) return null;
@@ -106,11 +153,17 @@ export class PactBookA1aSessionAdapter {
     this.#seed = prepared.seed;
     const round = this.#base.bankroll.completedRounds + 1;
     this.#state = enterPactBookRound(this.#state, round);
-    const view = this.#base.startRound(prepared, stake);
+    if (this.#sealedCofre && this.#sealedCofre.targetRound !== round) throw new Error("O Cofre Selado só pode ser usado na rodada imediatamente seguinte do mesmo Ato.");
+    const override = this.#sealedCofre?.targetRound === round ? this.#sealedCofre.card : undefined;
+    const view = this.#base.startRound(prepared, stake, override);
+    if (override) this.#sealedCofre = null;
     if (view.status === "complete") this.#state = expirePactBook(this.#state, "complete");
     return this.current;
   }
-  compose(partition: Partition) { return this.#after(this.#base.compose(partition)); }
+  compose(partition: Partition) {
+    if (this.#arremateOptions) throw new Error("Escolha uma das duas cartas do Cofre antes de compor.");
+    return this.#after(this.#base.compose(partition));
+  }
   skipRead() { return this.#after(this.#base.skipRead()); }
   readDealerHole() {
     if (this.#readForbidden()) throw new Error("Leitura está indisponível pela Renúncia vigente.");
@@ -139,21 +192,94 @@ export class PactBookA1aSessionAdapter {
     const result = this.#base.maneuverDirectWithPactPrivilege(hand, cardIndex); this.#state = next; return this.#after(result);
   }
   continueAfterAbilities() { return this.#after(this.#base.continueAfterAbilities()); }
-  act(action: Action) {
-    const round = this.#base.current.round;
-    if (!round?.currentHand) throw new Error("Não há mão ativa para a ação.");
-    assertPactBookActionAllowed(this.#state, round.roundNumber, round.currentHand, action);
-    return this.#after(this.#base.act(action));
-  }
   impetusDouble() {
     const round = this.#base.current.round;
     if (!round || !this.canUseImpetusDouble) throw new Error("Privilégio de Ímpeto indisponível; exige exatamente uma Compra normal.");
     const next = consumePactBookPrivilege(this.#state, round.roundNumber);
     const result = this.#base.impetusDouble(); this.#state = next; return this.#after(result);
   }
+  act(action: Action) {
+    const round = this.#base.current.round;
+    const handName = round?.currentHand;
+    const hand = handName && round?.hands?.[handName];
+    if (!round || !handName || !hand) throw new Error("Não há mão ativa para a ação.");
+    assertPactBookActionAllowed(this.#state, round.roundNumber, handName, action, hand.cards);
+    if (this.#orderPreview && action === "double") throw new Error("Após a prévia da Ordem, escolha somente Comprar ou Parar.");
+    if (action === "hit" && this.#orderPreview) {
+      if (this.#orderPreview.hand !== handName) throw new Error("A prévia da Ordem pertence a outra Face.");
+      const nextCard = this.#base.peekNextForCurrentHand();
+      if (JSON.stringify(nextCard) !== JSON.stringify(this.#orderPreview.card)) {
+        throw new Error("A lane da Face divergiu da carta exata prévia da Ordem.");
+      }
+      const result = this.#base.act(action);
+      this.#orderPreview = null;
+      return this.#after(result);
+    }
+    const pact = this.#state.current?.choice;
+    const available = round.phase === "player" && action === "hit" && canUsePactBookPrivilege(this.#state, round.roundNumber);
+    if (available && (pact === "bastion" || pact === "reflection" || pact === "chaos")) {
+      const other: HandName = handName === "luz" ? "sombra" : "luz";
+      const receiver = pact === "reflection" && round.hands[other].status === "playing" ? other : null;
+      if (pact !== "reflection" || receiver) {
+        const pending = this.#base.beginPactHit();
+        if (pact === "bastion" && !this.canUseBastion) return this.#after(this.#base.resolvePactHit("normal"));
+        return this.#after(pending);
+      }
+    }
+    return this.#after(this.#base.act(action));
+  }
+  resolvePendingHit(choice: "normal" | "bastion" | "reflection" | "chaos"): PublicCofreFocoNight {
+    const round = this.#base.current.round;
+    if (!round || round.phase !== "hitPending" || !round.pendingHitHand) throw new Error("Não há Compra pendente.");
+    if (choice === "bastion" && !this.canUseBastion) throw new Error("Privilégio do Bastião indisponível para esta Compra.");
+    if (choice === "reflection" && !this.canUseReflection) throw new Error("Privilégio do Reflexo indisponível sem outra Face ativa.");
+    if (choice === "chaos" && !this.canUseChaos) throw new Error("Privilégio do Caos indisponível.");
+    const receiver = choice === "reflection" ? this.reflectionTarget ?? undefined : undefined;
+    const next = choice === "normal" ? this.#state : consumePactBookPrivilege(this.#state, round.roundNumber);
+    const result = this.#base.resolvePactHit(choice, receiver);
+    this.#state = next;
+    return this.#after(result);
+  }
+  sealCofre(): PublicCofreFocoNight {
+    if (!this.canUsePenhor) throw new Error("Privilégio do Penhor indisponível nesta rodada.");
+    const round = this.#base.current.round!;
+    const card = round.cofre;
+    if (!card) throw new Error("Não há Cofre conhecido para Selar.");
+    const next = markPactBookCofreSealed(this.#state, round.roundNumber, round.roundNumber + 1);
+    this.#sealedCofre = { card: structuredClone(card), targetRound: round.roundNumber + 1 };
+    this.#state = next;
+    return this.#base.current;
+  }
+  activateArremate(): readonly [Card, Card] {
+    if (!this.canUseArremate) throw new Error("Privilégio do Arremate indisponível nesta rodada.");
+    const round = this.#base.current.round!;
+    if (!round.cofre) throw new Error("Não há Cofre para oferecer.");
+    const alternate = this.#base.drawAlternateCofreCandidate();
+    const next = consumePactBookPrivilege(this.#state, round.roundNumber);
+    this.#arremateOptions = [structuredClone(round.cofre), structuredClone(alternate)];
+    this.#state = next;
+    return this.#arremateOptions;
+  }
+  chooseArremate(index: 0 | 1): PublicCofreFocoNight {
+    if (!this.#arremateOptions || (index !== 0 && index !== 1)) throw new Error("Escolha de Cofre do Arremate indisponível.");
+    const selected = this.#arremateOptions[index];
+    const result = this.#base.chooseCofre(selected);
+    this.#arremateOptions = null;
+    return this.#after(result);
+  }
+  revealOrderPreview(): Readonly<{ hand: HandName; card: Card }> {
+    if (!this.canUseOrder) throw new Error("Privilégio da Ordem indisponível antes de uma decisão de Face.");
+    const round = this.#base.current.round!;
+    const hand = round.currentHand!;
+    const card = this.#base.peekNextForCurrentHand();
+    const next = consumePactBookPrivilege(this.#state, round.roundNumber);
+    this.#state = next;
+    this.#orderPreview = { hand, card: structuredClone(card) };
+    return this.orderPreview!;
+  }
   resolveDealer() { return this.#after(this.#base.resolveDealer()); }
-  abandonBeforeDeal(): void { this.#base.abandonBeforeDeal(); this.#state = expirePactBook(this.#state, "abandoned"); }
-  abandonNight() { const result = this.#base.abandonNight(); this.#state = expirePactBook(this.#state, "abandoned"); return result; }
+  abandonBeforeDeal(): void { this.#base.abandonBeforeDeal(); this.#state = expirePactBook(this.#state, "abandoned"); this.#sealedCofre = null; this.#arremateOptions = null; this.#orderPreview = null; }
+  abandonNight() { const result = this.#base.abandonNight(); this.#state = expirePactBook(this.#state, "abandoned"); this.#sealedCofre = null; this.#arremateOptions = null; this.#orderPreview = null; return result; }
 
   #privilegeWindow(round: number): boolean {
     const current = this.#state.current;
@@ -170,6 +296,7 @@ export class PactBookA1aSessionAdapter {
   #readForbidden(): boolean {
     const current = this.#state.current; const round = this.#base.isBetting ? this.bankroll.completedRounds + 1 : this.#base.current.round?.roundNumber ?? 0;
     if (!current || current.status !== "active") return false;
+    if (pactBookRestrictions(this.#state, round)?.forbidRead) return true;
     if (current.choice === "lighthouse") return true;
     if (current.choice !== "vigil" && current.choice !== "flare") return false;
     const early = round <= (current.endRound === 7 ? 5 : 8);
@@ -178,6 +305,7 @@ export class PactBookA1aSessionAdapter {
   #maneuverForbidden(): boolean {
     const current = this.#state.current; const round = this.#base.isBetting ? this.bankroll.completedRounds + 1 : this.#base.current.round?.roundNumber ?? 0;
     if (!current || current.status !== "active") return false;
+    if (pactBookRestrictions(this.#state, round)?.forbidManeuver) return true;
     if (current.choice === "impetus") return true;
     if (current.choice !== "vigil" && current.choice !== "flare") return false;
     const early = round <= (current.endRound === 7 ? 5 : 8);
