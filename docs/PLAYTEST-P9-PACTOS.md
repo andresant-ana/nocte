@@ -4,7 +4,9 @@
 
 ## Consentimento e controle
 
-Na configuração do modo Livro dos Pactos, a coleta está desligada por padrão. Marcar a opção é o consentimento explícito para aquela Noite. Sem consentimento, o jogo prossegue normalmente e nenhum registro é criado. Com consentimento, um identificador aleatório efêmero e eventos permitidos ficam apenas na memória da página. Não há rede, API, cookie, armazenamento local ou persistência. Recarregar/fechar perde dados não exportados. A pessoa pode encerrar a Noite a qualquer momento e limpar os dados na tela final.
+Na configuração do modo Livro dos Pactos, a coleta está desligada por padrão. Marcar a opção é o consentimento explícito para aquela Noite. Sem consentimento, o jogo prossegue normalmente e nenhum registro é criado. Com consentimento, um identificador aleatório efêmero e eventos permitidos ficam apenas na memória da página. O jogo não transmite esses dados: não há API de coleta, cookie, armazenamento local ou persistência. Recarregar/fechar perde dados não exportados. A pessoa pode encerrar a Noite a qualquer momento e limpar os dados na tela final.
+
+No preview público P10, o navegador solicita os arquivos estáticos ao GitHub Pages. Isso é tráfego de hospedagem, separado dos dados do playtest, que permanecem no cliente. O GitHub informa que registra e armazena o IP de visitantes de Pages por motivos de segurança; veja [PLAYTEST-SHARE.md](PLAYTEST-SHARE.md) para esse limite de privacidade e para instruções de participação.
 
 O questionário aparece depois de uma Noite concluída ou abandonada e é opcional. Exportar é uma ação manual. Não há texto livre.
 

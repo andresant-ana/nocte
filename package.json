@@ -6,7 +6,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --maxWorkers=2",
     "typecheck": "tsc --build",
     "simulate": "pnpm --filter @nocte/sim simulate",
     "benchmark": "pnpm --filter @nocte/sim benchmark",

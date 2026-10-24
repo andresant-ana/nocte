@@ -526,7 +526,8 @@ export function App() {
       <p className="eyebrow">PROTÓTIPO SOLO · LABORATÓRIO LOCAL</p>
       <h1>NOCTE</h1>
       <p className="subtitle">Duas Faces</p>
-      <p className="local-notice">Jogo solo, executado localmente neste navegador. Escolha o modo antes de cada Noite.</p>
+      <p className="local-notice">Jogo solo, executado neste navegador. Escolha o modo antes de cada Noite.</p>
+      <p className="experimental-preview-notice">Protótipo experimental. As fichas são 100% fictícias e não podem ser compradas, resgatadas ou trocadas por prêmios. Não há carteira real, ranking ou monetização.</p>
 
       <div className="setup-fields">
         <label className="profile-label" htmlFor="game-mode">Modo de jogo</label>
@@ -570,7 +571,7 @@ export function App() {
           <label className="playtest-opt-in">
             <input type="checkbox" checked={pactPlaytestOptIn} onChange={(event) => setPactPlaytestOptIn(event.target.checked)} />
             Participar do playtest local opcional dos Pactos
-            <small>Desligado por padrão. Só com sua autorização, eventos públicos desta Noite ficam em memória nesta página. Nada é enviado nem salvo; você pode jogar normalmente sem participar.</small>
+            <small>Desligado por padrão. Só com sua autorização, eventos públicos desta Noite ficam em memória nesta página. Dados do playtest não são enviados nem salvos; o provedor pode registrar dados técnicos do acesso. Você pode jogar normalmente sem participar.</small>
           </label>
         </>}
 

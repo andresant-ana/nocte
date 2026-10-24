@@ -34,6 +34,10 @@ Documentation baseline → TypeScript game engine and simulation lab → gamepla
 
 The repository is not a live or networked game. NOCTE-P1A supplies the experimental symmetric engine and strategy simulator. P1B adds a model EV solver and controlled strategy benchmark; P1C audits strategic depth. NOCTE-P2A adds a local solo browser prototype and a consent-based playtest protocol. Its rules remain experimental, and no human study has been conducted. See [LAB-P1B.md](docs/LAB-P1B.md), [LAB-P1C.md](docs/LAB-P1C.md), and [PLAYTEST-P2A.md](docs/PLAYTEST-P2A.md). Historical figures remain in [VALIDATION.md](docs/VALIDATION.md).
 
+## Shareable experimental preview (NOCTE-P10)
+
+The optional static preview is built for GitHub Pages under `/nocte/` from `packages/web/dist`; deployment runs only from `main` after Pages is enabled with **GitHub Actions** in repository Settings. The site is not considered published until a successful deployment and URL are verified. See the [P10 volunteer and privacy guide](docs/PLAYTEST-SHARE.md). Playtest consent remains off by default, and study JSON is downloaded only by an explicit local action. GitHub Pages may log visitor IP addresses for infrastructure security; this is separate from NOCTE, which does not send playtest data.
+
 ## Solo prototype (NOCTE-P2A)
 
 Requires Node.js 22+ and pnpm 12.9.1. Run `pnpm install` and `pnpm dev`, then open the local URL printed by Vite. The prototype reuses the existing engine, runs in the browser, and keeps study records in memory only. Joining a study is optional; exports require an explicit action, and records can be cleared. Read the [P2A protocol](docs/PLAYTEST-P2A.md) before facilitating or interpreting any session. No human results or definitive rules are implied.
