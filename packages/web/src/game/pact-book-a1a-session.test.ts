@@ -314,6 +314,28 @@ describe("PACT-BOOK-0.1 first playable slice", () => {
     expect(() => session.composeCisao("sombra")).toThrow(/indisponível/i);
   });
 
+  it("Cisão supports all eight player-selected 3+1 layouts without consuming privilege on invalid index", () => {
+    for (const threeCardHand of ["luz", "sombra"] as const) {
+      for (let isolated = 0; isolated < 4; isolated += 1) {
+        const { session, seed } = reachFour("bonding");
+        session.sign("cisao"); session.startRound(prepared(seed, 3), 1);
+        const result = session.composeCisao(threeCardHand, isolated);
+        const partition = result.round?.openingPartition;
+        const singleFace = threeCardHand === "luz" ? "sombra" : "luz";
+        expect(partition?.[singleFace]).toEqual([isolated]);
+        expect(partition?.[threeCardHand]).toEqual([0, 1, 2, 3].filter(index => index !== isolated));
+        expect(result.round?.hands?.[singleFace].cards).toHaveLength(1);
+        expect(result.round?.hands?.[threeCardHand].cards).toHaveLength(3);
+      }
+    }
+    const { session, seed } = reachFour("bonding");
+    session.sign("cisao"); session.startRound(prepared(seed, 3), 1);
+    const initial = session.current;
+    expect(() => session.composeCisao("luz", 4)).toThrow(/carta isolada/i);
+    expect(session.current).toEqual(initial);
+    expect(session.contract.privilege).toBe("available");
+  });
+
   it("Balança reveals only a coarse category, requires one final recomposition, and suppresses natural bonus", () => {
     const { session, seed } = reachFour("bonding");
     session.sign("balanca");

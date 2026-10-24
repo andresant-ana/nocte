@@ -48,7 +48,7 @@ type PactActions = Readonly<{
   canUseOrder?: boolean;
   orderPreview?: Readonly<{ hand: HandName; card: Card }> | null;
   canUseCisao?: boolean;
-  composeCisao?: (threeCardHand: HandName) => PublicCofreFocoNight;
+  composeCisao?: (threeCardHand: HandName, singleCardIndex: number) => PublicCofreFocoNight;
   canUseBalanca?: boolean;
   balancaProposalMade?: boolean;
   balancaRecomposePending?: boolean;
@@ -118,6 +118,7 @@ function phaseLabel(night: VisibleTableNight): string {
 export function CofreFocoTable({ session, night, rules, bankroll, error, onNightChange, onNextRound, onReturnToSetup, cardIdentityMode = false, pact }: Props) {
   const round = night.round;
   const [selectedPartition, setSelectedPartition] = useState(0);
+  const [cisaoSingleIndex, setCisaoSingleIndex] = useState(3);
   const [selectedSwap, setSelectedSwap] = useState<Readonly<{ hand: HandName; cardIndex: number }> | null>(null);
   const [maneuverChooserOpen, setManeuverChooserOpen] = useState(false);
   const [confirmation, setConfirmation] = useState<"read" | "read-privilege" | "maneuver" | "maneuver-privilege" | null>(null);
@@ -165,7 +166,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
       setLocalError(null);
       const next = operation();
       onNightChange(next as PublicCofreFocoNight);
-      if (next.round?.roundNumber !== round?.roundNumber) setSelectedPartition(0);
+      if (next.round?.roundNumber !== round?.roundNumber) { setSelectedPartition(0); setCisaoSingleIndex(3); }
       succeeded = true;
     } catch (cause) {
       setLocalError(cause instanceof Error ? cause.message : "Ação indisponível. Confira o estado da rodada.");
@@ -334,8 +335,12 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
           </fieldset>
           {pact?.canUseCisao && <div className="pact-composition-controls" role="group" aria-label="Composição excepcional Cisão">
             <p>Cisão · distribuição 3+1 · nenhum natural nesta composição.</p>
-            <button type="button" className="secondary-action" onClick={() => update(() => pact.composeCisao!("luz"))}>Cisão · 3 Luz + 1 Sombra</button>
-            <button type="button" className="secondary-action" onClick={() => update(() => pact.composeCisao!("sombra"))}>Cisão · 1 Luz + 3 Sombra</button>
+             <label htmlFor="cisao-single-card">Carta que ficará sozinha</label>
+             <select id="cisao-single-card" value={cisaoSingleIndex} onChange={event => setCisaoSingleIndex(Number(event.target.value))}>
+               {round.originalCards.map((card, index) => <option key={index} value={index}>Carta {index + 1} · {faceLabel(card)}</option>)}
+             </select>
+            <button type="button" className="secondary-action" onClick={() => update(() => pact.composeCisao!("luz", cisaoSingleIndex))}>Cisão · 3 Luz + 1 Sombra</button>
+            <button type="button" className="secondary-action" onClick={() => update(() => pact.composeCisao!("sombra", cisaoSingleIndex))}>Cisão · 1 Luz + 3 Sombra</button>
           </div>}
           {pact?.balancaProposalMade && <p className="ability-status" role="status">Balança · proposta inicial registrada. A confirmação final ainda não ocorreu.</p>}
           {pact?.balancaCategory && <p className="ability-status" role="status">Balança · carta fechada do dealer: {pact.balancaCategory}. O valor exato continua oculto.</p>}

@@ -472,7 +472,7 @@ export function App() {
           canUseChaos: active.controller.canUseChaos, canUsePenhor: active.controller.canUsePenhor,
           canUseArremate: active.controller.canUseArremate, arremateOptions: active.controller.arremateOptions,
           canUseOrder: active.controller.canUseOrder, orderPreview: active.controller.orderPreview,
-          canUseCisao: active.controller.canUseCisao, composeCisao: (face) => active.controller.composeCisao(face),
+          canUseCisao: active.controller.canUseCisao, composeCisao: (face, singleCardIndex) => active.controller.composeCisao(face, singleCardIndex),
           canUseBalanca: active.controller.canUseBalanca, balancaProposalMade: active.controller.balancaProposalMade,
           balancaRecomposePending: active.controller.balancaRecomposePending, balancaCategory: active.controller.balancaCategory,
           proposeBalanca: (partition) => active.controller.proposeBalanca(partition), revealBalancaCategory: () => active.controller.revealBalancaCategory(),

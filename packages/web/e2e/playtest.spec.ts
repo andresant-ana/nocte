@@ -752,6 +752,7 @@ test("P7-C Cisão creates the 3+1 composition and removes both Dobrar actions", 
   await expect(offer).toHaveAttribute("data-pact-family", "bonding");
   await page.getByRole("button", { name: "Assinar Cisão" }).click();
   await page.getByRole("button", { name: /Confirmar aposta e distribuir/ }).click();
+  await page.getByLabel("Carta que ficará sozinha").selectOption("1");
   await page.getByRole("button", { name: "Cisão · 3 Luz + 1 Sombra" }).click();
   await expect(page.getByRole("list", { name: "Cartas da mão Luz" }).getByRole("listitem")).toHaveCount(3);
   await expect(page.getByRole("list", { name: "Cartas da mão Sombra" }).getByRole("listitem")).toHaveCount(1);

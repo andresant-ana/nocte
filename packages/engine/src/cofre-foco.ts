@@ -202,13 +202,17 @@ export function composeCofreFoco(night: CofreFocoNight, partition: Partition, op
 }
 
 /** P7 Cisão-only 3+1 composition. The exceptional layout never grants natural status. */
-export function composePactBookCisao(night: CofreFocoNight, threeCardHand: HandName): CofreFocoNight {
+export function composePactBookCisao(night: CofreFocoNight, threeCardHand: HandName, singleCardIndex = 3): CofreFocoNight {
   const round = night.round;
   if (night.status !== "active" || !round || round.phase !== "compose") throw new Error("Composição Cisão só é legal antes da composição final.");
   if (threeCardHand !== "luz" && threeCardHand !== "sombra") throw new Error("Cisão exige escolher Luz ou Sombra para três cartas.");
+  if (!Number.isSafeInteger(singleCardIndex) || singleCardIndex < 0 || singleCardIndex > 3) throw new Error("Cisão exige escolher uma carta isolada entre as quatro iniciais.");
+  // Eight real layouts: the player chooses which original card stands alone and which Face receives three.
+  const triple = [0, 1, 2, 3].filter(i => i !== singleCardIndex) as [number, number, number];
+  const single = [singleCardIndex] as [number];
   const partition: CofreFocoOpeningPartition = threeCardHand === "luz"
-    ? { luz: [0, 1, 2] as const, sombra: [3] as const }
-    : { luz: [3] as const, sombra: [0, 1, 2] as const };
+    ? { luz: triple, sombra: single }
+    : { luz: single, sombra: triple };
   const hands: Record<HandName, CofreFocoHand> = {
     luz: makeHand(partition.luz.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure, true),
     sombra: makeHand(partition.sombra.map(i => clone(round.originalCards[i]!)), night.rules.initialExposure, true),

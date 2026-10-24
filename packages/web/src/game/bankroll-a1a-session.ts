@@ -140,7 +140,7 @@ export class BankrollA1aSessionAdapter {
   }
 
   compose(partition: Partition, suppressOpeningNatural = false) { return this.#transition(() => this.#session!.compose(partition, suppressOpeningNatural)); }
-  composeCisao(threeCardHand: HandName) { return this.#transition(() => this.#session!.composeCisao(threeCardHand)); }
+  composeCisao(threeCardHand: HandName, singleCardIndex = 3) { return this.#transition(() => this.#session!.composeCisao(threeCardHand, singleCardIndex)); }
   skipRead() { return this.#transition(() => this.#session!.skipRead()); }
   readDealerHole() { return this.#transition(() => this.#session!.readDealerHole()); }
   readDealerHoleWithPactPrivilege() { return this.#transition(() => this.#session!.readDealerHoleWithPactPrivilege()); }

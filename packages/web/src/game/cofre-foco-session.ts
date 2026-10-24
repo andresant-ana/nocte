@@ -83,8 +83,8 @@ export class CofreFocoSessionAdapter {
     return this.current;
   }
 
-  composeCisao(threeCardHand: HandName): PublicCofreFocoNight {
-    this.#night = composePactBookCisao(this.#night, threeCardHand);
+  composeCisao(threeCardHand: HandName, singleCardIndex = 3): PublicCofreFocoNight {
+    this.#night = composePactBookCisao(this.#night, threeCardHand, singleCardIndex);
     return this.current;
   }
 

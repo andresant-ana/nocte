@@ -242,10 +242,10 @@ export class PactBookA1aSessionAdapter {
     this.#balancaProposal = null;
     return this.#after(result);
   }
-  composeCisao(threeCardHand: HandName) {
+  composeCisao(threeCardHand: HandName, singleCardIndex = 3) {
     if (!this.canUseCisao) throw new Error("Privilégio da Cisão indisponível nesta composição.");
     const round = this.#base.current.round!.roundNumber;
-    const result = this.#base.composeCisao(threeCardHand);
+    const result = this.#base.composeCisao(threeCardHand, singleCardIndex);
     this.#state = consumePactBookPrivilege(this.#state, round);
     return this.#after(result);
   }
