@@ -177,6 +177,20 @@ describe("PACT-BOOK-0.1 first playable slice", () => {
     expect(session.orderPreview).toBeNull();
   });
 
+  it("Ordem clears the preview after Parar so the next Face can act and Dobrar normally", () => {
+    const { session, seed } = reachFour("destiny");
+    session.sign("order"); session.startRound(prepared(seed, 3), 1); session.compose(opening);
+    session.skipRead(); session.skipManeuver(); session.continueAfterAbilities();
+    expect(session.revealOrderPreview()).toEqual({ hand: "luz", card: card("2") });
+    expect(session.contract.privilege).toBe("consumed");
+    const advanced = session.act("stand");
+    expect(advanced.round?.currentHand).toBe("sombra");
+    expect(session.orderPreview).toBeNull();
+    expect(session.legalActions).toContain("double");
+    expect(() => session.act("double")).not.toThrow();
+    expect(session.contract.privilege).toBe("consumed");
+  });
+
   it("Caos permits a normal first Compra, then consumes exactly one pending and one forced replacement from that Face", () => {
     const { session, seed } = reachFour("destiny");
     session.sign("chaos"); session.startRound(prepared(seed, 3), 1); session.compose(opening);

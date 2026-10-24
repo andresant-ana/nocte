@@ -226,7 +226,11 @@ export class PactBookA1aSessionAdapter {
         return this.#after(pending);
       }
     }
-    return this.#after(this.#base.act(action));
+    const result = this.#base.act(action);
+    // Order grants one preview for the *current* Face/decision only. If the
+    // player Stands, discard it before the next Face or round starts.
+    if (action === "stand" && this.#orderPreview) this.#orderPreview = null;
+    return this.#after(result);
   }
   resolvePendingHit(choice: "normal" | "bastion" | "reflection" | "chaos"): PublicCofreFocoNight {
     const round = this.#base.current.round;
