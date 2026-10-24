@@ -6,7 +6,8 @@ import type { PublicBankrollA0 } from "./bankroll-a0-session";
 import type { PublicBankrollA1a } from "./bankroll-a1a-session";
 import { A1A_INITIAL_TICKS, formatHalfChips } from "./bankroll-a1a";
 import { PlayingCard } from "./PlayingCard";
-import type { PublicPactContract, PactPublicNight } from "./pact-a1a-session";
+import type { PactPublicNight } from "./pact-a1a-session";
+import type { PactBookPublicContract } from "./pact-book-a1a-session";
 
 // Pact projections physically omit dealerUp at runtime during composition.
 export type VisibleTableNight = Omit<PublicCofreFocoNight, "round"> & { round?: Omit<PublicCofreFocoRound, "dealerUp"> & { dealerUp?: Card } };
@@ -26,12 +27,21 @@ type CofreSession = {
   abandonNight: () => VisibleTableNight;
 };
 type PactActions = Readonly<{
-  contract: PublicPactContract;
+  contract: PactBookPublicContract | Readonly<{ status: string; pact: "veil" | "iron" | null; ironFace: HandName | null; privilege: string }>;
   roundsRemaining: number;
   canUseReadPrivilege: boolean;
   canUseManeuverPrivilege: boolean;
   readPrivilege: () => PactPublicNight;
   maneuverPrivilege: (hand: HandName, cardIndex: number) => PactPublicNight;
+  canUseFarol?: boolean;
+  farolCategory?: string | null;
+  revealFarol?: () => PublicCofreFocoNight;
+  canUseImpetusDouble?: boolean;
+  impetusDouble?: () => PublicCofreFocoNight;
+  focusAbilityRenunciation?: string | null;
+  renunciationText?: string;
+  privilegeText?: string;
+  pactName?: string;
 }>;
 
 type Props = {
@@ -182,9 +192,10 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
           <p className="table-profile">{cardIdentityMode ? "Laboratório P5 de cartas · " : ""}{night.rulesId} · EXPERIMENTAL · natural {rules.naturalPayout}</p>
           {pact && <p className="pact-status-strip" role="status">
             {pact.contract.status === "refused" ? "Pactos recusados · regras A1a normais"
-              : pact.contract.pact ? <>Pacto {pact.contract.pact === "veil" ? "Véu" : "Ferro"} · {pact.contract.status === "expired" ? "expirado" : `Ato II · ${pact.roundsRemaining} rodada${pact.roundsRemaining === 1 ? "" : "s"} restante${pact.roundsRemaining === 1 ? "" : "s"}`}
-                  <span>Renúncia: {pact.contract.pact === "veil" ? "upcard oculta na composição" : `sem Dobrar ${pact.contract.ironFace === "luz" ? "Luz" : "Sombra"}`}</span>
-                  <span>Privilégio: {pact.contract.pact === "veil" ? "Leitura" : "Manobra"} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : "Expirado"}</span>
+              : pact.contract.pact ? <>Pacto {pact.pactName ?? (pact.contract.pact === "veil" ? "Véu" : pact.contract.pact === "iron" ? "Ferro" : pact.contract.pact)} · {pact.contract.status === "expired" ? "expirado" : `${"actStartRound" in pact.contract && pact.contract.actStartRound === 8 ? "Ato III" : "Ato II"} · ${pact.roundsRemaining} rodada${pact.roundsRemaining === 1 ? "" : "s"} restante${pact.roundsRemaining === 1 ? "" : "s"}`}
+                  <span>Renúncia: {pact.renunciationText ?? (pact.contract.pact === "veil" ? "upcard oculta na composição" : `sem Dobrar ${pact.contract.ironFace === "luz" ? "Luz" : "Sombra"}`)}</span>
+                  <span>Privilégio: {pact.privilegeText ?? (pact.contract.pact === "veil" ? "Leitura" : "Manobra")} · {pact.contract.privilege === "available" ? "Disponível" : pact.contract.privilege === "consumed" ? "Consumido" : pact.contract.privilege === "expired" ? "Expirado" : "—"}</span>
+                  {pact.focusAbilityRenunciation && <span>{pact.focusAbilityRenunciation}</span>}
                 </> : null}
           </p>}
         </div>
@@ -267,6 +278,8 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
       <section className="table-action-dock" aria-label="Ações da rodada">
         {night.status === "active" && round.phase === "compose" && <>
           <h3>Composição</h3>
+          {pact?.canUseFarol && <button type="button" className="secondary-action" onClick={() => update(() => pact.revealFarol!())}>Usar Privilégio do Farol · revelar categoria</button>}
+          {pact?.farolCategory && <p className="ability-status" role="status">Farol · carta fechada: {pact.farolCategory} (informação desta rodada)</p>}
           <fieldset className="composition-options">
             <legend className="visually-hidden">Composições disponíveis</legend>
             {partitionsForRound.map((partition: Partition, index) => {
@@ -284,6 +297,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
         {night.status === "active" && round.phase === "focusWindow" && <>
           <h3>Janela de Foco · {night.focusRemaining} restante{night.focusRemaining === 1 ? "" : "s"}</h3>
           <div className="focus-dock">
+            {pact?.focusAbilityRenunciation && <p className="ability-status" role="status">{pact.focusAbilityRenunciation}</p>}
             <section className="ability-panel" aria-labelledby="read-choice-title">
               <h4 id="read-choice-title">Leitura · {rules.readCost} Focos</h4>
               {round.readUsed ? <p className="ability-status" role="status">Usada nesta rodada</p>
@@ -329,6 +343,7 @@ export function CofreFocoTable({ session, night, rules, bankroll, error, onNight
 
         {night.status === "active" && round.phase === "player" && <div className="action-row" role="group" aria-label={`Ações para ${round.currentHand === "luz" ? "Luz" : "Sombra"}`}>
           {session.legalActions.map(action => <button type="button" key={action} onClick={() => update(() => session.act(action))}>{actionLabels[action]}</button>)}
+          {pact?.canUseImpetusDouble && <button type="button" className="secondary-action" onClick={() => update(() => pact.impetusDouble!())}>Privilégio de Ímpeto · Dobrar após Compra</button>}
         </div>}
         {night.status === "active" && round.phase === "dealer" && <button type="button" onClick={() => update(() => session.resolveDealer())}>Resolver dealer</button>}
 

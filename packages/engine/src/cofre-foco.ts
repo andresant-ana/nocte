@@ -30,7 +30,8 @@ export type CofreFocoRules = Readonly<{
 }>;
 
 /** Optional, version-specific rules context. Omitted for every existing profile. */
-export type CofreFocoActionRestrictions = Readonly<{ forbiddenDoubleHand?: HandName }>;
+export type CofreFocoActionRestrictions = Readonly<{ forbiddenDoubleHand?: HandName; forbidManeuver?: boolean }>;
+export type DealerHoleCategory = "ace" | "low" | "high";
 export type PactPrivilegePayment = "focus" | "pact-privilege";
 
 const profile = (payout: CofreFocoRules["naturalPayout"], id: CofreFocoRules["id"], options?: Partial<CofreFocoRules>): CofreFocoRules => Object.freeze({
@@ -93,6 +94,8 @@ export type CofreFocoRound = Readonly<{
   focusWindowOpened: boolean;
   settlement?: Readonly<Record<HandName, SettledHand>>;
   score?: number;
+  /** P7 privilege: only an explicitly authorized coarse category, never the hidden card. */
+  dealerHoleCategory?: DealerHoleCategory;
 }>;
 
 export type CofreFocoNight = Readonly<{
@@ -194,6 +197,15 @@ export function readDealerHole(night: CofreFocoNight): CofreFocoNight {
 /** PACT-LAB-0.1 only: marks Read used while leaving the Focus ledger untouched. */
 export function readDealerHoleWithPactPrivilege(night: CofreFocoNight): CofreFocoNight {
   return readDealerHoleWithPayment(night, "pact-privilege");
+}
+
+/** P7 Farol: reveal a coarse hole-card category before composition without exposing rank or card. */
+export function revealDealerHoleCategory(night: CofreFocoNight): CofreFocoNight {
+  const round = requirePhase(night, "compose");
+  if (round.dealerHoleCategory) throw new Error("A categoria do Farol já foi revelada nesta rodada.");
+  const rank = round.dealerHole.rank;
+  const category: DealerHoleCategory = rank === "A" ? "ace" : Number(rank) >= 2 && Number(rank) <= 6 ? "low" : "high";
+  return { ...night, round: { ...round, dealerHoleCategory: category } };
 }
 
 function readDealerHoleWithPayment(night: CofreFocoNight, payment: PactPrivilegePayment): CofreFocoNight {
@@ -308,6 +320,22 @@ export function applyCofreFocoAction(night: CofreFocoNight, action: Action, draw
   const { currentHand: _currentHand, ...withoutCurrentHand } = round;
   const advanced = { ...withoutCurrentHand, hands, phase: "player" as const };
   return advanceHands(night, advanced);
+}
+
+/** P7 Ímpeto: only a three-card hand (exactly one normal Compra) may use the special post-hit double. */
+export function applyPactImpetusDouble(night: CofreFocoNight, draw: CardSource): CofreFocoNight {
+  const round = requirePhase(night, "player");
+  const name = round.currentHand;
+  const hand = name && round.hands?.[name];
+  if (!name || !hand || hand.status !== "playing" || hand.cards.length !== 3 || hand.openingNatural || hand.maneuverTwentyOne) {
+    throw new Error("Ímpeto só permite Dobrar depois de exatamente uma Compra normal.");
+  }
+  const cards = [...hand.cards, clone(draw())];
+  const nextHand: CofreFocoHand = { ...hand, cards, exposure: hand.exposure + night.rules.initialExposure,
+    status: handValue(cards).bust ? "busted" : "doubled" };
+  const hands = { ...round.hands!, [name]: nextHand };
+  const { currentHand: _currentHand, ...withoutCurrentHand } = round;
+  return advanceHands(night, { ...withoutCurrentHand, hands, phase: "player" });
 }
 
 export function playCofreFocoDealer(night: CofreFocoNight, draw: CardSource): CofreFocoNight {

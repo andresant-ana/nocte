@@ -14,6 +14,8 @@ import {
   projectCofreFoco,
   readDealerHole,
   readDealerHoleWithPactPrivilege,
+  revealDealerHoleCategory,
+  applyPactImpetusDouble,
   skipManeuver,
   skipRead,
   type CofreFocoNight,
@@ -90,6 +92,11 @@ export class CofreFocoSessionAdapter {
     return this.current;
   }
 
+  revealFarolCategory(): PublicCofreFocoNight {
+    this.#night = revealDealerHoleCategory(this.#night);
+    return this.current;
+  }
+
   skipManeuver(): PublicCofreFocoNight {
     this.#night = skipManeuver(this.#night);
     return this.current;
@@ -123,6 +130,13 @@ export class CofreFocoSessionAdapter {
     const hand = this.#night.round?.currentHand;
     if (!hand) throw new Error("Não há mão ativa para receber a ação.");
     this.#night = applyCofreFocoAction(this.#night, action, this.#prepared.draws[hand], this.#actionRestrictions?.(this.#night.roundNumber));
+    return this.current;
+  }
+
+  impetusDouble(): PublicCofreFocoNight {
+    const hand = this.#night.round?.currentHand;
+    if (!hand) throw new Error("Não há mão ativa para Ímpeto.");
+    this.#night = applyPactImpetusDouble(this.#night, this.#prepared.draws[hand]);
     return this.current;
   }
 

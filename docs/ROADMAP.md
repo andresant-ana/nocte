@@ -122,3 +122,7 @@ Implementação experimental em branch/PR próprio: modo local `BANKROLL-LAB-A1a
 ### NOCTE-P6-PAC-E — Issue #40
 
 N-057 autoriza somente o modo local isolado `PACT-LAB-0.1`: oferta antes da aposta e sorteio da rodada 4; Véu, Ferro ou recusa; Renúncia/Privilégio nas rodadas 4–7; regras A1a + Cofre/Foco normais nas demais rodadas. O contrato e as invariantes estão em [PACTOS-LAB-P6](PACTOS-LAB-P6.md). A entrega não estende o solver P2B-F nem afirma vantagem estratégica ou profundidade; uma comparação pareada justa e o playtest humano são gates seguintes. N-044 continua preservada em seu contexto histórico, e nenhum modo anterior é alterado.
+
+### NOCTE-P7-A — Issue #42
+
+N-058 autoriza o laboratório local versionado `PACT-BOOK-0.1`, com duas ofertas pareadas pré-deal sem repetição e sem empilhamento. Esta entrega incremental é empilhada sobre PR #41, preservando PACT-LAB-0.1; torna jogáveis Véu, Farol, Ferro, Ímpeto, Vigília e Fulgor, em três famílias completas. Os seis pares restantes não entram no sorteio nesta base. Não há solver comparativo, ajuste de regras, resultados humanos ou alegação de equilíbrio. Ver [PACTOS-LAB-P7](PACTOS-LAB-P7.md).
